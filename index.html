@@ -71,8 +71,7 @@
     }
     .btn:active { transform: scale(0.96); }
 
-    .red-btn { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4); }
-    .blue-btn { background: linear-gradient(135deg, #0284c7, #2563eb); box-shadow: 0 6px 20px rgba(2, 132, 199, 0.4); }
+    .join-btn { background: linear-gradient(135deg, #0284c7, #2563eb); box-shadow: 0 6px 20px rgba(2, 132, 199, 0.4); }
 
     .q-box { font-size: 1.15rem; line-height: 1.4; font-weight: 600; min-height: 60px; display: flex; align-items: center; justify-content: center; }
     
@@ -161,10 +160,7 @@
   <div class="card" id="joinCard">
     <h1>JOIN THE MATCH</h1>
     <input type="text" id="playerName" placeholder="Enter Your Name" maxlength="15">
-    <div style="display: flex; gap: 12px; margin-top: 6px;">
-      <button class="btn red-btn" style="flex: 1;" onclick="joinGame('A')">RED TEAM</button>
-      <button class="btn blue-btn" style="flex: 1;" onclick="joinGame('B')">BLUE TEAM</button>
-    </div>
+    <button class="btn join-btn" style="width: 100%; margin-top: 6px;" onclick="joinGame()">JOIN MATCH</button>
   </div>
 
   <!-- GAME PLAY CARD -->
@@ -232,21 +228,35 @@
       osc.stop(audioCtx.currentTime + duration);
     }
 
-    window.joinGame = function(team) {
+    window.joinGame = function() {
       const nameInput = document.getElementById("playerName").value.trim();
       if (!nameInput) return alert("Please enter your name!");
 
-      myName = nameInput; myTeam = team;
-      const playerRef = ref(db, `game/presence/${myName}_${Date.now()}`);
+      myName = nameInput;
+
+      // Unique ID combining name and millisecond timestamp
+      const uniqueId = `${myName}_${Date.now()}`;
+
+      // Hash the uniqueId to assign teams evenly (50/50 split) without race conditions
+      let hash = 0;
+      for (let i = 0; i < uniqueId.length; i++) {
+        hash = (hash << 5) - hash + uniqueId.charCodeAt(i);
+        hash |= 0;
+      }
+      myTeam = Math.abs(hash) % 2 === 0 ? 'A' : 'B';
+
+      // Register presence in Firebase
+      const playerRef = ref(db, `game/presence/${uniqueId}`);
       set(playerRef, { name: myName, team: myTeam });
       onDisconnect(playerRef).remove();
 
+      // Update UI instantly
       document.getElementById("joinCard").style.display = "none";
       document.getElementById("gameCard").style.display = "flex";
       
       const badge = document.getElementById("playerBadge");
-      badge.innerText = `${myName} (${team === 'A' ? 'RED' : 'BLUE'})`;
-      badge.style.color = team === 'A' ? '#ff5263' : '#38bdf8';
+      badge.innerText = `${myName} (${myTeam === 'A' ? 'RED TEAM' : 'BLUE TEAM'})`;
+      badge.style.color = myTeam === 'A' ? '#ff5263' : '#38bdf8';
 
       listenToGame();
     };
@@ -324,7 +334,7 @@
         let pullForce = isSuddenDeath ? 30 : 15;
         let pointsAdded = 5;
 
-        // FAST & CONFLICT-FREE: Push pull event to queue
+        // Push pull event to queue
         push(pullsRef, {
           team: myTeam,
           force: pullForce,
