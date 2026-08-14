@@ -5,18 +5,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tug-of-War Player</title>
   <style>
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; padding: 20px; background: #f8fafc; margin: 0; }
-    .timer-banner { background: #0f172a; color: #f8fafc; font-size: 1.5rem; font-weight: bold; padding: 12px; border-radius: 12px; max-width: 500px; margin: 0 auto 20px; }
-    .card { background: white; padding: 25px; border-radius: 16px; max-width: 500px; margin: 0 auto; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+    body { font-family: 'Segoe UI', sans-serif; text-align: center; padding: 20px; background: #f8fafc; margin: 0; user-select: none; }
+    .timer-banner { background: #0f172a; color: #f8fafc; font-size: 1.5rem; font-weight: bold; padding: 12px; border-radius: 12px; max-width: 500px; margin: 0 auto 20px; transition: all 0.3s; }
+    .timer-banner.sudden-death { background: #dc2626; animation: pulse 0.8s infinite alternate; }
+    @keyframes pulse { from { opacity: 1; } to { opacity: 0.7; } }
+
+    .card { background: white; padding: 25px; border-radius: 16px; max-width: 500px; margin: 0 auto; box-shadow: 0 10px 20px rgba(0,0,0,0.05); position: relative; }
     .card.team-a { border: 4px solid #ef4444; }
     .card.team-b { border: 4px solid #3b82f6; }
     .team-badge { display: inline-block; padding: 6px 16px; border-radius: 20px; color: white; font-weight: bold; margin-bottom: 15px; text-transform: uppercase; }
     .badge-red { background: #ef4444; }
     .badge-blue { background: #3b82f6; }
+    
     .question { font-size: 1.3rem; font-weight: 700; margin-bottom: 20px; color: #0f172a; }
     .options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    button.opt { width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 12px; background: #f8fafc; font-size: 1.1rem; font-weight: 600; cursor: pointer; color: #334155; }
-    button.opt:hover { background: #cbd5e1; }
+    button.opt { width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 12px; background: #f8fafc; font-size: 1.1rem; font-weight: 600; cursor: pointer; color: #334155; transition: transform 0.1s; }
+    button.opt:active { transform: scale(0.95); }
+
+    /* FLOATING FX TEXT */
+    .float-fx { position: absolute; font-weight: 900; font-size: 1.8rem; pointer-events: none; animation: floatUp 0.8s ease-out forwards; z-index: 100; }
+    .fx-plus { color: #16a34a; }
+    .fx-minus { color: #dc2626; }
+    @keyframes floatUp { 
+      0% { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-50px) scale(1.3); }
+    }
+
     .end-screen { font-size: 2rem; font-weight: bold; padding: 40px; border-radius: 16px; display: none; }
     .win { background: #dcfce7; color: #166534; }
     .lose { background: #fee2e2; color: #991b1b; }
@@ -24,7 +38,7 @@
 </head>
 <body>
 
-  <div class="timer-banner">⏱️ Time Left: <span id="gameTimer">03:00</span></div>
+  <div class="timer-banner" id="timerBanner">⏱️ Time: <span id="gameTimer">03:00</span></div>
   <div id="endScreen" class="end-screen"></div>
 
   <div class="card" id="gameCard">
@@ -66,6 +80,20 @@
 
     let myTeam = null;
     let qIdx = 0;
+    let isSuddenDeath = false;
+
+    // Web Audio Synthesizer
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playBeep(freq, type, duration) {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type; osc.frequency.value = freq;
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start();
+      gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
+      osc.stop(audioCtx.currentTime + duration);
+    }
 
     const presenceRef = ref(db, "game/presence");
     const myPlayerRef = ref(db, `game/presence/${Math.random().toString(36).substring(2, 9)}`);
@@ -84,11 +112,19 @@
 
     onValue(gameRef, (snapshot) => {
       const data = snapshot.val() || {};
-      
       const t = data.timerSecs !== undefined ? data.timerSecs : 180;
-      const m = Math.floor(t / 60).toString().padStart(2, '0');
-      const s = (t % 60).toString().padStart(2, '0');
-      document.getElementById("gameTimer").innerText = `${m}:${s}`;
+      
+      isSuddenDeath = t <= 30 && t > 0;
+      const banner = document.getElementById("timerBanner");
+      if (isSuddenDeath) {
+        banner.className = "timer-banner sudden-death";
+        banner.innerHTML = `⚡ 2X PULL FORCE! <span id="gameTimer">${t}s</span>`;
+      } else {
+        banner.className = "timer-banner";
+        const m = Math.floor(t / 60).toString().padStart(2, '0');
+        const s = (t % 60).toString().padStart(2, '0');
+        banner.innerHTML = `⏱️ Time: <span id="gameTimer">${m}:${s}</span>`;
+      }
 
       if (data.gameOver) {
         document.getElementById("gameCard").style.display = "none";
@@ -97,13 +133,15 @@
 
         if (data.winner === myTeam) {
           endScreen.className = "end-screen win";
-          endScreen.innerHTML = "🎉 CONGRATULATIONS!<br>YOUR TEAM WON!";
+          endScreen.innerHTML = "🎉 VICTORY!<br>YOUR TEAM WON!";
+          playBeep(523, "sine", 0.5);
         } else if (data.winner === "TIE") {
           endScreen.className = "end-screen";
-          endScreen.innerHTML = "🤝 IT'S A TIE!";
+          endScreen.innerHTML = "🤝 DRAW GAME!";
         } else {
           endScreen.className = "end-screen lose";
-          endScreen.innerHTML = "💀 GAME OVER!<br>YOUR TEAM LOST!";
+          endScreen.innerHTML = "💀 DEFEAT!<br>YOUR TEAM LOST!";
+          playBeep(150, "sawtooth", 0.5);
         }
       } else {
         document.getElementById("gameCard").style.display = "block";
@@ -111,10 +149,20 @@
       }
     });
 
-    window.handleAnswer = function(selected) {
+    window.handleAnswer = function(selected, evt) {
       const isCorrect = selected === QUESTIONS[myTeam][qIdx].answer;
-      const pullForce = isCorrect ? 15 : -5;
-      const pointsAdded = isCorrect ? 5 : 0; // 5 POINTS PER QUESTION
+      
+      // Floating FX Popup
+      showFloatFX(evt.clientX, evt.clientY, isCorrect ? "+5 PTS!" : "-5 PULL!", isCorrect);
+
+      if (isCorrect) {
+        playBeep(587.33, "sine", 0.2); // Success Tone
+      } else {
+        playBeep(130.81, "square", 0.3); // Error Buzz
+      }
+
+      let pullForce = isCorrect ? (isSuddenDeath ? 30 : 15) : -5;
+      let pointsAdded = isCorrect ? 5 : 0;
       const dir = myTeam === "A" ? -1 : 1;
 
       runTransaction(gameRef, (data) => {
@@ -132,12 +180,22 @@
       renderQ();
     };
 
+    function showFloatFX(x, y, text, isPlus) {
+      const el = document.createElement("div");
+      el.className = `float-fx ${isPlus ? 'fx-plus' : 'fx-minus'}`;
+      el.innerText = text;
+      el.style.left = `${x - 40}px`;
+      el.style.top = `${y - 30}px`;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 800);
+    }
+
     function renderQ() {
       if (!myTeam) return;
       const q = QUESTIONS[myTeam][qIdx];
       document.getElementById("qText").innerText = q.q;
       document.getElementById("qOptions").innerHTML = q.options.map(opt => `
-        <button class="opt" onclick="handleAnswer('${opt}')">${opt}</button>
+        <button class="opt" onclick="handleAnswer('${opt}', event)">${opt}</button>
       `).join('');
     }
 
