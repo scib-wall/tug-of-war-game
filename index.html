@@ -3,292 +3,40 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Classroom Tug-of-War</title>
+  <title>Tug-of-War Player</title>
   <style>
-    :root {
-      --red-color: #ef4444;
-      --blue-color: #3b82f6;
-      --bg-color: #f8fafc;
-    }
-
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      text-align: center;
-      margin: 0;
-      padding: 20px;
-      background-color: var(--bg-color);
-      color: #1e293b;
-    }
-
-    /* SCORE DASHBOARD */
-    .dashboard {
-      display: flex;
-      justify-content: space-around;
-      max-width: 900px;
-      margin: 0 auto 20px auto;
-      background: #ffffff;
-      padding: 15px 25px;
-      border-radius: 16px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    }
-
-    .team-score-card {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .team-title {
-      font-size: 1.2rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .team-red-title { color: var(--red-color); }
-    .team-blue-title { color: var(--blue-color); }
-
-    .score-value {
-      font-size: 2rem;
-      font-weight: bold;
-    }
-
-    .player-count {
-      font-size: 0.85rem;
-      color: #64748b;
-    }
-
-    /* ARENA & ROPE STYLING */
-    .arena {
-      background: linear-gradient(180deg, #e0f2fe 0%, #fef3c7 100%);
-      padding: 60px 10px 40px 10px;
-      margin: 0 auto 25px auto;
-      border-radius: 20px;
-      overflow: hidden;
-      position: relative;
-      max-width: 900px;
-      box-shadow: inset 0 2px 8px rgba(0,0,0,0.08);
-    }
-
-    /* CENTER FLAG */
-    .center-marker {
-      position: absolute;
-      left: 50%;
-      top: 15px;
-      bottom: 0;
-      width: 4px;
-      background: #475569;
-      transform: translateX(-50%);
-      z-index: 5;
-    }
-
-    .center-flag {
-      position: absolute;
-      top: -10px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 1.5rem;
-      z-index: 6;
-    }
-
-    /* ROPE & PLAYER ANIMATIONS */
-    .rope-wrapper {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      /* SMOOTH ROPE TRANSITION */
-      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-      position: relative;
-      z-index: 2;
-    }
-
-    .rope {
-      width: 320px;
-      height: 14px;
-      background: linear-gradient(90deg, #78350f, #b45309, #78350f);
-      margin: 0 -5px;
-      border-radius: 7px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-    }
-
-    /* BANDANA PLAYER AVATARS */
-    .team-players {
-      display: flex;
-      gap: 2px;
-      align-items: center;
-    }
-
-    .player-icon {
-      position: relative;
-      font-size: 2.2rem;
-      filter: drop-shadow(0 3px 3px rgba(0,0,0,0.15));
-    }
-
-    /* RED BANDANA */
-    .player-icon.red::after {
-      content: '🎗️';
-      position: absolute;
-      top: -2px;
-      left: 6px;
-      font-size: 1.1rem;
-      filter: hue-rotate(140deg) saturate(3);
-    }
-
-    /* BLUE BANDANA */
-    .player-icon.blue::after {
-      content: '🎗️';
-      position: absolute;
-      top: -2px;
-      left: 6px;
-      font-size: 1.1rem;
-      filter: hue-rotate(0deg) saturate(3);
-    }
-
-    /* PULL RECOIL ANIMATION */
-    .pull-recoil {
-      animation: recoil 0.3s ease-out;
-    }
-
-    @keyframes recoil {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.08); }
-      100% { transform: scale(1); }
-    }
-
-    /* INDEPENDENT QUESTION CARDS */
-    .game-board {
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    .card {
-      padding: 25px;
-      border-radius: 16px;
-      background: white;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-      border: 3px solid transparent;
-      transition: all 0.3s ease;
-    }
-
-    .card.team-a { border-color: var(--red-color); }
-    .card.team-b { border-color: var(--blue-color); }
-
-    .my-team-badge {
-      display: inline-block;
-      padding: 6px 16px;
-      border-radius: 20px;
-      color: white;
-      font-weight: bold;
-      font-size: 0.9rem;
-      margin-bottom: 15px;
-      text-transform: uppercase;
-    }
-
-    .badge-red { background: var(--red-color); }
-    .badge-blue { background: var(--blue-color); }
-
-    .question-text {
-      font-size: 1.3rem;
-      font-weight: 700;
-      margin-bottom: 20px;
-      color: #0f172a;
-    }
-
-    .options-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    button.opt-btn {
-      width: 100%;
-      padding: 14px;
-      cursor: pointer;
-      border: 2px solid #e2e8f0;
-      border-radius: 12px;
-      background: #f8fafc;
-      font-size: 1.05rem;
-      font-weight: 600;
-      color: #334155;
-      transition: all 0.2s ease;
-    }
-
-    button.opt-btn:hover {
-      background: #e2e8f0;
-      border-color: #cbd5e1;
-      transform: translateY(-2px);
-    }
-
-    .reset-btn {
-      margin-top: 30px;
-      padding: 8px 18px;
-      background: #64748b;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.85rem;
-    }
-
-    .reset-btn:hover { background: #475569; }
+    body { font-family: 'Segoe UI', sans-serif; text-align: center; padding: 20px; background: #f8fafc; margin: 0; }
+    .timer-banner { background: #0f172a; color: #f8fafc; font-size: 1.5rem; font-weight: bold; padding: 12px; border-radius: 12px; max-width: 500px; margin: 0 auto 20px; }
+    .card { background: white; padding: 25px; border-radius: 16px; max-width: 500px; margin: 0 auto; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+    .card.team-a { border: 4px solid #ef4444; }
+    .card.team-b { border: 4px solid #3b82f6; }
+    .team-badge { display: inline-block; padding: 6px 16px; border-radius: 20px; color: white; font-weight: bold; margin-bottom: 15px; text-transform: uppercase; }
+    .badge-red { background: #ef4444; }
+    .badge-blue { background: #3b82f6; }
+    .question { font-size: 1.3rem; font-weight: 700; margin-bottom: 20px; }
+    .options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    button.opt { width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 12px; background: #f8fafc; font-size: 1.1rem; font-weight: 600; cursor: pointer; }
+    button.opt:hover { background: #cbd5e1; }
+    .end-screen { font-size: 2rem; font-weight: bold; padding: 40px; border-radius: 16px; display: none; }
+    .win { background: #dcfce7; color: #166534; }
+    .lose { background: #fee2e2; color: #991b1b; }
   </style>
 </head>
 <body>
 
-  <!-- SCOREBOARD DASHBOARD -->
-  <div class="dashboard">
-    <div class="team-score-card">
-      <span class="team-title team-red-title">Team Red</span>
-      <span class="score-value" id="scoreRed">0</span>
-      <span class="player-count" id="playersRed">0 Players</span>
-    </div>
-    
-    <div style="font-size: 1.8rem; font-weight: 900; align-self: center; color: #94a3b8;">VS</div>
+  <!-- TIMER -->
+  <div class="timer-banner">⏱️ Time Left: <span id="gameTimer">03:00</span></div>
 
-    <div class="team-score-card">
-      <span class="team-title team-blue-title">Team Blue</span>
-      <span class="score-value" id="scoreBlue">0</span>
-      <span class="player-count" id="playersBlue">0 Players</span>
-    </div>
+  <!-- GAME OVER OVERLAY -->
+  <div id="endScreen" class="end-screen"></div>
+
+  <!-- QUESTION CARD -->
+  <div class="card" id="gameCard">
+    <div id="teamBadge" class="team-badge">Assigning Team...</div>
+    <div class="question" id="qText">Loading question...</div>
+    <div class="options" id="qOptions"></div>
   </div>
 
-  <!-- TUG OF WAR ARENA -->
-  <div class="arena">
-    <div class="center-flag">🚩</div>
-    <div class="center-marker"></div>
-
-    <div class="rope-wrapper" id="ropeWrapper">
-      <!-- TEAM RED AVATARS -->
-      <div class="team-players">
-        <span class="player-icon red">🏃‍♂️</span>
-        <span class="player-icon red">🏃‍♀️</span>
-        <span class="player-icon red">🏃‍♂️</span>
-      </div>
-
-      <!-- ROPE -->
-      <div class="rope"></div>
-
-      <!-- TEAM BLUE AVATARS -->
-      <div class="team-players">
-        <span class="player-icon blue">🏃‍♀️</span>
-        <span class="player-icon blue">🏃‍♂️</span>
-        <span class="player-icon blue">🏃‍♀️</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- QUESTION INTERFACE -->
-  <div class="game-board">
-    <div class="card" id="cardContainer">
-      <div id="teamBadge" class="my-team-badge">Assigning Team...</div>
-      <div class="question-text" id="questionBox">Loading your question...</div>
-      <div class="options-grid" id="optionsBox"></div>
-    </div>
-  </div>
-
-  <button class="reset-btn" onclick="resetRope()">Reset Game State</button>
-
-  <!-- FIREBASE ENGINE -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getDatabase, ref, onValue, runTransaction, set, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -305,146 +53,113 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
+    const gameRef = ref(db, "game/state");
 
-    // SEPARATE QUESTION SETS FOR EACH TEAM
     const QUESTIONS = {
       A: [
-        { q: "[Red Q1] What is 8 × 7?", options: ["54", "56", "62", "48"], answer: "56" },
-        { q: "[Red Q2] Capital of Japan?", options: ["Seoul", "Beijing", "Tokyo", "Bangkok"], answer: "Tokyo" },
-        { q: "[Red Q3] Boiling point of water?", options: ["90°C", "100°C", "110°C", "120°C"], answer: "100°C" }
+        { q: "What is 8 × 7?", options: ["54", "56", "62", "48"], answer: "56" },
+        { q: "Capital of Japan?", options: ["Seoul", "Beijing", "Tokyo", "Bangkok"], answer: "Tokyo" },
+        { q: "Boiling point of water?", options: ["90°C", "100°C", "110°C", "120°C"], answer: "100°C" }
       ],
       B: [
-        { q: "[Blue Q1] What is 9 × 6?", options: ["54", "45", "63", "52"], answer: "54" },
-        { q: "[Blue Q2] Which planet is the largest?", options: ["Mars", "Saturn", "Jupiter", "Earth"], answer: "Jupiter" },
-        { q: "[Blue Q3] Primary colors include?", options: ["Green", "Blue", "Purple", "Orange"], answer: "Blue" }
+        { q: "What is 9 × 6?", options: ["54", "45", "63", "52"], answer: "54" },
+        { q: "Which planet is largest?", options: ["Mars", "Saturn", "Jupiter", "Earth"], answer: "Jupiter" },
+        { q: "Primary color?", options: ["Green", "Blue", "Purple", "Orange"], answer: "Blue" }
       ]
     };
 
-    let myTeam = null; 
-    let myQIndex = 0;
+    let myTeam = null;
+    let qIdx = 0;
 
-    // 1. BALANCED FAIR TEAM ASSIGNMENT & ONLINE TRACKING
+    // Auto-balance team assignment
     const presenceRef = ref(db, "game/presence");
     const myPlayerRef = ref(db, `game/presence/${Math.random().toString(36).substring(2, 9)}`);
 
-    runTransaction(presenceRef, (presenceData) => {
-      let redCount = 0;
-      let blueCount = 0;
-
-      if (presenceData) {
-        Object.values(presenceData).forEach(p => {
-          if (p.team === "A") redCount++;
-          if (p.team === "B") blueCount++;
-        });
-      }
-
-      // Assign to team with fewer players
-      myTeam = redCount <= blueCount ? "A" : "B";
-      return presenceData;
+    runTransaction(presenceRef, (data) => {
+      let red = 0, blue = 0;
+      if (data) Object.values(data).forEach(p => { if (p.team === "A") red++; else blue++; });
+      myTeam = red <= blue ? "A" : "B";
+      return data;
     }).then(() => {
       set(myPlayerRef, { team: myTeam });
       onDisconnect(myPlayerRef).remove();
       setupUI();
-      renderCurrentQuestion();
+      renderQ();
     });
-
-    // 2. REALTIME DASHBOARD & ROPE SYNCRONIZATION
-    const gameRef = ref(db, "game/state");
 
     onValue(gameRef, (snapshot) => {
       const data = snapshot.val() || {};
-      const pos = data.ropePosition || 0;
-
-      // Update Rope Position with Smooth Motion
-      const shiftPercentage = (pos / 100) * 35;
-      const ropeWrapper = document.getElementById("ropeWrapper");
-      ropeWrapper.style.transform = `translateX(${shiftPercentage}%)`;
       
-      // Trigger Pull Recoil
-      ropeWrapper.classList.add("pull-recoil");
-      setTimeout(() => ropeWrapper.classList.remove("pull-recoil"), 300);
+      // Timer update
+      const t = data.timerSecs !== undefined ? data.timerSecs : 180;
+      const m = Math.floor(t / 60).toString().padStart(2, '0');
+      const s = (t % 60).toString().padStart(2, '0');
+      document.getElementById("gameTimer").innerText = `${m}:${s}`;
 
-      // Update Score Dashboard
-      document.getElementById("scoreRed").innerText = data.scoreRed || 0;
-      document.getElementById("scoreBlue").innerText = data.scoreBlue || 0;
-    });
+      // Check Game Over
+      if (data.gameOver) {
+        document.getElementById("gameCard").style.display = "none";
+        const endScreen = document.getElementById("endScreen");
+        endScreen.style.display = "block";
 
-    // Track active players live
-    onValue(presenceRef, (snapshot) => {
-      const data = snapshot.val() || {};
-      let red = 0, blue = 0;
-      Object.values(data).forEach(p => {
-        if (p.team === "A") red++;
-        if (p.team === "B") blue++;
-      });
-      document.getElementById("playersRed").innerText = `${red} Player${red !== 1 ? 's' : ''}`;
-      document.getElementById("playersBlue").innerText = `${blue} Player${blue !== 1 ? 's' : ''}`;
-    });
-
-    // 3. INDEPENDENT QUESTION HANDLING
-    window.handleAnswer = function(selectedOption) {
-      const teamQuestions = QUESTIONS[myTeam];
-      const isCorrect = selectedOption === teamQuestions[myQIndex].answer;
-
-      const pullForce = isCorrect ? 15 : -5;
-      const direction = myTeam === "A" ? -1 : 1; // Team A pulls left (-), Team B pulls right (+)
-
-      // Atomic Update to prevent sync glitches
-      runTransaction(gameRef, (currentData) => {
-        if (!currentData) currentData = { ropePosition: 0, scoreRed: 0, scoreBlue: 0 };
-
-        let newPos = (currentData.ropePosition || 0) + (pullForce * direction);
-        newPos = Math.max(-100, Math.min(100, newPos)); // clamp between -100 and +100
-
-        let scoreRed = currentData.scoreRed || 0;
-        let scoreBlue = currentData.scoreBlue || 0;
-
-        if (isCorrect) {
-          if (myTeam === "A") scoreRed++;
-          else scoreBlue++;
+        if (data.winner === myTeam) {
+          endScreen.className = "end-screen win";
+          endScreen.innerHTML = "🎉 CONGRATULATIONS!<br>YOUR TEAM WON!";
+        } else if (data.winner === "TIE") {
+          endScreen.className = "end-screen";
+          endScreen.innerHTML = "🤝 IT'S A TIE!";
+        } else {
+          endScreen.className = "end-screen lose";
+          endScreen.innerHTML = "💀 GAME OVER!<br>YOUR TEAM LOST!";
         }
+      } else {
+        document.getElementById("gameCard").style.display = "block";
+        document.getElementById("endScreen").style.display = "none";
+      }
+    });
 
+    window.handleAnswer = function(selected) {
+      const isCorrect = selected === QUESTIONS[myTeam][qIdx].answer;
+      const pullForce = isCorrect ? 15 : -5;
+      const dir = myTeam === "A" ? -1 : 1;
+
+      runTransaction(gameRef, (data) => {
+        if (!data || data.gameOver) return data;
+        let pos = Math.max(-100, Math.min(100, (data.ropePosition || 0) + (pullForce * dir)));
         return {
-          ...currentData,
-          ropePosition: newPos,
-          scoreRed: scoreRed,
-          scoreBlue: scoreBlue
+          ...data,
+          ropePosition: pos,
+          scoreRed: isCorrect && myTeam === "A" ? (data.scoreRed || 0) + 1 : (data.scoreRed || 0),
+          scoreBlue: isCorrect && myTeam === "B" ? (data.scoreBlue || 0) + 1 : (data.scoreBlue || 0)
         };
       });
 
-      // Advance ONLY THIS STUDENT'S question counter
-      myQIndex = (myQIndex + 1) % teamQuestions.length;
-      renderCurrentQuestion();
+      qIdx = (qIdx + 1) % QUESTIONS[myTeam].length;
+      renderQ();
     };
 
-    function renderCurrentQuestion() {
+    function renderQ() {
       if (!myTeam) return;
-      const q = QUESTIONS[myTeam][myQIndex];
-      document.getElementById("questionBox").innerText = q.q;
-
-      document.getElementById("optionsBox").innerHTML = q.options.map(opt => `
-        <button class="opt-btn" onclick="handleAnswer('${opt}')">${opt}</button>
+      const q = QUESTIONS[myTeam][qIdx];
+      document.getElementById("qText").innerText = q.q;
+      document.getElementById("qOptions").innerHTML = q.options.map(opt => `
+        <button class="opt" onclick="handleAnswer('${opt}')">${opt}</button>
       `).join('');
     }
 
     function setupUI() {
-      const card = document.getElementById("cardContainer");
+      const card = document.getElementById("gameCard");
       const badge = document.getElementById("teamBadge");
-
       if (myTeam === "A") {
         card.className = "card team-a";
-        badge.className = "my-team-badge badge-red";
-        badge.innerText = "You are on Team RED";
+        badge.className = "team-badge badge-red";
+        badge.innerText = "Team RED";
       } else {
         card.className = "card team-b";
-        badge.className = "my-team-badge badge-blue";
-        badge.innerText = "You are on Team BLUE";
+        badge.className = "team-badge badge-blue";
+        badge.innerText = "Team BLUE";
       }
     }
-
-    window.resetRope = function() {
-      set(gameRef, { ropePosition: 0, scoreRed: 0, scoreBlue: 0 });
-    };
   </script>
 </body>
 </html>
