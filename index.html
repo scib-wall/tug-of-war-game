@@ -4,122 +4,138 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Phase Changes: Tug-of-War Player</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
     
     body { 
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
+      font-family: 'Plus Jakarta Sans', sans-serif; 
       text-align: center; 
-      padding: 15px; 
+      padding: 20px; 
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      background: #0f172a;
-      transition: background 0.5s ease;
+      background: #030712;
+      transition: background 0.8s ease;
       position: relative;
       overflow: hidden;
     }
 
-    /* SMOOTH ANIMATED GRADIENT BACKGROUNDS FOR TEAMS */
+    /* SMOOTH LUXURY BACKGROUND GRADIENTS */
     body.theme-red { 
-      background: linear-gradient(-45deg, #450a0a, #7f1d1d, #2a0808, #0f172a); 
+      background: linear-gradient(-45deg, #030712, #2a0813, #1e0b11, #090d16); 
       background-size: 300% 300%;
-      animation: smoothGradient 12s ease infinite;
+      animation: luxuryBG 15s ease infinite;
     }
     body.theme-blue { 
-      background: linear-gradient(-45deg, #172554, #1e3a8a, #0b193d, #0f172a); 
+      background: linear-gradient(-45deg, #030712, #0b192e, #0c1527, #090d16); 
       background-size: 300% 300%;
-      animation: smoothGradient 12s ease infinite;
+      animation: luxuryBG 15s ease infinite;
     }
 
-    @keyframes smoothGradient {
+    @keyframes luxuryBG {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     }
 
     .timer-banner { 
-      background: rgba(15, 23, 42, 0.8); 
-      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.05); 
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       color: #f8fafc; 
-      font-size: clamp(1.2rem, 4vw, 1.6rem); 
-      font-weight: 800; 
-      padding: 12px 24px; 
-      border-radius: 30px; 
-      border: 1px solid rgba(255,255,255,0.1);
-      margin-bottom: 20px; 
-      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+      font-size: clamp(1rem, 3.5vw, 1.2rem); 
+      font-weight: 700; 
+      letter-spacing: 1px;
+      padding: 10px 24px; 
+      border-radius: 100px; 
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 24px; 
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     }
-    .timer-banner.sudden-death { background: #dc2626; animation: pulse 0.8s infinite alternate; }
-    @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.05); } }
+    .timer-banner.sudden-death { background: rgba(243, 18, 96, 0.2); border-color: rgba(243, 18, 96, 0.4); color: #f31260; }
 
-    /* CARD UI */
+    /* CARD UI GLASSMORPHISM */
     .card { 
-      background: rgba(255, 255, 255, 0.95); 
-      backdrop-filter: blur(16px);
-      padding: clamp(20px, 5vw, 35px); 
-      border-radius: 24px; 
+      background: rgba(15, 23, 42, 0.65); 
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      padding: clamp(24px, 5vw, 40px); 
+      border-radius: 28px; 
       width: 100%; 
-      max-width: 480px; 
-      box-shadow: 0 20px 40px rgba(0,0,0,0.4); 
+      max-width: 440px; 
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 30px 60px rgba(0,0,0,0.5); 
       position: relative; 
     }
-    .card.team-a { border-top: 8px solid #ef4444; }
-    .card.team-b { border-top: 8px solid #3b82f6; }
 
     .team-badge { 
       display: inline-flex; 
       align-items: center;
       gap: 8px;
-      padding: 8px 20px; 
-      border-radius: 20px; 
-      color: white; 
+      padding: 6px 16px; 
+      border-radius: 100px; 
       font-weight: 800; 
-      font-size: clamp(0.9rem, 3vw, 1.1rem);
+      font-size: clamp(0.8rem, 2.5vw, 0.9rem);
       margin-bottom: 20px; 
       text-transform: uppercase; 
+      letter-spacing: 1.5px;
     }
-    .badge-red { background: linear-gradient(135deg, #ef4444, #b91c1c); box-shadow: 0 4px 12px rgba(239,68,68,0.4); }
-    .badge-blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); box-shadow: 0 4px 12px rgba(59,130,246,0.4); }
+    .badge-red { background: rgba(243, 18, 96, 0.15); color: #f31260; border: 1px solid rgba(243, 18, 96, 0.3); }
+    .badge-blue { background: rgba(0, 111, 238, 0.15); color: #006fee; border: 1px solid rgba(0, 111, 238, 0.3); }
 
-    .question { font-size: clamp(1.2rem, 4vw, 1.5rem); font-weight: 800; margin-bottom: 25px; color: #0f172a; }
+    .question { font-size: clamp(1.2rem, 4vw, 1.4rem); font-weight: 700; margin-bottom: 25px; color: #f8fafc; line-height: 1.4; }
     
     .options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     button.opt { 
       width: 100%; 
       min-height: 60px;
       padding: 15px; 
-      border: 2px solid #e2e8f0; 
+      border: 1px solid rgba(255, 255, 255, 0.1); 
       border-radius: 16px; 
-      background: #f8fafc; 
-      font-size: clamp(1rem, 3.5vw, 1.2rem); 
-      font-weight: 700; 
+      background: rgba(255, 255, 255, 0.03); 
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: clamp(0.95rem, 3.5vw, 1.1rem); 
+      font-weight: 600; 
       cursor: pointer; 
-      color: #334155; 
-      transition: all 0.15s ease; 
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      color: #f1f5f9; 
+      transition: all 0.2s ease; 
     }
-    button.opt:active { transform: scale(0.94); background: #e2e8f0; }
+    button.opt:hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.2); }
+    button.opt:active { transform: scale(0.96); background: rgba(255, 255, 255, 0.12); }
 
     /* FLOATING FX */
-    .float-fx { position: absolute; font-weight: 900; font-size: 2rem; pointer-events: none; animation: floatUp 0.8s ease-out forwards; z-index: 100; }
-    .fx-plus { color: #16a34a; text-shadow: 0 0 10px rgba(22,163,74,0.5); }
-    .fx-minus { color: #dc2626; text-shadow: 0 0 10px rgba(220,38,38,0.5); }
+    .float-fx { position: absolute; font-weight: 800; font-size: 1.5rem; pointer-events: none; animation: floatUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; z-index: 100; }
+    .fx-plus { color: #17c964; }
+    .fx-minus { color: #f31260; }
     @keyframes floatUp { 
       0% { opacity: 1; transform: translateY(0) scale(1); }
-      100% { opacity: 0; transform: translateY(-60px) scale(1.4); }
+      100% { opacity: 0; transform: translateY(-50px) scale(1.2); }
     }
 
-    .end-screen { font-size: clamp(1.5rem, 5vw, 2.2rem); font-weight: 900; padding: 40px 20px; border-radius: 24px; display: none; width: 100%; max-width: 480px; }
-    .win { background: #dcfce7; color: #166534; box-shadow: 0 0 30px rgba(34,197,94,0.3); }
-    .lose { background: #fee2e2; color: #991b1b; box-shadow: 0 0 30px rgba(239,68,68,0.3); }
+    .end-screen { 
+      font-size: clamp(1.4rem, 4.5vw, 2rem); 
+      font-weight: 800; 
+      padding: 40px 20px; 
+      border-radius: 28px; 
+      display: none; 
+      width: 100%; 
+      max-width: 440px; 
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .win { color: #17c964; border-color: rgba(23, 201, 100, 0.4); }
+    .lose { color: #f31260; border-color: rgba(243, 18, 96, 0.4); }
   </style>
 </head>
 <body>
 
-  <div class="timer-banner" id="timerBanner">⏱️ Time: <span id="gameTimer">03:00</span></div>
+  <div class="timer-banner" id="timerBanner">TIME: <span id="gameTimer">03:00</span></div>
   <div id="endScreen" class="end-screen"></div>
 
   <div class="card" id="gameCard">
@@ -198,7 +214,7 @@
         banner.className = "timer-banner";
         const m = Math.floor(t / 60).toString().padStart(2, '0');
         const s = (t % 60).toString().padStart(2, '0');
-        banner.innerHTML = `⏱️ Time: <span id="gameTimer">${m}:${s}</span>`;
+        banner.innerHTML = `TIME: <span id="gameTimer">${m}:${s}</span>`;
       }
 
       if (data.gameOver) {
@@ -208,14 +224,14 @@
 
         if (data.winner === myTeam) {
           endScreen.className = "end-screen win";
-          endScreen.innerHTML = "🎉 VICTORY!<br>YOUR TEAM WON!";
+          endScreen.innerHTML = "VICTORY<br><span style='font-size: 1rem; opacity: 0.8;'>YOUR TEAM WON</span>";
           playBeep(523, "sine", 0.5);
         } else if (data.winner === "TIE") {
           endScreen.className = "end-screen";
-          endScreen.innerHTML = "🤝 DRAW GAME!";
+          endScreen.innerHTML = "DRAW GAME";
         } else {
           endScreen.className = "end-screen lose";
-          endScreen.innerHTML = "💀 DEFEAT!<br>YOUR TEAM LOST!";
+          endScreen.innerHTML = "DEFEAT<br><span style='font-size: 1rem; opacity: 0.8;'>YOUR TEAM LOST</span>";
           playBeep(150, "sawtooth", 0.5);
         }
       } else {
@@ -226,7 +242,7 @@
 
     window.handleAnswer = function(selected, evt) {
       const isCorrect = selected === QUESTIONS[myTeam][qIdx].answer;
-      showFloatFX(evt.clientX, evt.clientY, isCorrect ? "+5 PTS!" : "-5 PULL!", isCorrect);
+      showFloatFX(evt.clientX, evt.clientY, isCorrect ? "+5 PTS" : "-5 PULL", isCorrect);
 
       if (isCorrect) playBeep(587.33, "sine", 0.2);
       else playBeep(130.81, "square", 0.3);
@@ -254,8 +270,8 @@
       const el = document.createElement("div");
       el.className = `float-fx ${isPlus ? 'fx-plus' : 'fx-minus'}`;
       el.innerText = text;
-      el.style.left = `${x - 40}px`;
-      el.style.top = `${y - 30}px`;
+      el.style.left = `${x - 30}px`;
+      el.style.top = `${y - 20}px`;
       document.body.appendChild(el);
       setTimeout(() => el.remove(), 800);
     }
@@ -276,14 +292,12 @@
 
       if (myTeam === "A") {
         body.className = "theme-red";
-        card.className = "card team-a";
         badge.className = "team-badge badge-red";
-        badge.innerHTML = "🏃‍♂️ Team RED";
+        badge.innerHTML = "Team Red";
       } else {
         body.className = "theme-blue";
-        card.className = "card team-b";
         badge.className = "team-badge badge-blue";
-        badge.innerHTML = "🏃‍♀️ Team BLUE";
+        badge.innerHTML = "Team Blue";
       }
     }
   </script>
