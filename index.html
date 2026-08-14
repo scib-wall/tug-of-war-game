@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tug-of-War Player</title>
   <style>
-    body { font-family: 'Segoe UI', sans-serif; text-align: center; padding: 20px; background: #f8fafc; margin: 0; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; padding: 20px; background: #f8fafc; margin: 0; }
     .timer-banner { background: #0f172a; color: #f8fafc; font-size: 1.5rem; font-weight: bold; padding: 12px; border-radius: 12px; max-width: 500px; margin: 0 auto 20px; }
     .card { background: white; padding: 25px; border-radius: 16px; max-width: 500px; margin: 0 auto; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
     .card.team-a { border: 4px solid #ef4444; }
@@ -13,9 +13,9 @@
     .team-badge { display: inline-block; padding: 6px 16px; border-radius: 20px; color: white; font-weight: bold; margin-bottom: 15px; text-transform: uppercase; }
     .badge-red { background: #ef4444; }
     .badge-blue { background: #3b82f6; }
-    .question { font-size: 1.3rem; font-weight: 700; margin-bottom: 20px; }
+    .question { font-size: 1.3rem; font-weight: 700; margin-bottom: 20px; color: #0f172a; }
     .options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    button.opt { width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 12px; background: #f8fafc; font-size: 1.1rem; font-weight: 600; cursor: pointer; }
+    button.opt { width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 12px; background: #f8fafc; font-size: 1.1rem; font-weight: 600; cursor: pointer; color: #334155; }
     button.opt:hover { background: #cbd5e1; }
     .end-screen { font-size: 2rem; font-weight: bold; padding: 40px; border-radius: 16px; display: none; }
     .win { background: #dcfce7; color: #166534; }
@@ -24,13 +24,9 @@
 </head>
 <body>
 
-  <!-- TIMER -->
   <div class="timer-banner">⏱️ Time Left: <span id="gameTimer">03:00</span></div>
-
-  <!-- GAME OVER OVERLAY -->
   <div id="endScreen" class="end-screen"></div>
 
-  <!-- QUESTION CARD -->
   <div class="card" id="gameCard">
     <div id="teamBadge" class="team-badge">Assigning Team...</div>
     <div class="question" id="qText">Loading question...</div>
@@ -71,7 +67,6 @@
     let myTeam = null;
     let qIdx = 0;
 
-    // Auto-balance team assignment
     const presenceRef = ref(db, "game/presence");
     const myPlayerRef = ref(db, `game/presence/${Math.random().toString(36).substring(2, 9)}`);
 
@@ -90,13 +85,11 @@
     onValue(gameRef, (snapshot) => {
       const data = snapshot.val() || {};
       
-      // Timer update
       const t = data.timerSecs !== undefined ? data.timerSecs : 180;
       const m = Math.floor(t / 60).toString().padStart(2, '0');
       const s = (t % 60).toString().padStart(2, '0');
       document.getElementById("gameTimer").innerText = `${m}:${s}`;
 
-      // Check Game Over
       if (data.gameOver) {
         document.getElementById("gameCard").style.display = "none";
         const endScreen = document.getElementById("endScreen");
@@ -121,6 +114,7 @@
     window.handleAnswer = function(selected) {
       const isCorrect = selected === QUESTIONS[myTeam][qIdx].answer;
       const pullForce = isCorrect ? 15 : -5;
+      const pointsAdded = isCorrect ? 5 : 0; // 5 POINTS PER QUESTION
       const dir = myTeam === "A" ? -1 : 1;
 
       runTransaction(gameRef, (data) => {
@@ -129,8 +123,8 @@
         return {
           ...data,
           ropePosition: pos,
-          scoreRed: isCorrect && myTeam === "A" ? (data.scoreRed || 0) + 1 : (data.scoreRed || 0),
-          scoreBlue: isCorrect && myTeam === "B" ? (data.scoreBlue || 0) + 1 : (data.scoreBlue || 0)
+          scoreRed: myTeam === "A" ? (data.scoreRed || 0) + pointsAdded : (data.scoreRed || 0),
+          scoreBlue: myTeam === "B" ? (data.scoreBlue || 0) + pointsAdded : (data.scoreBlue || 0)
         };
       });
 
