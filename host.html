@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tug-of-War Host Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; text-align: center; background: #0f172a; color: #f8fafc; margin: 0; padding: 20px; }
+    h1 { margin-bottom: 5px; }
+
+    /* TIMER DISPLAY */
+    .timer { font-size: 3.5rem; font-weight: bold; color: #facc15; font-family: monospace; }
+    
+    /* DASHBOARD */
+    .dashboard { display: flex; justify-content: space-around; max-width: 900px; margin: 20px auto; background: #1e293b; padding: 20px; border-radius: 16px; }
+    .score { font-size: 2.5rem; font-weight: bold; }
+    .red-txt { color: #ef4444; }
+    .blue-txt { color: #3b82f6; }
+
+    /* ARENA & ROPE */
+    .arena { background: #334155; padding: 60px 10px; margin: 20px auto; border-radius: 20px; max-width: 900px; overflow: hidden; position: relative; }
+    .center-line { position: absolute; left: 50%; top: 0; bottom: 0; width: 4px; background: #cbd5e1; z-index: 1; }
+    .flag { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); font-size: 2rem; z-index: 5; }
+
+    .rope-wrapper { display: flex; align-items: center; justify-content: center; transition: transform 0.3s ease-out; position: relative; z-index: 2; }
+    .rope { width: 350px; height: 16px; background: #b45309; border-radius: 8px; margin: 0 -10px; }
+
+    /* FACELISS PEOPLE AVATARS */
+    .team-players { display: flex; gap: 8px; }
+    .player { font-size: 2.8rem; display: inline-block; }
+
+    /* JUMPING ANIMATION FOR WINNERS */
+    .jumping { animation: jump 0.6s infinite alternate ease-in-out; }
+    @keyframes jump {
+      from { transform: translateY(0); }
+      to { transform: translateY(-25px); }
+    }
+
+    /* CONTROLS */
+    .controls { margin-top: 20px; }
+    button { padding: 12px 24px; font-size: 1.1rem; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; margin: 0 10px; }
+    .start-btn { background: #22c55e; color: white; }
+    .reset-btn { background: #ef4444; color: white; }
+  </style>
+</head>
+<body>
+
+  <h1>🏆 CLASSROOM TUG-OF-WAR ARENA</h1>
+  <div class="timer" id="timerDisplay">03:00</div>
+
+  <!-- SCORES -->
+  <div class="dashboard">
+    <div>
+      <div class="red-txt" style="font-size: 1.5rem; font-weight: bold;">TEAM RED</div>
+      <div class="score red-txt" id="scoreRed">0</div>
+      <div id="playersRed">0 Players</div>
+    </div>
+    <div>
+      <div class="blue-txt" style="font-size: 1.5rem; font-weight: bold;">TEAM BLUE</div>
+      <div class="score blue-txt" id="scoreBlue">0</div>
+      <div id="playersBlue">0 Players</div>
+    </div>
+  </div>
+
+  <!-- LIVE ARENA -->
+  <div class="arena">
+    <div class="flag">🚩</div>
+    <div class="center-line"></div>
+
+    <div class="rope-wrapper" id="ropeWrapper">
+      <!-- RED TEAM AVATARS (FACELISS) -->
+      <div class="team-players" id="teamAAvatars">
+        <span class="player">🚶‍♂️</span>
+        <span class="player">🚶‍♀️</span>
+        <span class="player">🚶‍♂️</span>
+      </div>
+
+      <div class="rope"></div>
+
+      <!-- BLUE TEAM AVATARS (FACELISS) -->
+      <div class="team-players" id="teamBAvatars">
+        <span class="player">🚶‍♀️</span>
+        <span class="player">🚶‍♂️</span>
+        <span class="player">🚶‍♀️</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="controls">
+    <button class="start-btn" onclick="startGame()">Start 3-Min Game</button>
+    <button class="reset-btn" onclick="resetGame()">Reset Game</button>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCS3yT10PtrUfFqvO4MhsZucgEatbSFKZY",
+      authDomain: "tug-of-war-game-f18b3.firebaseapp.com",
+      databaseURL: "https://tug-of-war-game-f18b3-default-rtdb.firebaseio.com",
+      projectId: "tug-of-war-game-f18b3",
+      storageBucket: "tug-of-war-game-f18b3.firebasestorage.app",
+      messagingSenderId: "797664292032",
+      appId: "1:797664292032:web:781e254da90da2c43e5125"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const gameRef = ref(db, "game/state");
+    const presenceRef = ref(db, "game/presence");
+
+    let timerInterval = null;
+    let confettiInterval = null;
+
+    // Realtime Sync
+    onValue(gameRef, (snapshot) => {
+      const data = snapshot.val() || {};
+      const pos = data.ropePosition || 0;
+
+      // Move Rope
+      const shiftPct = (pos / 100) * 35;
+      document.getElementById("ropeWrapper").style.transform = `translateX(${shiftPct}%)`;
+
+      // Update Scores
+      document.getElementById("scoreRed").innerText = data.scoreRed || 0;
+      document.getElementById("scoreBlue").innerText = data.scoreBlue || 0;
+
+      // Handle Game End
+      if (data.gameOver) {
+        clearInterval(timerInterval);
+        handleWinnerDisplay(data.winner, pos);
+      }
+    });
+
+    // Player Count Tracker
+    onValue(presenceRef, (snapshot) => {
+      const data = snapshot.val() || {};
+      let red = 0, blue = 0;
+      Object.values(data).forEach(p => { if (p.team === "A") red++; else blue++; });
+      document.getElementById("playersRed").innerText = `${red} Players`;
+      document.getElementById("playersBlue").innerText = `${blue} Players`;
+    });
+
+    window.startGame = function() {
+      let timeLeft = 180; // 3 Minutes
+      clearInterval(timerInterval);
+      clearInterval(confettiInterval);
+
+      set(gameRef, { ropePosition: 0, scoreRed: 0, scoreBlue: 0, timerSecs: 180, gameOver: false, winner: null });
+
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+        const s = (timeLeft % 60).toString().padStart(2, '0');
+        document.getElementById("timerDisplay").innerText = `${m}:${s}`;
+
+        set(gameRef, { ...getLatestState(), timerSecs: timeLeft });
+
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          let state = getLatestState();
+          let winner = state.ropePosition < 0 ? "A" : (state.ropePosition > 0 ? "B" : "TIE");
+          set(gameRef, { ...state, gameOver: true, winner: winner });
+        }
+      }, 1000);
+    };
+
+    function handleWinnerDisplay(winner, pos) {
+      const teamA = document.getElementById("teamAAvatars");
+      const teamB = document.getElementById("teamBAvatars");
+
+      teamA.classList.remove("jumping");
+      teamB.classList.remove("jumping");
+
+      if (winner === "A" || pos < 0) {
+        teamA.classList.add("jumping");
+        triggerConfetti();
+      } else if (winner === "B" || pos > 0) {
+        teamB.classList.add("jumping");
+        triggerConfetti();
+      }
+    }
+
+    function triggerConfetti() {
+      clearInterval(confettiInterval);
+      confettiInterval = setInterval(() => {
+        confetti({ particleCount: 50, spread: 70, origin: { y: 0.6 } });
+      }, 700);
+    }
+
+    function getLatestState() {
+      let r = 0, b = 0, pos = 0;
+      // Fetch numbers from DOM elements
+      r = parseInt(document.getElementById("scoreRed").innerText) || 0;
+      b = parseInt(document.getElementById("scoreBlue").innerText) || 0;
+      return { scoreRed: r, scoreBlue: b, ropePosition: pos };
+    }
+
+    window.resetGame = function() {
+      clearInterval(timerInterval);
+      clearInterval(confettiInterval);
+      document.getElementById("timerDisplay").innerText = "03:00";
+      document.getElementById("teamAAvatars").classList.remove("jumping");
+      document.getElementById("teamBAvatars").classList.remove("jumping");
+      set(gameRef, { ropePosition: 0, scoreRed: 0, scoreBlue: 0, timerSecs: 180, gameOver: false, winner: null });
+    };
+  </script>
+</body>
+</html>
