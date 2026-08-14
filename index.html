@@ -74,7 +74,7 @@
     .red-btn { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4); }
     .blue-btn { background: linear-gradient(135deg, #0284c7, #2563eb); box-shadow: 0 6px 20px rgba(2, 132, 199, 0.4); }
 
-    .q-box { font-size: 1.15rem; line-weight: 1.4; font-weight: 600; min-height: 60px; display: flex; align-items: center; justify-content: center; }
+    .q-box { font-size: 1.15rem; line-height: 1.4; font-weight: 600; min-height: 60px; display: flex; align-items: center; justify-content: center; }
     
     .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     
@@ -100,22 +100,40 @@
       transform: none !important;
     }
 
-    /* COOL-DOWN WARNING BANNER */
+    /* COOL-DOWN WARNING BANNER & PROGRESS BAR */
     .cooldown-banner {
       background: rgba(239, 68, 68, 0.25);
       border: 1px solid rgba(239, 68, 68, 0.5);
       color: #fca5a5;
-      padding: 8px 14px;
+      padding: 10px 14px;
       border-radius: 20px;
       font-size: 0.85rem;
       font-weight: 700;
       display: none;
+      flex-direction: column;
+      gap: 6px;
       animation: pulseAlert 0.6s infinite alternate;
     }
 
+    .cooldown-bar-bg {
+      width: 100%;
+      height: 6px;
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .cooldown-bar-fill {
+      width: 100%;
+      height: 100%;
+      background: #f87171;
+      border-radius: 10px;
+      transition: width 0.1s linear;
+    }
+
     @keyframes pulseAlert {
-      from { opacity: 0.7; transform: scale(0.98); }
-      to { opacity: 1; transform: scale(1.02); }
+      from { opacity: 0.85; transform: scale(0.99); }
+      to { opacity: 1; transform: scale(1.01); }
     }
 
     /* FLOATING FEEDBACK FX */
@@ -157,7 +175,12 @@
     </div>
 
     <!-- COOL-DOWN BANNER -->
-    <div class="cooldown-banner" id="cooldownBanner">⚠️ SLIPPED! REGAINING FOOTING (3s)...</div>
+    <div class="cooldown-banner" id="cooldownBanner">
+      <div id="cooldownText">⚠️ SLIPPED! REGAINING FOOTING (3.0s)...</div>
+      <div class="cooldown-bar-bg">
+        <div class="cooldown-bar-fill" id="cooldownBar"></div>
+      </div>
+    </div>
 
     <div class="q-box" id="qText">Get Ready!</div>
 
@@ -171,7 +194,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, set, onValue, runTransaction, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, set, push, onValue, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const app = initializeApp({
       apiKey: "AIzaSyCS3yT10PtrUfFqvO4MhsZucgEatbSFKZY", 
@@ -181,6 +204,7 @@
     });
     const db = getDatabase(app);
     const gameRef = ref(db, "game/state");
+    const pullsRef = ref(db, "game/pulls");
 
     const QUESTIONS = {
       A: [
@@ -299,17 +323,13 @@
         
         let pullForce = isSuddenDeath ? 30 : 15;
         let pointsAdded = 5;
-        const dir = myTeam === "A" ? -1 : 1;
 
-        runTransaction(gameRef, (data) => {
-          if (!data || data.status !== "playing") return data;
-          let pos = Math.max(-100, Math.min(100, (data.ropePosition || 0) + (pullForce * dir)));
-          return { 
-            ...data, 
-            ropePosition: pos, 
-            scoreRed: myTeam === "A" ? (data.scoreRed || 0) + pointsAdded : (data.scoreRed || 0),
-            scoreBlue: myTeam === "B" ? (data.scoreBlue || 0) + pointsAdded : (data.scoreBlue || 0) 
-          };
+        // FAST & CONFLICT-FREE: Push pull event to queue
+        push(pullsRef, {
+          team: myTeam,
+          force: pullForce,
+          points: pointsAdded,
+          timestamp: Date.now()
         });
 
         // Rotate to next question immediately
@@ -326,29 +346,35 @@
     function triggerCooldown(seconds) {
       isCoolingDown = true;
       const banner = document.getElementById("cooldownBanner");
+      const text = document.getElementById("cooldownText");
+      const bar = document.getElementById("cooldownBar");
       disableButtons(true);
 
-      let timeLeft = seconds;
-      if (banner) {
-        banner.style.display = "block";
-        banner.innerText = `⚠️ SLIPPED! REGAINING FOOTING (${timeLeft}s)...`;
-      }
+      banner.style.display = "flex";
+      bar.style.width = "100%";
+
+      const startTime = Date.now();
+      const durationMs = seconds * 1000;
 
       const timer = setInterval(() => {
-        timeLeft--;
-        if (timeLeft > 0) {
-          if (banner) banner.innerText = `⚠️ SLIPPED! REGAINING FOOTING (${timeLeft}s)...`;
-        } else {
+        const elapsed = Date.now() - startTime;
+        const remainingMs = Math.max(0, durationMs - elapsed);
+        const percentLeft = (remainingMs / durationMs) * 100;
+
+        bar.style.width = `${percentLeft}%`;
+        text.innerText = `⚠️ SLIPPED! REGAINING FOOTING (${(remainingMs / 1000).toFixed(1)}s)...`;
+
+        if (remainingMs <= 0) {
           clearInterval(timer);
           isCoolingDown = false;
-          if (banner) banner.style.display = "none";
+          banner.style.display = "none";
           
           if (currentStatus === "playing") {
             qIdx = (qIdx + 1) % QUESTIONS[myTeam].length;
             renderQ();
           }
         }
-      }, 1000);
+      }, 50);
     }
   </script>
 </body>
