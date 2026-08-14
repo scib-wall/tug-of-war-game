@@ -4,16 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Tug of War Game Player</title>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Outfit:wght@800;900&display=swap" rel="stylesheet">
   <style>
-    * { 
-      box-sizing: border-box; 
-      margin: 0; 
-      padding: 0; 
-      user-select: none; 
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
     
     body { 
       font-family: 'Fredoka', sans-serif; 
@@ -24,19 +20,19 @@
       flex-direction: column; 
       justify-content: center; 
       align-items: center;
-      background: #090d16; 
+      background: #080d1a; 
       transition: background 0.8s ease; 
       overflow: hidden;
     }
 
     body.theme-red { 
-      background: linear-gradient(-45deg, #090d16, #450a0a, #7f1d1d, #111827); 
+      background: linear-gradient(-45deg, #090d16, #450a0a, #7f1d1d, #0f172a); 
       background-size: 300% 300%; 
       animation: vibrantBG 12s ease infinite; 
     }
 
     body.theme-blue { 
-      background: linear-gradient(-45deg, #090d16, #1e3a8a, #1d4ed8, #111827); 
+      background: linear-gradient(-45deg, #030712, #075985, #1e40af, #0b1329); 
       background-size: 300% 300%; 
       animation: vibrantBG 12s ease infinite; 
     }
@@ -48,15 +44,15 @@
     }
 
     .card { 
-      background: rgba(255, 255, 255, 0.08); 
-      backdrop-filter: blur(20px); 
-      -webkit-backdrop-filter: blur(20px);
+      background: rgba(15, 23, 42, 0.65); 
+      backdrop-filter: blur(24px); 
+      -webkit-backdrop-filter: blur(24px);
       padding: 30px 20px; 
-      border-radius: 24px; 
+      border-radius: 28px; 
       width: 100%; 
       max-width: 380px; 
-      border: 1px solid rgba(255, 255, 255, 0.2); 
-      box-shadow: 0 20px 40px rgba(0,0,0,0.35); 
+      border: 1px solid rgba(255, 255, 255, 0.15); 
+      box-shadow: 0 25px 50px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.2); 
       transform: translateY(0) scale(1); 
       transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
     }
@@ -64,33 +60,36 @@
     .input-field { 
       width: 100%; 
       padding: 14px; 
-      border-radius: 12px; 
-      border: 1px solid rgba(255,255,255,0.3); 
-      background: rgba(0,0,0,0.3); 
+      border-radius: 14px; 
+      border: 1px solid rgba(255,255,255,0.2); 
+      background: rgba(0,0,0,0.4); 
       color: white; 
       font-family: 'Fredoka', sans-serif; 
       font-size: 1.1rem; 
       text-align: center; 
       margin-bottom: 15px; 
       outline: none; 
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
     }
 
     .input-field:focus { 
-      border-color: #4ade80; 
+      border-color: #38bdf8; 
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
     }
 
     .join-btn { 
       width: 100%; 
       padding: 14px; 
-      background: #4ade80; 
-      color: #064e3b; 
+      background: linear-gradient(135deg, #38bdf8, #0284c7); 
+      color: #ffffff; 
       font-weight: 700; 
       font-size: 1.1rem; 
-      border-radius: 12px; 
+      border-radius: 14px; 
       border: none; 
       cursor: pointer; 
-      transition: transform 0.2s; 
+      transition: all 0.2s; 
       font-family: 'Fredoka', sans-serif; 
+      box-shadow: 0 8px 20px rgba(2, 132, 199, 0.4);
     }
 
     .join-btn:active { 
@@ -98,7 +97,7 @@
     }
 
     .timer-banner { 
-      background: rgba(255, 255, 255, 0.1); 
+      background: rgba(15, 23, 42, 0.7); 
       backdrop-filter: blur(12px); 
       color: #ffffff; 
       font-size: 1rem; 
@@ -107,7 +106,7 @@
       border-radius: 50px; 
       border: 1px solid rgba(255, 255, 255, 0.2); 
       margin-bottom: 16px; 
-      box-shadow: 0 8px 20px rgba(0,0,0,0.25); 
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4); 
       display: none; 
     }
 
@@ -129,13 +128,13 @@
     }
 
     .badge-blue { 
-      background: rgba(37, 99, 235, 0.3); 
-      color: #93c5fd; 
-      border: 1px solid rgba(37, 99, 235, 0.5); 
+      background: rgba(14, 165, 233, 0.25); 
+      color: #7dd3fc; 
+      border: 1px solid rgba(14, 165, 233, 0.5); 
     }
     
     .question { 
-      font-size: 1.2rem; 
+      font-size: 1.25rem; 
       font-weight: 700; 
       margin-bottom: 20px; 
       color: #ffffff; 
@@ -150,11 +149,11 @@
 
     button.opt { 
       width: 100%; 
-      min-height: 54px; 
+      min-height: 56px; 
       padding: 12px; 
-      border: 1px solid rgba(255, 255, 255, 0.2); 
-      border-radius: 14px; 
-      background: rgba(255, 255, 255, 0.1); 
+      border: 1px solid rgba(255, 255, 255, 0.18); 
+      border-radius: 16px; 
+      background: rgba(255, 255, 255, 0.08); 
       backdrop-filter: blur(12px); 
       font-family: 'Fredoka', sans-serif; 
       font-size: 1rem; 
@@ -162,11 +161,12 @@
       cursor: pointer; 
       color: #ffffff; 
       transition: all 0.2s ease; 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
 
     button.opt:active { 
       transform: translateY(0) scale(0.96); 
-      background: rgba(255, 255, 255, 0.25); 
+      background: rgba(56, 189, 248, 0.3); 
     }
 
     .overlay-modal { 
@@ -175,7 +175,7 @@
       left: 0; 
       width: 100vw; 
       height: 100vh; 
-      background: rgba(9, 13, 22, 0.85); 
+      background: rgba(3, 7, 18, 0.88); 
       display: flex; 
       justify-content: center; 
       align-items: center; 
@@ -188,14 +188,15 @@
 
     .overlay-modal.active { 
       opacity: 1; 
-      backdrop-filter: blur(12px); 
+      backdrop-filter: blur(16px); 
     }
 
     .countdown-number { 
       font-family: 'Outfit', sans-serif; 
       font-size: 10rem; 
       font-weight: 900; 
-      color: #ffffff; 
+      color: #38bdf8; 
+      text-shadow: 0 0 30px rgba(56, 189, 248, 0.6);
       animation: popZoom 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite; 
     }
 
@@ -228,6 +229,20 @@
       0% { opacity: 1; transform: translateY(0) scale(1); } 
       100% { opacity: 0; transform: translateY(-40px) scale(1.15); } 
     }
+
+    /* DRAMATIC DEFEAT SCREEN SHAKE */
+    @keyframes defeatShake {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      20% { transform: translate(-10px, 8px) rotate(-1deg); }
+      40% { transform: translate(10px, -8px) rotate(1deg); }
+      60% { transform: translate(-8px, -4px) rotate(-1deg); }
+      80% { transform: translate(8px, 4px) rotate(1deg); }
+      100% { transform: translate(0, 0) rotate(0deg); }
+    }
+    .defeat-effect {
+      animation: defeatShake 0.6s ease-in-out;
+      background: linear-gradient(180deg, #180507, #080d1a) !important;
+    }
   </style>
 </head>
 <body>
@@ -242,7 +257,7 @@
 
   <!-- Login Card -->
   <div class="card" id="loginCard">
-    <h2 style="color: white; margin-bottom: 20px;">Enter Your Name</h2>
+    <h2 style="color: white; margin-bottom: 20px; font-family: 'Outfit';">Enter Your Name</h2>
     <input type="text" id="playerName" class="input-field" placeholder="Nickname..." maxlength="15" autocomplete="off" />
     <button class="join-btn" onclick="joinGame()">JOIN TEAM</button>
   </div>
@@ -288,6 +303,7 @@
     let qIdx = 0;
     let isSuddenDeath = false;
     let currentStatus = "waiting";
+    let confettiTriggered = false;
 
     // Sound Synthesizer
     let audioCtx = null;
@@ -369,6 +385,11 @@
       const status = data.status || "waiting";
       currentStatus = status;
 
+      if (status === "waiting") {
+        confettiTriggered = false;
+        document.body.classList.remove("defeat-effect");
+      }
+
       // Safe check for countdown element
       const syncOverlay = document.getElementById("syncCountdown");
       const syncText = document.getElementById("syncText");
@@ -389,10 +410,10 @@
         if (status === "playing") {
           banner.style.display = "block";
           if (isSuddenDeath) {
-            banner.style.background = "rgba(239, 68, 68, 0.3)";
+            banner.style.background = "rgba(239, 68, 68, 0.4)";
             banner.innerHTML = `⚡ 2X PULL FORCE! <span>${t}s</span>`;
           } else {
-            banner.style.background = "rgba(255, 255, 255, 0.1)";
+            banner.style.background = "rgba(15, 23, 42, 0.7)";
             const m = Math.floor(t / 60).toString().padStart(2, '0');
             const s = (t % 60).toString().padStart(2, '0');
             banner.innerHTML = `TIME: <span>${m}:${s}</span>`;
@@ -402,7 +423,7 @@
         }
       }
 
-      // Safe check for end game status
+      // Safe check for end game status & victory/defeat animations
       if (status === "ended") {
         const qOptions = document.getElementById("qOptions");
         const qText = document.getElementById("qText");
@@ -410,11 +431,24 @@
         if (qOptions) qOptions.innerHTML = "";
         if (qText) {
           if (data.winner === myTeam) {
-            qText.innerHTML = "<span style='color:#4ade80; font-size:1.5rem;'>🏆 YOU WON!</span><br>Check the main screen!";
+            qText.innerHTML = "<span style='color:#4ade80; font-size:1.8rem; font-family:Outfit; font-weight:900;'>🏆 VICTORY!</span><br><span style='font-size:0.95rem; opacity:0.8;'>Check the main screen!</span>";
+            if (!confettiTriggered) {
+              confettiTriggered = true;
+              confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+              playBeep(523.25, "sine", 0.2); 
+              setTimeout(() => playBeep(659.25, "sine", 0.2), 150);
+              setTimeout(() => playBeep(783.99, "sine", 0.4), 300);
+            }
           } else if (data.winner === "TIE") {
-            qText.innerHTML = "🤝 DRAW GAME";
+            qText.innerHTML = "<span style='font-size:1.5rem; font-family:Outfit; font-weight:800;'>🤝 DRAW GAME</span>";
           } else {
-            qText.innerHTML = "<span style='color:#ff6b6b; font-size:1.5rem;'>💀 DEFEAT</span>";
+            qText.innerHTML = "<span style='color:#ff6b6b; font-size:1.8rem; font-family:Outfit; font-weight:900;'>💀 DEFEAT</span>";
+            if (!confettiTriggered) {
+              confettiTriggered = true;
+              document.body.classList.add("defeat-effect");
+              playBeep(180, "sawtooth", 0.4);
+              setTimeout(() => playBeep(120, "sawtooth", 0.5), 200);
+            }
           }
         }
       }
@@ -434,7 +468,7 @@
       }
     }
 
-    // Answer Handling Logic
+    // Answer Handling Logic (With direct Transaction bug fix)
     window.handleAnswer = function(selected, evt) {
       if (currentStatus !== "playing") return;
       const isCorrect = selected === QUESTIONS[myTeam][qIdx].answer;
