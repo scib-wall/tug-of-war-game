@@ -2,267 +2,176 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Tug of War Game Player</title>
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phase Changes: Student Player</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Outfit:wght@800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
     
     body { 
       font-family: 'Fredoka', sans-serif; 
       text-align: center; 
-      padding: 16px; 
+      color: #ffffff; 
       min-height: 100vh;
-      display: flex; 
-      flex-direction: column; 
-      justify-content: center; 
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
       align-items: center;
-      /* Noticeable dark gradient with balanced red & blue ambient tones */
-      background: linear-gradient(-45deg, #0a1128, #3b0764, #1e1b4b, #0f172a); 
+      padding: 1rem;
+      background: linear-gradient(-45deg, #0f172a, #1e1b4b, #0369a1, #312e81);
       background-size: 300% 300%;
-      animation: subtleBG 16s ease infinite; 
-      overflow: hidden;
+      animation: subtleBG 16s ease infinite;
     }
 
-    /* Team Red: Deep Crimson and Burgundy Tone */
-    body.theme-red { 
-      background: linear-gradient(-45deg, #111827, #7f1d1d, #450a0a, #1a080c); 
-      background-size: 300% 300%; 
-      animation: subtleBG 16s ease infinite; 
-    }
+    @keyframes subtleBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
-    /* Team Blue: Deep Royal Cobalt Tone */
-    body.theme-blue { 
-      background: linear-gradient(-45deg, #0f172a, #1e3a8a, #0369a1, #081a36); 
-      background-size: 300% 300%; 
-      animation: subtleBG 16s ease infinite; 
-    }
-
-    @keyframes subtleBG { 
-      0% { background-position: 0% 50%; } 
-      50% { background-position: 100% 50%; } 
-      100% { background-position: 0% 50%; } 
-    }
-
-    /* iPhone 17 Dark Glass Theme */
-    .card { 
-      background: rgba(15, 23, 42, 0.7); 
-      backdrop-filter: blur(28px) saturate(160%); 
+    .card {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(28px) saturate(160%);
       -webkit-backdrop-filter: blur(28px) saturate(160%);
-      padding: 30px 22px; 
-      border-radius: 32px; 
-      width: 100%; 
-      max-width: 380px; 
-      border: 1px solid rgba(255, 255, 255, 0.15); 
-      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2); 
-      transform: translateY(0) scale(1); 
-      transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 28px;
+      padding: 24px;
+      width: 100%;
+      max-width: 450px;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
     }
 
-    .input-field { 
-      width: 100%; 
-      padding: 16px; 
-      border-radius: 18px; 
-      border: 1px solid rgba(255, 255, 255, 0.15); 
-      background: rgba(0, 0, 0, 0.4); 
-      color: white; 
-      font-family: 'Fredoka', sans-serif; 
-      font-size: 1.1rem; 
-      text-align: center; 
-      margin-bottom: 16px; 
-      outline: none; 
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
-    }
-
-    .input-field:focus { 
-      border-color: #38bdf8; 
-      box-shadow: 0 0 16px rgba(56, 189, 248, 0.3);
-    }
-
-    .join-btn { 
-      width: 100%; 
-      padding: 16px; 
-      background: linear-gradient(135deg, #0284c7, #0369a1); 
-      color: #ffffff; 
-      font-weight: 700; 
-      font-size: 1.1rem; 
-      border-radius: 18px; 
-      border: 1px solid rgba(255,255,255,0.25); 
-      cursor: pointer; 
-      transition: all 0.2s ease; 
-      font-family: 'Fredoka', sans-serif; 
-      box-shadow: 0 10px 25px rgba(2, 132, 199, 0.3);
-    }
-
-    .join-btn:active { 
-      transform: scale(0.96); 
-    }
-
-    .timer-banner { 
-      background: rgba(15, 23, 42, 0.75); 
-      backdrop-filter: blur(20px); 
-      color: #ffffff; 
-      font-size: 1rem; 
-      font-weight: 700; 
-      padding: 10px 24px; 
-      border-radius: 50px; 
-      border: 1px solid rgba(255, 255, 255, 0.15); 
-      margin-bottom: 18px; 
-      box-shadow: 0 10px 25px rgba(0,0,0,0.4); 
-      display: none; 
-    }
-
-    .team-badge { 
-      display: inline-flex; 
-      padding: 6px 18px; 
-      border-radius: 50px; 
-      font-weight: 700; 
-      font-size: 0.85rem; 
-      margin-bottom: 16px; 
-      text-transform: uppercase; 
-      letter-spacing: 1px; 
-    }
-
-    .badge-red { 
-      background: rgba(239, 68, 68, 0.25); 
-      color: #fca5a5; 
-      border: 1px solid rgba(239, 68, 68, 0.4); 
-    }
-
-    .badge-blue { 
-      background: rgba(14, 165, 233, 0.25); 
-      color: #7dd3fc; 
-      border: 1px solid rgba(14, 165, 233, 0.4); 
-    }
+    h1 { font-family: 'Outfit', sans-serif; font-size: 1.8rem; font-weight: 900; letter-spacing: 1px; }
     
-    .question { 
-      font-size: 1.25rem; 
-      font-weight: 700; 
-      margin-bottom: 22px; 
-      color: #ffffff; 
-      line-height: 1.35; 
+    input[type="text"] {
+      width: 100%;
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(0,0,0,0.3);
+      color: white;
+      font-size: 1.1rem;
+      font-family: 'Fredoka', sans-serif;
+      text-align: center;
+      outline: none;
     }
 
-    .options { 
-      display: grid; 
-      grid-template-columns: 1fr 1fr; 
-      gap: 12px; 
+    .btn {
+      padding: 14px;
+      border-radius: 50px;
+      border: none;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: white;
+    }
+    .btn:active { transform: scale(0.96); }
+
+    .red-btn { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4); }
+    .blue-btn { background: linear-gradient(135deg, #0284c7, #2563eb); box-shadow: 0 6px 20px rgba(2, 132, 199, 0.4); }
+
+    .q-box { font-size: 1.15rem; line-weight: 1.4; font-weight: 600; min-height: 60px; display: flex; align-items: center; justify-content: center; }
+    
+    .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    
+    button.opt {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: white;
+      padding: 16px 10px;
+      border-radius: 18px;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    button.opt:active:not(:disabled) { transform: scale(0.95); background: rgba(255,255,255,0.25); }
+
+    /* DISABLED / COOL-DOWN BUTTON STATE */
+    button.opt:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+      filter: grayscale(80%);
+      transform: none !important;
     }
 
-    button.opt { 
-      width: 100%; 
-      min-height: 58px; 
-      padding: 12px; 
-      border: 1px solid rgba(255, 255, 255, 0.15); 
-      border-radius: 18px; 
-      background: rgba(255, 255, 255, 0.08); 
-      backdrop-filter: blur(16px); 
-      font-family: 'Fredoka', sans-serif; 
-      font-size: 1rem; 
-      font-weight: 600; 
-      cursor: pointer; 
-      color: #ffffff; 
-      transition: all 0.2s ease; 
-      box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+    /* COOL-DOWN WARNING BANNER */
+    .cooldown-banner {
+      background: rgba(239, 68, 68, 0.25);
+      border: 1px solid rgba(239, 68, 68, 0.5);
+      color: #fca5a5;
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      display: none;
+      animation: pulseAlert 0.6s infinite alternate;
     }
 
-    button.opt:active { 
-      transform: translateY(0) scale(0.96); 
-      background: rgba(56, 189, 248, 0.25); 
+    @keyframes pulseAlert {
+      from { opacity: 0.7; transform: scale(0.98); }
+      to { opacity: 1; transform: scale(1.02); }
     }
 
-    .overlay-modal { 
-      position: fixed; 
-      top: 0; 
-      left: 0; 
-      width: 100vw; 
-      height: 100vh; 
-      background: rgba(15, 23, 42, 0.88); 
-      display: flex; 
-      justify-content: center; 
-      align-items: center; 
-      z-index: 999; 
-      opacity: 0; 
-      pointer-events: none; 
-      transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1); 
-      backdrop-filter: blur(0px); 
+    /* FLOATING FEEDBACK FX */
+    .float-fx {
+      position: fixed;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 900;
+      font-size: 1.4rem;
+      pointer-events: none;
+      animation: floatUp 0.8s ease-out forwards;
+      z-index: 1000;
     }
+    .fx-plus { color: #4ade80; text-shadow: 0 0 10px rgba(74, 222, 128, 0.6); }
+    .fx-minus { color: #f87171; text-shadow: 0 0 10px rgba(248, 113, 113, 0.6); }
 
-    .overlay-modal.active { 
-      opacity: 1; 
-      backdrop-filter: blur(20px); 
-    }
-
-    .countdown-number { 
-      font-family: 'Outfit', sans-serif; 
-      font-size: 10rem; 
-      font-weight: 900; 
-      color: #38bdf8; 
-      text-shadow: 0 0 40px rgba(56, 189, 248, 0.5);
-      animation: popZoom 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite; 
-    }
-
-    @keyframes popZoom { 0% { transform: scale(0.4); opacity: 0; } 40% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
-
-    .float-fx { 
-      position: absolute; 
-      font-weight: 700; 
-      font-size: 1.3rem; 
-      pointer-events: none; 
-      animation: floatUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
-      z-index: 100; 
-    }
-
-    .fx-plus { color: #4ade80; text-shadow: 0 0 10px rgba(74,222,128,0.5); }
-    .fx-minus { color: #ff6b6b; text-shadow: 0 0 10px rgba(255,107,107,0.5); }
-
-    @keyframes floatUp { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-40px) scale(1.15); } }
-
-    @keyframes defeatShake {
-      0% { transform: translate(0, 0) rotate(0deg); }
-      20% { transform: translate(-10px, 8px) rotate(-1deg); }
-      40% { transform: translate(10px, -8px) rotate(1deg); }
-      60% { transform: translate(-8px, -4px) rotate(-1deg); }
-      80% { transform: translate(8px, 4px) rotate(1deg); }
-      100% { transform: translate(0, 0) rotate(0deg); }
-    }
-    .defeat-effect {
-      animation: defeatShake 0.6s ease-in-out;
-      background: linear-gradient(180deg, #2a080c, #0f172a) !important;
+    @keyframes floatUp {
+      0% { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-40px) scale(1.2); }
     }
   </style>
 </head>
 <body>
 
-  <!-- Sync Countdown Overlay -->
-  <div class="overlay-modal" id="syncCountdown">
-    <div class="countdown-number" id="syncText">3</div>
+  <!-- JOIN CARD -->
+  <div class="card" id="joinCard">
+    <h1>JOIN THE MATCH</h1>
+    <input type="text" id="playerName" placeholder="Enter Your Name" maxlength="15">
+    <div style="display: flex; gap: 12px; margin-top: 6px;">
+      <button class="btn red-btn" style="flex: 1;" onclick="joinGame('A')">RED TEAM</button>
+      <button class="btn blue-btn" style="flex: 1;" onclick="joinGame('B')">BLUE TEAM</button>
+    </div>
   </div>
 
-  <!-- Timer Display -->
-  <div class="timer-banner" id="timerBanner">TIME: <span id="gameTimer">02:00</span></div>
-
-  <!-- Login Card -->
-  <div class="card" id="loginCard">
-    <h2 style="color: white; margin-bottom: 20px; font-family: 'Outfit'; font-weight:800;">Enter Your Name</h2>
-    <input type="text" id="playerName" class="input-field" placeholder="Nickname..." maxlength="15" autocomplete="off" />
-    <button class="join-btn" onclick="joinGame()">JOIN TEAM</button>
-  </div>
-
-  <!-- Game Play Card -->
+  <!-- GAME PLAY CARD -->
   <div class="card" id="gameCard" style="display: none;">
-    <div id="teamBadge" class="team-badge">Assigning...</div>
-    <div class="question" id="qText">Waiting for Host to start...</div>
-    <div class="options" id="qOptions"></div>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <span id="playerBadge" style="font-weight: 700; opacity: 0.8;"></span>
+      <span id="statusBadge" style="font-weight: 800; color: #facc15;">WAITING...</span>
+    </div>
+
+    <!-- COOL-DOWN BANNER -->
+    <div class="cooldown-banner" id="cooldownBanner">⚠️ SLIPPED! REGAINING FOOTING (3s)...</div>
+
+    <div class="q-box" id="qText">Get Ready!</div>
+
+    <div class="options-grid" id="optionsGrid">
+      <button class="opt" disabled>A</button>
+      <button class="opt" disabled>B</button>
+      <button class="opt" disabled>C</button>
+      <button class="opt" disabled>D</button>
+    </div>
   </div>
 
-  <!-- Firebase Game Script -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, onValue, runTransaction, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, set, onValue, runTransaction, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const app = initializeApp({
       apiKey: "AIzaSyCS3yT10PtrUfFqvO4MhsZucgEatbSFKZY", 
@@ -270,225 +179,176 @@
       databaseURL: "https://tug-of-war-game-f18b3-default-rtdb.firebaseio.com", 
       projectId: "tug-of-war-game-f18b3"
     });
-
     const db = getDatabase(app);
     const gameRef = ref(db, "game/state");
-    const presenceRef = ref(db, "game/presence");
 
     const QUESTIONS = {
       A: [
-        { q: "What is 8 × 7?", options: ["54", "56", "62", "48"], answer: "56" },
-        { q: "Capital of Japan?", options: ["Seoul", "Beijing", "Tokyo", "Bangkok"], answer: "Tokyo" },
-        { q: "Boiling point of water?", options: ["90°C", "100°C", "110°C", "120°C"], answer: "100°C" }
+        { q: "Solid to Liquid phase change?", opts: ["Melting", "Freezing", "Sublimation", "Deposition"], answer: "Melting" },
+        { q: "Liquid to Gas phase change?", opts: ["Condensation", "Evaporation", "Freezing", "Melting"], answer: "Evaporation" },
+        { q: "Solid directly to Gas?", opts: ["Deposition", "Melting", "Sublimation", "Condensation"], answer: "Sublimation" },
+        { q: "Gas to Liquid phase change?", opts: ["Freezing", "Condensation", "Evaporation", "Sublimation"], answer: "Condensation" }
       ],
       B: [
-        { q: "What is 9 × 6?", options: ["54", "45", "63", "52"], answer: "54" },
-        { q: "Which planet is largest?", options: ["Mars", "Saturn", "Jupiter", "Earth"], answer: "Jupiter" },
-        { q: "Primary color?", options: ["Green", "Blue", "Purple", "Orange"], answer: "Blue" }
+        { q: "Liquid to Solid phase change?", opts: ["Freezing", "Melting", "Evaporation", "Sublimation"], answer: "Freezing" },
+        { q: "Gas directly to Solid?", opts: ["Sublimation", "Deposition", "Condensation", "Melting"], answer: "Deposition" },
+        { q: "Does adding heat increase molecular speed?", opts: ["Yes", "No", "Only in solids", "Never"], answer: "Yes" },
+        { q: "Gas to Liquid phase change?", opts: ["Condensation", "Melting", "Freezing", "Evaporation"], answer: "Condensation" }
       ]
     };
 
-    let myTeam = null;
-    let myName = "";
-    let qIdx = 0;
-    let isSuddenDeath = false;
-    let currentStatus = "waiting";
-    let confettiTriggered = false;
-
-    let audioCtx = null;
-    function initAudio() {
-      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-    }
+    let myName = "", myTeam = "", qIdx = 0, currentStatus = "waiting", isSuddenDeath = false, isCoolingDown = false;
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
     function playBeep(freq, type, duration) {
-      if (!audioCtx) return;
       if (audioCtx.state === 'suspended') audioCtx.resume();
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = type; osc.frequency.value = freq;
-      osc.connect(gain); gain.connect(audioCtx.destination);
-      osc.start();
-      gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
+      const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+      osc.type = type; osc.frequency.value = freq; osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(); gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
       osc.stop(audioCtx.currentTime + duration);
     }
 
-    window.joinGame = function() {
-      const input = document.getElementById("playerName").value.trim();
-      if (!input) return alert("Please enter your name!");
-      myName = input;
+    window.joinGame = function(team) {
+      const nameInput = document.getElementById("playerName").value.trim();
+      if (!nameInput) return alert("Please enter your name!");
 
-      initAudio();
+      myName = nameInput; myTeam = team;
+      const playerRef = ref(db, `game/presence/${myName}_${Date.now()}`);
+      set(playerRef, { name: myName, team: myTeam });
+      onDisconnect(playerRef).remove();
 
-      const playerId = Math.random().toString(36).substring(2, 9);
-      const myPlayerRef = ref(db, `game/presence/${playerId}`);
-      let assignedTeam = null;
+      document.getElementById("joinCard").style.display = "none";
+      document.getElementById("gameCard").style.display = "flex";
+      
+      const badge = document.getElementById("playerBadge");
+      badge.innerText = `${myName} (${team === 'A' ? 'RED' : 'BLUE'})`;
+      badge.style.color = team === 'A' ? '#ff5263' : '#38bdf8';
 
-      runTransaction(presenceRef, (data) => {
-        const currentData = data || {};
-        let red = 0, blue = 0;
-        
-        Object.values(currentData).forEach(p => { 
-          if (p.team === "A") red++; else blue++; 
-        });
-
-        assignedTeam = red <= blue ? "A" : "B";
-        currentData[playerId] = { team: assignedTeam, name: myName };
-        return currentData;
-      }).then(() => {
-        myTeam = assignedTeam;
-        onDisconnect(myPlayerRef).remove();
-        
-        document.getElementById("loginCard").style.display = "none";
-        document.getElementById("gameCard").style.display = "block";
-        
-        const body = document.body;
-        const badge = document.getElementById("teamBadge");
-        if (myTeam === "A") { 
-          body.className = "theme-red"; 
-          badge.className = "team-badge badge-red"; 
-          badge.innerHTML = "Team Red"; 
-        } else { 
-          body.className = "theme-blue"; 
-          badge.className = "team-badge badge-blue"; 
-          badge.innerHTML = "Team Blue"; 
-        }
-        
-        renderStateUI();
-      }).catch(err => {
-        console.error("Failed to join game:", err);
-        alert("Unable to join match. Please check your network connection.");
-      });
+      listenToGame();
     };
 
-    onValue(gameRef, (snapshot) => {
-      const data = snapshot.val() || {};
-      const status = data.status || "waiting";
-      currentStatus = status;
+    function listenToGame() {
+      onValue(gameRef, (snapshot) => {
+        const data = snapshot.val() || {};
+        currentStatus = data.status || "waiting";
+        isSuddenDeath = (data.timerSecs !== undefined && data.timerSecs <= 30 && data.timerSecs > 0);
 
-      if (status === "waiting") {
-        confettiTriggered = false;
-        document.body.classList.remove("defeat-effect");
-      }
+        const statusBadge = document.getElementById("statusBadge");
 
-      const syncOverlay = document.getElementById("syncCountdown");
-      const syncText = document.getElementById("syncText");
-      if (syncOverlay) {
-        if (status === "countdown") {
-          syncOverlay.classList.add("active");
-          if (syncText) syncText.innerText = data.countdownVal;
-        } else {
-          syncOverlay.classList.remove("active");
-        }
-      }
-
-      const t = data.timerSecs !== undefined ? data.timerSecs : 120;
-      isSuddenDeath = t <= 30 && t > 0;
-      const banner = document.getElementById("timerBanner");
-      if (banner) {
-        if (status === "playing") {
-          banner.style.display = "block";
-          if (isSuddenDeath) {
-            banner.style.background = "rgba(220, 38, 38, 0.4)";
-            banner.innerHTML = `⚡ 2X PULL FORCE! <span>${t}s</span>`;
-          } else {
-            banner.style.background = "rgba(15, 23, 42, 0.75)";
-            const m = Math.floor(t / 60).toString().padStart(2, '0');
-            const s = (t % 60).toString().padStart(2, '0');
-            banner.innerHTML = `TIME: <span>${m}:${s}</span>`;
+        if (currentStatus === "countdown") {
+          statusBadge.innerText = `READY... ${data.countdownVal || ''}`;
+          statusBadge.style.color = "#facc15";
+          document.getElementById("qText").innerText = "Get Ready!";
+          disableButtons(true);
+        } else if (currentStatus === "playing") {
+          statusBadge.innerText = isSuddenDeath ? "🔥 SUDDEN DEATH 2X!" : "PULL!";
+          statusBadge.style.color = isSuddenDeath ? "#ff2a5f" : "#4ade80";
+          if (!isCoolingDown) {
+            renderQ();
           }
+        } else if (currentStatus === "ended") {
+          statusBadge.innerText = "MATCH OVER";
+          statusBadge.style.color = "#ef4444";
+          document.getElementById("qText").innerText = data.winner === myTeam ? "🎉 YOUR TEAM WON!" : (data.winner === "TIE" ? "🤝 IT'S A TIE!" : "💔 MATCH LOST");
+          disableButtons(true);
         } else {
-          banner.style.display = "none";
+          statusBadge.innerText = "WAITING FOR HOST...";
+          statusBadge.style.color = "#facc15";
+          document.getElementById("qText").innerText = "Waiting for host to start...";
+          disableButtons(true);
         }
-      }
+      });
+    }
 
-      if (status === "ended") {
-        const qOptions = document.getElementById("qOptions");
-        const qText = document.getElementById("qText");
-        
-        if (qOptions) qOptions.innerHTML = "";
-        if (qText) {
-          if (data.winner === myTeam) {
-            qText.innerHTML = "<span style='color:#4ade80; font-size:1.8rem; font-family:Outfit; font-weight:900;'>🏆 VICTORY!</span><br><span style='font-size:0.95rem; opacity:0.8;'>Check the main screen!</span>";
-            if (!confettiTriggered) {
-              confettiTriggered = true;
-              confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
-              playBeep(523.25, "sine", 0.2); 
-              setTimeout(() => playBeep(659.25, "sine", 0.2), 150);
-              setTimeout(() => playBeep(783.99, "sine", 0.4), 300);
-            }
-          } else if (data.winner === "TIE") {
-            qText.innerHTML = "<span style='font-size:1.5rem; font-family:Outfit; font-weight:800;'>🤝 DRAW GAME</span>";
-          } else {
-            qText.innerHTML = "<span style='color:#ff6b6b; font-size:1.8rem; font-family:Outfit; font-weight:900;'>💀 DEFEAT</span>";
-            if (!confettiTriggered) {
-              confettiTriggered = true;
-              document.body.classList.add("defeat-effect");
-              playBeep(180, "sawtooth", 0.4);
-              setTimeout(() => playBeep(120, "sawtooth", 0.5), 200);
-            }
-          }
-        }
-      }
+    function renderQ() {
+      if (currentStatus !== "playing" || isCoolingDown) return;
+      const q = QUESTIONS[myTeam][qIdx];
+      document.getElementById("qText").innerText = q.q;
+      const grid = document.getElementById("optionsGrid");
+      grid.innerHTML = "";
 
-      if (myTeam) renderStateUI();
-    });
+      q.opts.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.className = "opt";
+        btn.innerText = opt;
+        btn.onclick = (e) => handleAnswer(opt, e);
+        grid.appendChild(btn);
+      });
+    }
 
-    function renderStateUI() {
-      const qText = document.getElementById("qText");
-      const qOptions = document.getElementById("qOptions");
-
-      if (currentStatus === "waiting") {
-        if (qText) qText.innerText = "Waiting for Host to start match...";
-        if (qOptions) qOptions.innerHTML = "";
-      } else if (currentStatus === "playing" && qOptions && qOptions.innerHTML === "") {
-        renderQ();
-      }
+    function disableButtons(disabled) {
+      document.querySelectorAll("button.opt").forEach(b => b.disabled = disabled);
     }
 
     window.handleAnswer = function(selected, evt) {
-      if (currentStatus !== "playing") return;
+      if (currentStatus !== "playing" || isCoolingDown) return;
+
       const isCorrect = selected === QUESTIONS[myTeam][qIdx].answer;
       
+      // Visual Float FX (+5 PTS or SLIPPED!)
       const el = document.createElement("div");
       el.className = `float-fx ${isCorrect ? 'fx-plus' : 'fx-minus'}`;
-      el.innerText = isCorrect ? "+5 PTS" : "-5 PULL";
+      el.innerText = isCorrect ? "+5 PTS" : "SLIPPED!";
       el.style.left = `${evt.clientX - 25}px`; 
       el.style.top = `${evt.clientY - 15}px`;
       document.body.appendChild(el);
       setTimeout(() => el.remove(), 800);
 
-      if (isCorrect) playBeep(587.33, "sine", 0.2); else playBeep(130.81, "square", 0.3);
+      if (isCorrect) {
+        playBeep(587.33, "sine", 0.2);
+        
+        let pullForce = isSuddenDeath ? 30 : 15;
+        let pointsAdded = 5;
+        const dir = myTeam === "A" ? -1 : 1;
 
-      let pullForce = isCorrect ? (isSuddenDeath ? 30 : 15) : -5;
-      let pointsAdded = isCorrect ? 5 : 0;
-      const dir = myTeam === "A" ? -1 : 1;
+        runTransaction(gameRef, (data) => {
+          if (!data || data.status !== "playing") return data;
+          let pos = Math.max(-100, Math.min(100, (data.ropePosition || 0) + (pullForce * dir)));
+          return { 
+            ...data, 
+            ropePosition: pos, 
+            scoreRed: myTeam === "A" ? (data.scoreRed || 0) + pointsAdded : (data.scoreRed || 0),
+            scoreBlue: myTeam === "B" ? (data.scoreBlue || 0) + pointsAdded : (data.scoreBlue || 0) 
+          };
+        });
 
-      runTransaction(gameRef, (data) => {
-        if (!data || data.status !== "playing") return data;
-        let pos = Math.max(-100, Math.min(100, (data.ropePosition || 0) + (pullForce * dir)));
-        return { 
-          ...data, 
-          ropePosition: pos, 
-          scoreRed: myTeam === "A" ? (data.scoreRed || 0) + pointsAdded : (data.scoreRed || 0),
-          scoreBlue: myTeam === "B" ? (data.scoreBlue || 0) + pointsAdded : (data.scoreBlue || 0) 
-        };
-      });
+        // Rotate to next question immediately
+        qIdx = (qIdx + 1) % QUESTIONS[myTeam].length;
+        renderQ();
 
-      qIdx = (qIdx + 1) % QUESTIONS[myTeam].length;
-      renderQ();
+      } else {
+        // INCORRECT ANSWER: Trigger 3-Second Cool-down Penalty
+        playBeep(130.81, "square", 0.3);
+        triggerCooldown(3);
+      }
     };
 
-    function renderQ() {
-      if (!myTeam || currentStatus !== "playing") return;
-      const q = QUESTIONS[myTeam][qIdx];
-      const qText = document.getElementById("qText");
-      const qOptions = document.getElementById("qOptions");
+    function triggerCooldown(seconds) {
+      isCoolingDown = true;
+      const banner = document.getElementById("cooldownBanner");
+      disableButtons(true);
 
-      if (qText) qText.innerText = q.q;
-      if (qOptions) {
-        qOptions.innerHTML = q.options.map(opt => `<button class="opt" onclick="handleAnswer('${opt}', event)">${opt}</button>`).join('');
+      let timeLeft = seconds;
+      if (banner) {
+        banner.style.display = "block";
+        banner.innerText = `⚠️ SLIPPED! REGAINING FOOTING (${timeLeft}s)...`;
       }
+
+      const timer = setInterval(() => {
+        timeLeft--;
+        if (timeLeft > 0) {
+          if (banner) banner.innerText = `⚠️ SLIPPED! REGAINING FOOTING (${timeLeft}s)...`;
+        } else {
+          clearInterval(timer);
+          isCoolingDown = false;
+          if (banner) banner.style.display = "none";
+          
+          if (currentStatus === "playing") {
+            qIdx = (qIdx + 1) % QUESTIONS[myTeam].length;
+            renderQ();
+          }
+        }
+      }, 1000);
     }
   </script>
 </body>
