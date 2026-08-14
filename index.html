@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Classroom Tug-of-War</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; padding: 20px; background-color: #f9fafb; }
+    h1 { color: #1f2937; }
+    .rope-container { background: #fef3c7; padding: 40px 10px; margin: 20px auto; border-radius: 12px; overflow: hidden; position: relative; max-width: 800px; }
+    .center-line { position: absolute; left: 50%; top: 0; bottom: 0; width: 4px; background: #ef4444; z-index: 1; }
+    .rope-wrapper { display: flex; align-items: center; justify-content: center; transition: transform 0.3s ease-out; }
+    .team-avatar { font-size: 1.8rem; font-weight: bold; }
+    .rope { width: 300px; height: 12px; background: #92400e; margin: 0 10px; border-radius: 6px; }
+    .controls-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 800px; margin: 20px auto; }
+    .card { padding: 15px; border-radius: 8px; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .card.team-a { border: 2px solid #ef4444; }
+    .card.team-b { border: 2px solid #3b82f6; }
+    button { display: block; width: 100%; margin: 8px 0; padding: 10px; cursor: pointer; border: 1px solid #ccc; border-radius: 6px; background: #f3f4f6; font-size: 1rem; }
+    button:hover { background: #e5e7eb; }
+    .reset-btn { width: auto; display: inline-block; padding: 8px 16px; background: #374151; color: white; border: none; }
+  </style>
+</head>
+<body>
+
+  <h1>🎓 Classroom Tug-of-War</h1>
+
+  <!-- ROPE DISPLAY -->
+  <div class="rope-container">
+    <div class="center-line"></div>
+    <div class="rope-wrapper" id="ropeWrapper">
+      <span class="team-avatar" style="color: #ef4444;">🔴 Team A</span>
+      <div class="rope"></div>
+      <span class="team-avatar" style="color: #3b82f6;">Team B 🔵</span>
+    </div>
+  </div>
+
+  <button class="reset-btn" onclick="resetRope()">Reset Rope</button>
+
+  <!-- GAME CONTROLS -->
+  <div class="controls-grid">
+    <!-- Team A Panel -->
+    <div class="card team-a">
+      <h3 style="color: #ef4444;">Team A Controls</h3>
+      <p id="questionA">Loading question...</p>
+      <div id="optionsA"></div>
+    </div>
+
+    <!-- Team B Panel -->
+    <div class="card team-b">
+      <h3 style="color: #3b82f6;">Team B Controls</h3>
+      <p id="questionB">Loading question...</p>
+      <div id="optionsB"></div>
+    </div>
+  </div>
+
+  <!-- FIREBASE REALTIME DATABASE SDKs -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, onValue, runTransaction, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    // YOUR FIREBASE CONFIG
+    const firebaseConfig = {
+      apiKey: "AIzaSyCS3yT10PtrUfFqvO4MhsZucgEatbSFKZY",
+      authDomain: "tug-of-war-game-f18b3.firebaseapp.com",
+      databaseURL: "https://tug-of-war-game-f18b3-default-rtdb.firebaseio.com",
+      projectId: "tug-of-war-game-f18b3",
+      storageBucket: "tug-of-war-game-f18b3.firebasestorage.app",
+      messagingSenderId: "797664292032",
+      appId: "1:797664292032:web:781e254da90da2c43e5125"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const gameRef = ref(db, "game/state");
+
+    const QUESTIONS = [
+      { q: "What is 7 × 8?", options: ["54", "56", "62", "48"], answer: "56" },
+      { q: "Which planet is known as the Red Planet?", options: ["Venus", "Mars", "Jupiter", "Saturn"], answer: "Mars" },
+      { q: "What is the capital of France?", options: ["Berlin", "Madrid", "Paris", "Rome"], answer: "Paris" }
+    ];
+
+    let currentQ = 0;
+
+    // Realtime Rope Sync
+    onValue(gameRef, (snapshot) => {
+      const data = snapshot.val();
+      const pos = data ? (data.ropePosition || 0) : 0;
+      const shiftPercentage = (pos / 100) * 35;
+      document.getElementById("ropeWrapper").style.transform = `translateX(${shiftPercentage}%)`;
+    });
+
+    window.handleAnswer = function(selectedOption, team) {
+      const isCorrect = selectedOption === QUESTIONS[currentQ].answer;
+      const pullAmount = isCorrect ? 15 : -5;
+      const direction = team === "A" ? -1 : 1;
+
+      runTransaction(gameRef, (currentData) => {
+        if (!currentData) return { ropePosition: pullAmount * direction };
+        let newPos = (currentData.ropePosition || 0) + (pullAmount * direction);
+        newPos = Math.max(-100, Math.min(100, newPos));
+        return { ...currentData, ropePosition: newPos };
+      });
+
+      currentQ = (currentQ + 1) % QUESTIONS.length;
+      renderQuestions();
+    };
+
+    window.resetRope = function() {
+      set(gameRef, { ropePosition: 0 });
+    };
+
+    function renderQuestions() {
+      const q = QUESTIONS[currentQ];
+      document.getElementById("questionA").innerText = q.q;
+      document.getElementById("questionB").innerText = q.q;
+
+      document.getElementById("optionsA").innerHTML = q.options.map(opt => 
+        `<button onclick="handleAnswer('${opt}', 'A')">${opt}</button>`
+      ).join('');
+
+      document.getElementById("optionsB").innerHTML = q.options.map(opt => 
+        `<button onclick="handleAnswer('${opt}', 'B')">${opt}</button>`
+      ).join('');
+    }
+
+    renderQuestions();
+  </script>
+</body>
+</html>
