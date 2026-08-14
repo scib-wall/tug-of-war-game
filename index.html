@@ -20,76 +20,78 @@
       flex-direction: column; 
       justify-content: center; 
       align-items: center;
-      background: #080d1a; 
-      transition: background 0.8s ease; 
+      background: linear-gradient(-45deg, #020617, #070e20, #0a1128, #030712); 
+      background-size: 300% 300%;
+      animation: subtleBG 20s ease infinite; 
       overflow: hidden;
     }
 
     body.theme-red { 
-      background: linear-gradient(-45deg, #090d16, #450a0a, #7f1d1d, #0f172a); 
+      background: linear-gradient(-45deg, #05050a, #1f0505, #2e0808, #090a12); 
       background-size: 300% 300%; 
-      animation: vibrantBG 12s ease infinite; 
+      animation: subtleBG 20s ease infinite; 
     }
 
     body.theme-blue { 
-      background: linear-gradient(-45deg, #030712, #075985, #1e40af, #0b1329); 
+      background: linear-gradient(-45deg, #020617, #031e38, #072e54, #020617); 
       background-size: 300% 300%; 
-      animation: vibrantBG 12s ease infinite; 
+      animation: subtleBG 20s ease infinite; 
     }
 
-    @keyframes vibrantBG { 
+    @keyframes subtleBG { 
       0% { background-position: 0% 50%; } 
       50% { background-position: 100% 50%; } 
       100% { background-position: 0% 50%; } 
     }
 
+    /* iPhone 17 Dark Glass Theme */
     .card { 
-      background: rgba(15, 23, 42, 0.65); 
-      backdrop-filter: blur(24px); 
-      -webkit-backdrop-filter: blur(24px);
-      padding: 30px 20px; 
-      border-radius: 28px; 
+      background: rgba(13, 18, 30, 0.75); 
+      backdrop-filter: blur(30px) saturate(180%); 
+      -webkit-backdrop-filter: blur(30px) saturate(180%);
+      padding: 30px 22px; 
+      border-radius: 32px; 
       width: 100%; 
       max-width: 380px; 
-      border: 1px solid rgba(255, 255, 255, 0.15); 
-      box-shadow: 0 25px 50px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.2); 
+      border: 1px solid rgba(255, 255, 255, 0.12); 
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.15); 
       transform: translateY(0) scale(1); 
       transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
     }
 
     .input-field { 
       width: 100%; 
-      padding: 14px; 
-      border-radius: 14px; 
-      border: 1px solid rgba(255,255,255,0.2); 
-      background: rgba(0,0,0,0.4); 
+      padding: 16px; 
+      border-radius: 18px; 
+      border: 1px solid rgba(255, 255, 255, 0.12); 
+      background: rgba(0, 0, 0, 0.35); 
       color: white; 
       font-family: 'Fredoka', sans-serif; 
       font-size: 1.1rem; 
       text-align: center; 
-      margin-bottom: 15px; 
+      margin-bottom: 16px; 
       outline: none; 
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
     }
 
     .input-field:focus { 
       border-color: #38bdf8; 
-      box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.3);
     }
 
     .join-btn { 
       width: 100%; 
-      padding: 14px; 
-      background: linear-gradient(135deg, #38bdf8, #0284c7); 
+      padding: 16px; 
+      background: linear-gradient(135deg, #0284c7, #0369a1); 
       color: #ffffff; 
       font-weight: 700; 
       font-size: 1.1rem; 
-      border-radius: 14px; 
-      border: none; 
+      border-radius: 18px; 
+      border: 1px solid rgba(255,255,255,0.2); 
       cursor: pointer; 
-      transition: all 0.2s; 
+      transition: all 0.2s ease; 
       font-family: 'Fredoka', sans-serif; 
-      box-shadow: 0 8px 20px rgba(2, 132, 199, 0.4);
+      box-shadow: 0 10px 25px rgba(2, 132, 199, 0.3);
     }
 
     .join-btn:active { 
@@ -97,22 +99,22 @@
     }
 
     .timer-banner { 
-      background: rgba(15, 23, 42, 0.7); 
-      backdrop-filter: blur(12px); 
+      background: rgba(13, 18, 30, 0.8); 
+      backdrop-filter: blur(20px); 
       color: #ffffff; 
       font-size: 1rem; 
       font-weight: 700; 
-      padding: 8px 20px; 
+      padding: 10px 24px; 
       border-radius: 50px; 
-      border: 1px solid rgba(255, 255, 255, 0.2); 
-      margin-bottom: 16px; 
-      box-shadow: 0 8px 20px rgba(0,0,0,0.4); 
+      border: 1px solid rgba(255, 255, 255, 0.12); 
+      margin-bottom: 18px; 
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5); 
       display: none; 
     }
 
     .team-badge { 
       display: inline-flex; 
-      padding: 6px 16px; 
+      padding: 6px 18px; 
       border-radius: 50px; 
       font-weight: 700; 
       font-size: 0.85rem; 
@@ -122,21 +124,21 @@
     }
 
     .badge-red { 
-      background: rgba(239, 68, 68, 0.25); 
-      color: #ff8787; 
-      border: 1px solid rgba(239, 68, 68, 0.4); 
+      background: rgba(239, 68, 68, 0.2); 
+      color: #fca5a5; 
+      border: 1px solid rgba(239, 68, 68, 0.3); 
     }
 
     .badge-blue { 
-      background: rgba(14, 165, 233, 0.25); 
+      background: rgba(14, 165, 233, 0.2); 
       color: #7dd3fc; 
-      border: 1px solid rgba(14, 165, 233, 0.5); 
+      border: 1px solid rgba(14, 165, 233, 0.35); 
     }
     
     .question { 
       font-size: 1.25rem; 
       font-weight: 700; 
-      margin-bottom: 20px; 
+      margin-bottom: 22px; 
       color: #ffffff; 
       line-height: 1.35; 
     }
@@ -144,29 +146,29 @@
     .options { 
       display: grid; 
       grid-template-columns: 1fr 1fr; 
-      gap: 10px; 
+      gap: 12px; 
     }
 
     button.opt { 
       width: 100%; 
-      min-height: 56px; 
+      min-height: 58px; 
       padding: 12px; 
-      border: 1px solid rgba(255, 255, 255, 0.18); 
-      border-radius: 16px; 
-      background: rgba(255, 255, 255, 0.08); 
-      backdrop-filter: blur(12px); 
+      border: 1px solid rgba(255, 255, 255, 0.12); 
+      border-radius: 18px; 
+      background: rgba(255, 255, 255, 0.05); 
+      backdrop-filter: blur(16px); 
       font-family: 'Fredoka', sans-serif; 
       font-size: 1rem; 
       font-weight: 600; 
       cursor: pointer; 
       color: #ffffff; 
       transition: all 0.2s ease; 
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.2);
     }
 
     button.opt:active { 
       transform: translateY(0) scale(0.96); 
-      background: rgba(56, 189, 248, 0.3); 
+      background: rgba(56, 189, 248, 0.25); 
     }
 
     .overlay-modal { 
@@ -175,7 +177,7 @@
       left: 0; 
       width: 100vw; 
       height: 100vh; 
-      background: rgba(3, 7, 18, 0.88); 
+      background: rgba(2, 6, 23, 0.9); 
       display: flex; 
       justify-content: center; 
       align-items: center; 
@@ -188,7 +190,7 @@
 
     .overlay-modal.active { 
       opacity: 1; 
-      backdrop-filter: blur(16px); 
+      backdrop-filter: blur(20px); 
     }
 
     .countdown-number { 
@@ -196,15 +198,11 @@
       font-size: 10rem; 
       font-weight: 900; 
       color: #38bdf8; 
-      text-shadow: 0 0 30px rgba(56, 189, 248, 0.6);
+      text-shadow: 0 0 40px rgba(56, 189, 248, 0.5);
       animation: popZoom 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite; 
     }
 
-    @keyframes popZoom { 
-      0% { transform: scale(0.4); opacity: 0; } 
-      40% { transform: scale(1.1); opacity: 1; } 
-      100% { transform: scale(1); opacity: 1; } 
-    }
+    @keyframes popZoom { 0% { transform: scale(0.4); opacity: 0; } 40% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
 
     .float-fx { 
       position: absolute; 
@@ -215,22 +213,11 @@
       z-index: 100; 
     }
 
-    .fx-plus { 
-      color: #4ade80; 
-      text-shadow: 0 0 10px rgba(74,222,128,0.5); 
-    }
+    .fx-plus { color: #4ade80; text-shadow: 0 0 10px rgba(74,222,128,0.5); }
+    .fx-minus { color: #ff6b6b; text-shadow: 0 0 10px rgba(255,107,107,0.5); }
 
-    .fx-minus { 
-      color: #ff6b6b; 
-      text-shadow: 0 0 10px rgba(255,107,107,0.5); 
-    }
+    @keyframes floatUp { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-40px) scale(1.15); } }
 
-    @keyframes floatUp { 
-      0% { opacity: 1; transform: translateY(0) scale(1); } 
-      100% { opacity: 0; transform: translateY(-40px) scale(1.15); } 
-    }
-
-    /* DRAMATIC DEFEAT SCREEN SHAKE */
     @keyframes defeatShake {
       0% { transform: translate(0, 0) rotate(0deg); }
       20% { transform: translate(-10px, 8px) rotate(-1deg); }
@@ -241,7 +228,7 @@
     }
     .defeat-effect {
       animation: defeatShake 0.6s ease-in-out;
-      background: linear-gradient(180deg, #180507, #080d1a) !important;
+      background: linear-gradient(180deg, #120305, #030712) !important;
     }
   </style>
 </head>
@@ -257,7 +244,7 @@
 
   <!-- Login Card -->
   <div class="card" id="loginCard">
-    <h2 style="color: white; margin-bottom: 20px; font-family: 'Outfit';">Enter Your Name</h2>
+    <h2 style="color: white; margin-bottom: 20px; font-family: 'Outfit'; font-weight:800;">Enter Your Name</h2>
     <input type="text" id="playerName" class="input-field" placeholder="Nickname..." maxlength="15" autocomplete="off" />
     <button class="join-btn" onclick="joinGame()">JOIN TEAM</button>
   </div>
@@ -305,15 +292,10 @@
     let currentStatus = "waiting";
     let confettiTriggered = false;
 
-    // Sound Synthesizer
     let audioCtx = null;
     function initAudio() {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
     }
 
     function playBeep(freq, type, duration) {
@@ -321,16 +303,13 @@
       if (audioCtx.state === 'suspended') audioCtx.resume();
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
-      osc.type = type;
-      osc.frequency.value = freq;
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
+      osc.type = type; osc.frequency.value = freq;
+      osc.connect(gain); gain.connect(audioCtx.destination);
       osc.start();
       gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
       osc.stop(audioCtx.currentTime + duration);
     }
 
-    // Join Match Logic
     window.joinGame = function() {
       const input = document.getElementById("playerName").value.trim();
       if (!input) return alert("Please enter your name!");
@@ -379,7 +358,6 @@
       });
     };
 
-    // Database Realtime Sync
     onValue(gameRef, (snapshot) => {
       const data = snapshot.val() || {};
       const status = data.status || "waiting";
@@ -390,7 +368,6 @@
         document.body.classList.remove("defeat-effect");
       }
 
-      // Safe check for countdown element
       const syncOverlay = document.getElementById("syncCountdown");
       const syncText = document.getElementById("syncText");
       if (syncOverlay) {
@@ -402,7 +379,6 @@
         }
       }
 
-      // Safe check for timer element
       const t = data.timerSecs !== undefined ? data.timerSecs : 120;
       isSuddenDeath = t <= 30 && t > 0;
       const banner = document.getElementById("timerBanner");
@@ -410,10 +386,10 @@
         if (status === "playing") {
           banner.style.display = "block";
           if (isSuddenDeath) {
-            banner.style.background = "rgba(239, 68, 68, 0.4)";
+            banner.style.background = "rgba(220, 38, 38, 0.4)";
             banner.innerHTML = `⚡ 2X PULL FORCE! <span>${t}s</span>`;
           } else {
-            banner.style.background = "rgba(15, 23, 42, 0.7)";
+            banner.style.background = "rgba(13, 18, 30, 0.8)";
             const m = Math.floor(t / 60).toString().padStart(2, '0');
             const s = (t % 60).toString().padStart(2, '0');
             banner.innerHTML = `TIME: <span>${m}:${s}</span>`;
@@ -423,7 +399,6 @@
         }
       }
 
-      // Safe check for end game status & victory/defeat animations
       if (status === "ended") {
         const qOptions = document.getElementById("qOptions");
         const qText = document.getElementById("qText");
@@ -468,7 +443,6 @@
       }
     }
 
-    // Answer Handling Logic (With direct Transaction bug fix)
     window.handleAnswer = function(selected, evt) {
       if (currentStatus !== "playing") return;
       const isCorrect = selected === QUESTIONS[myTeam][qIdx].answer;
