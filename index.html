@@ -6,33 +6,33 @@
   <title>Phase Changes: Tug-of-War Player</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
     
     body { 
-      font-family: 'Plus Jakarta Sans', sans-serif; 
+      font-family: 'Outfit', sans-serif; 
       text-align: center; 
-      padding: 20px; 
+      padding: 16px; 
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      background: #030712;
+      background: #090d16;
       transition: background 0.8s ease;
       position: relative;
       overflow: hidden;
     }
 
-    /* SMOOTH LUXURY BACKGROUND GRADIENTS */
+    /* SMOOTH TEAM BACKGROUND GRADIENTS */
     body.theme-red { 
-      background: linear-gradient(-45deg, #030712, #2a0813, #1e0b11, #090d16); 
+      background: linear-gradient(-45deg, #090d16, #2a0813, #1e0b11, #090d16); 
       background-size: 300% 300%;
       animation: luxuryBG 15s ease infinite;
     }
     body.theme-blue { 
-      background: linear-gradient(-45deg, #030712, #0b192e, #0c1527, #090d16); 
+      background: linear-gradient(-45deg, #090d16, #0b192e, #0c1527, #090d16); 
       background-size: 300% 300%;
       animation: luxuryBG 15s ease infinite;
     }
@@ -45,61 +45,61 @@
 
     .timer-banner { 
       background: rgba(255, 255, 255, 0.05); 
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       color: #f8fafc; 
-      font-size: clamp(1rem, 3.5vw, 1.2rem); 
+      font-size: 0.95rem; 
       font-weight: 700; 
-      letter-spacing: 1px;
-      padding: 10px 24px; 
-      border-radius: 100px; 
+      letter-spacing: 0.5px;
+      padding: 8px 18px; 
+      border-radius: 50px; 
       border: 1px solid rgba(255, 255, 255, 0.1);
-      margin-bottom: 24px; 
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      margin-bottom: 16px; 
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
-    .timer-banner.sudden-death { background: rgba(243, 18, 96, 0.2); border-color: rgba(243, 18, 96, 0.4); color: #f31260; }
+    .timer-banner.sudden-death { background: rgba(244, 63, 94, 0.2); border-color: rgba(244, 63, 94, 0.4); color: #fb7185; }
 
     /* CARD UI GLASSMORPHISM */
     .card { 
-      background: rgba(15, 23, 42, 0.65); 
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      padding: clamp(24px, 5vw, 40px); 
-      border-radius: 28px; 
+      background: rgba(15, 23, 42, 0.7); 
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 24px 20px; 
+      border-radius: 20px; 
       width: 100%; 
-      max-width: 440px; 
+      max-width: 380px; 
       border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 30px 60px rgba(0,0,0,0.5); 
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4); 
       position: relative; 
     }
 
     .team-badge { 
       display: inline-flex; 
       align-items: center;
-      gap: 8px;
-      padding: 6px 16px; 
-      border-radius: 100px; 
+      gap: 6px;
+      padding: 5px 14px; 
+      border-radius: 50px; 
       font-weight: 800; 
-      font-size: clamp(0.8rem, 2.5vw, 0.9rem);
-      margin-bottom: 20px; 
+      font-size: 0.8rem;
+      margin-bottom: 16px; 
       text-transform: uppercase; 
-      letter-spacing: 1.5px;
+      letter-spacing: 1px;
     }
-    .badge-red { background: rgba(243, 18, 96, 0.15); color: #f31260; border: 1px solid rgba(243, 18, 96, 0.3); }
-    .badge-blue { background: rgba(0, 111, 238, 0.15); color: #006fee; border: 1px solid rgba(0, 111, 238, 0.3); }
+    .badge-red { background: rgba(244, 63, 94, 0.15); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.3); }
+    .badge-blue { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
 
-    .question { font-size: clamp(1.2rem, 4vw, 1.4rem); font-weight: 700; margin-bottom: 25px; color: #f8fafc; line-height: 1.4; }
+    .question { font-size: 1.15rem; font-weight: 700; margin-bottom: 20px; color: #f8fafc; line-height: 1.35; }
     
-    .options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     button.opt { 
       width: 100%; 
-      min-height: 60px;
-      padding: 15px; 
+      min-height: 52px;
+      padding: 12px; 
       border: 1px solid rgba(255, 255, 255, 0.1); 
-      border-radius: 16px; 
-      background: rgba(255, 255, 255, 0.03); 
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: clamp(0.95rem, 3.5vw, 1.1rem); 
+      border-radius: 12px; 
+      background: rgba(255, 255, 255, 0.04); 
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.95rem; 
       font-weight: 600; 
       cursor: pointer; 
       color: #f1f5f9; 
@@ -109,28 +109,28 @@
     button.opt:active { transform: scale(0.96); background: rgba(255, 255, 255, 0.12); }
 
     /* FLOATING FX */
-    .float-fx { position: absolute; font-weight: 800; font-size: 1.5rem; pointer-events: none; animation: floatUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; z-index: 100; }
-    .fx-plus { color: #17c964; }
-    .fx-minus { color: #f31260; }
+    .float-fx { position: absolute; font-weight: 800; font-size: 1.3rem; pointer-events: none; animation: floatUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; z-index: 100; }
+    .fx-plus { color: #4ade80; }
+    .fx-minus { color: #fb7185; }
     @keyframes floatUp { 
       0% { opacity: 1; transform: translateY(0) scale(1); }
-      100% { opacity: 0; transform: translateY(-50px) scale(1.2); }
+      100% { opacity: 0; transform: translateY(-40px) scale(1.15); }
     }
 
     .end-screen { 
-      font-size: clamp(1.4rem, 4.5vw, 2rem); 
+      font-size: 1.5rem; 
       font-weight: 800; 
-      padding: 40px 20px; 
-      border-radius: 28px; 
+      padding: 30px 20px; 
+      border-radius: 20px; 
       display: none; 
       width: 100%; 
-      max-width: 440px; 
+      max-width: 380px; 
       background: rgba(15, 23, 42, 0.7);
-      backdrop-filter: blur(20px);
+      backdrop-filter: blur(16px);
       border: 1px solid rgba(255,255,255,0.1);
     }
-    .win { color: #17c964; border-color: rgba(23, 201, 100, 0.4); }
-    .lose { color: #f31260; border-color: rgba(243, 18, 96, 0.4); }
+    .win { color: #4ade80; border-color: rgba(74, 222, 128, 0.3); }
+    .lose { color: #fb7185; border-color: rgba(251, 113, 133, 0.3); }
   </style>
 </head>
 <body>
@@ -224,14 +224,14 @@
 
         if (data.winner === myTeam) {
           endScreen.className = "end-screen win";
-          endScreen.innerHTML = "VICTORY<br><span style='font-size: 1rem; opacity: 0.8;'>YOUR TEAM WON</span>";
+          endScreen.innerHTML = "VICTORY<br><span style='font-size: 0.9rem; opacity: 0.8;'>YOUR TEAM WON</span>";
           playBeep(523, "sine", 0.5);
         } else if (data.winner === "TIE") {
           endScreen.className = "end-screen";
           endScreen.innerHTML = "DRAW GAME";
         } else {
           endScreen.className = "end-screen lose";
-          endScreen.innerHTML = "DEFEAT<br><span style='font-size: 1rem; opacity: 0.8;'>YOUR TEAM LOST</span>";
+          endScreen.innerHTML = "DEFEAT<br><span style='font-size: 0.9rem; opacity: 0.8;'>YOUR TEAM LOST</span>";
           playBeep(150, "sawtooth", 0.5);
         }
       } else {
@@ -270,8 +270,8 @@
       const el = document.createElement("div");
       el.className = `float-fx ${isPlus ? 'fx-plus' : 'fx-minus'}`;
       el.innerText = text;
-      el.style.left = `${x - 30}px`;
-      el.style.top = `${y - 20}px`;
+      el.style.left = `${x - 25}px`;
+      el.style.top = `${y - 15}px`;
       document.body.appendChild(el);
       setTimeout(() => el.remove(), 800);
     }
