@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Tug-of-War Player</title>
+  <title>Phase Changes: Tug-of-War Player</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
     
@@ -22,9 +22,23 @@
       overflow: hidden;
     }
 
-    /* DYNAMIC TEAM ANIMATED BACKGROUND GRADIENTS */
-    body.theme-red { background: linear-gradient(135deg, #450a0a, #7f1d1d, #0f172a); }
-    body.theme-blue { background: linear-gradient(135deg, #172554, #1e3a8a, #0f172a); }
+    /* SMOOTH ANIMATED GRADIENT BACKGROUNDS FOR TEAMS */
+    body.theme-red { 
+      background: linear-gradient(-45deg, #450a0a, #7f1d1d, #2a0808, #0f172a); 
+      background-size: 300% 300%;
+      animation: smoothGradient 12s ease infinite;
+    }
+    body.theme-blue { 
+      background: linear-gradient(-45deg, #172554, #1e3a8a, #0b193d, #0f172a); 
+      background-size: 300% 300%;
+      animation: smoothGradient 12s ease infinite;
+    }
+
+    @keyframes smoothGradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
 
     .timer-banner { 
       background: rgba(15, 23, 42, 0.8); 
