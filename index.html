@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Phase Changes: Tug-of-War Player</title>
+  <title>Phase Changes: Tug of War Player</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
@@ -19,20 +19,22 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      background: #0f172a;
+      background: #090d16;
       transition: background 0.8s ease;
       position: relative;
       overflow: hidden;
     }
 
-    /* VIBRANT MOVING TEAM GRADIENTS */
+    /* VIBRANT TEAM GRADIENTS */
     body.theme-red { 
-      background: linear-gradient(-45deg, #0f172a, #450a0a, #7f1d1d, #1e1b4b); 
+      background: linear-gradient(-45deg, #090d16, #450a0a, #7f1d1d, #111827); 
       background-size: 300% 300%;
       animation: vibrantBG 12s ease infinite;
     }
+    
+    /* CHIC SAPPHIRE BLUE GRADIENT */
     body.theme-blue { 
-      background: linear-gradient(-45deg, #0f172a, #0c4a6e, #0369a1, #1e1b4b); 
+      background: linear-gradient(-45deg, #090d16, #1e3a8a, #1d4ed8, #111827); 
       background-size: 300% 300%;
       animation: vibrantBG 12s ease infinite;
     }
@@ -59,7 +61,7 @@
     }
     .timer-banner.sudden-death { background: rgba(239, 68, 68, 0.3); border-color: rgba(239, 68, 68, 0.6); color: #ffffff; }
 
-    /* FROSTED GLASS CARD */
+    /* CARD UI */
     .card { 
       background: rgba(255, 255, 255, 0.08); 
       backdrop-filter: blur(20px);
@@ -86,13 +88,11 @@
       letter-spacing: 1px;
     }
     .badge-red { background: rgba(239, 68, 68, 0.25); color: #ff8787; border: 1px solid rgba(239, 68, 68, 0.4); }
-    .badge-blue { background: rgba(14, 165, 233, 0.25); color: #7dd3fc; border: 1px solid rgba(14, 165, 233, 0.4); }
+    .badge-blue { background: rgba(37, 99, 235, 0.3); color: #93c5fd; border: 1px solid rgba(37, 99, 235, 0.5); }
 
     .question { font-size: 1.2rem; font-weight: 700; margin-bottom: 20px; color: #ffffff; line-height: 1.35; text-shadow: 0 2px 10px rgba(0,0,0,0.3); }
     
     .options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    
-    /* GLASSY OPTION BUTTONS */
     button.opt { 
       width: 100%; 
       min-height: 54px;
