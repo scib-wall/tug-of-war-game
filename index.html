@@ -1,239 +1,191 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Phase Changes: Tug of War Player</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Outfit:wght@800;900&display=swap" rel="stylesheet">
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
-    
-    body { 
-      font-family: 'Fredoka', sans-serif; text-align: center; padding: 16px; min-height: 100vh;
-      display: flex; flex-direction: column; justify-content: center; align-items: center;
-      background: #090d16; transition: background 0.8s ease; overflow: hidden;
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getDatabase, ref, onValue, runTransaction, set, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+  const app = initializeApp({
+    apiKey: "AIzaSyCS3yT10PtrUfFqvO4MhsZucgEatbSFKZY", 
+    authDomain: "tug-of-war-game-f18b3.firebaseapp.com",
+    databaseURL: "https://tug-of-war-game-f18b3-default-rtdb.firebaseio.com", 
+    projectId: "tug-of-war-game-f18b3"
+  });
+  const db = getDatabase(app);
+  const gameRef = ref(db, "game/state");
+  const presenceRef = ref(db, "game/presence");
+
+  const QUESTIONS = {
+    A: [
+      { q: "What is 8 × 7?", options: ["54", "56", "62", "48"], answer: "56" },
+      { q: "Capital of Japan?", options: ["Seoul", "Beijing", "Tokyo", "Bangkok"], answer: "Tokyo" },
+      { q: "Boiling point of water?", options: ["90°C", "100°C", "110°C", "120°C"], answer: "100°C" }
+    ],
+    B: [
+      { q: "What is 9 × 6?", options: ["54", "45", "63", "52"], answer: "54" },
+      { q: "Which planet is largest?", options: ["Mars", "Saturn", "Jupiter", "Earth"], answer: "Jupiter" },
+      { q: "Primary color?", options: ["Green", "Blue", "Purple", "Orange"], answer: "Blue" }
+    ]
+  };
+
+  let myTeam = null, myName = "", qIdx = 0, isSuddenDeath = false, currentStatus = "waiting";
+
+  // FIX 2: Audio Context setup
+  let audioCtx = null;
+  function initAudio() {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     }
-    body.theme-red { background: linear-gradient(-45deg, #090d16, #450a0a, #7f1d1d, #111827); background-size: 300% 300%; animation: vibrantBG 12s ease infinite; }
-    body.theme-blue { background: linear-gradient(-45deg, #090d16, #1e3a8a, #1d4ed8, #111827); background-size: 300% 300%; animation: vibrantBG 12s ease infinite; }
-    @keyframes vibrantBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-
-    /* SHARED CARD STYLING */
-    .card { 
-      background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-      padding: 30px 20px; border-radius: 24px; width: 100%; max-width: 380px; 
-      border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 20px 40px rgba(0,0,0,0.35); 
-      transform: translateY(0) scale(1); transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume();
     }
+  }
 
-    /* NAME ENTRY UI */
-    .input-field { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.3); background: rgba(0,0,0,0.3); color: white; font-family: 'Fredoka', sans-serif; font-size: 1.1rem; text-align: center; margin-bottom: 15px; outline: none; }
-    .input-field:focus { border-color: #4ade80; }
-    .join-btn { width: 100%; padding: 14px; background: #4ade80; color: #064e3b; font-weight: 700; font-size: 1.1rem; border-radius: 12px; border: none; cursor: pointer; transition: transform 0.2s; font-family: 'Fredoka'; }
-    .join-btn:active { transform: scale(0.96); }
+  function playBeep(freq, type, duration) {
+    if (!audioCtx) return;
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+    osc.type = type; osc.frequency.value = freq; osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(); gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
+    osc.stop(audioCtx.currentTime + duration);
+  }
 
-    /* GAME UI */
-    .timer-banner { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); color: #ffffff; font-size: 1rem; font-weight: 700; padding: 8px 20px; border-radius: 50px; border: 1px solid rgba(255, 255, 255, 0.2); margin-bottom: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.25); display: none; }
-    .team-badge { display: inline-flex; padding: 6px 16px; border-radius: 50px; font-weight: 700; font-size: 0.85rem; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px; }
-    .badge-red { background: rgba(239, 68, 68, 0.25); color: #ff8787; border: 1px solid rgba(239, 68, 68, 0.4); }
-    .badge-blue { background: rgba(37, 99, 235, 0.3); color: #93c5fd; border: 1px solid rgba(37, 99, 235, 0.5); }
-    
-    .question { font-size: 1.2rem; font-weight: 700; margin-bottom: 20px; color: #ffffff; line-height: 1.35; }
-    .options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    button.opt { width: 100%; min-height: 54px; padding: 12px; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 14px; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); font-family: 'Fredoka', sans-serif; font-size: 1rem; font-weight: 600; cursor: pointer; color: #ffffff; transition: all 0.2s ease; }
-    button.opt:active { transform: translateY(0) scale(0.96); background: rgba(255, 255, 255, 0.25); }
+  // FIX 1: Updated joinGame with atomic transaction & player presence
+  window.joinGame = function() {
+    const input = document.getElementById("playerName").value.trim();
+    if (!input) return alert("Please enter your name!");
+    myName = input;
 
-    /* SYNCED COUNTDOWN OVERLAY */
-    .overlay-modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(9, 13, 22, 0.85); display: flex; justify-content: center; align-items: center; z-index: 999; opacity: 0; pointer-events: none; transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1); backdrop-filter: blur(0px); }
-    .overlay-modal.active { opacity: 1; backdrop-filter: blur(12px); }
-    .countdown-number { font-family: 'Outfit', sans-serif; font-size: 10rem; font-weight: 900; color: #ffffff; animation: popZoom 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite; }
-    @keyframes popZoom { 0% { transform: scale(0.4); opacity: 0; } 40% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+    // Unlock audio on physical tap
+    initAudio();
 
-    /* FLOATING FX */
-    .float-fx { position: absolute; font-weight: 700; font-size: 1.3rem; pointer-events: none; animation: floatUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; z-index: 100; }
-    .fx-plus { color: #4ade80; text-shadow: 0 0 10px rgba(74,222,128,0.5); }
-    .fx-minus { color: #ff6b6b; text-shadow: 0 0 10px rgba(255,107,107,0.5); }
-    @keyframes floatUp { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-40px) scale(1.15); } }
-  </style>
-</head>
-<body>
+    const playerId = Math.random().toString(36).substring(2, 9);
+    const myPlayerRef = ref(db, `game/presence/${playerId}`);
 
-  <!-- SYNCED COUNTDOWN -->
-  <div class="overlay-modal" id="syncCountdown"><div class="countdown-number" id="syncText">3</div></div>
-
-  <!-- HEADER -->
-  <div class="timer-banner" id="timerBanner">TIME: <span id="gameTimer">02:00</span></div>
-
-  <!-- STEP 1: LOGIN -->
-  <div class="card" id="loginCard">
-    <h2 style="color: white; margin-bottom: 20px;">Enter Your Name</h2>
-    <input type="text" id="playerName" class="input-field" placeholder="Nickname..." maxlength="15" autocomplete="off" />
-    <button class="join-btn" onclick="joinGame()">JOIN TEAM</button>
-  </div>
-
-  <!-- STEP 2: GAMEPLAY -->
-  <div class="card" id="gameCard" style="display: none;">
-    <div id="teamBadge" class="team-badge">Assigning...</div>
-    <div class="question" id="qText">Waiting for Host to start...</div>
-    <div class="options" id="qOptions"></div>
-  </div>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, onValue, runTransaction, set, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-
-    const app = initializeApp({
-      apiKey: "AIzaSyCS3yT10PtrUfFqvO4MhsZucgEatbSFKZY", authDomain: "tug-of-war-game-f18b3.firebaseapp.com",
-      databaseURL: "https://tug-of-war-game-f18b3-default-rtdb.firebaseio.com", projectId: "tug-of-war-game-f18b3"
-    });
-    const db = getDatabase(app);
-    const gameRef = ref(db, "game/state");
-    const presenceRef = ref(db, "game/presence");
-
-    const QUESTIONS = {
-      A: [
-        { q: "What is 8 × 7?", options: ["54", "56", "62", "48"], answer: "56" },
-        { q: "Capital of Japan?", options: ["Seoul", "Beijing", "Tokyo", "Bangkok"], answer: "Tokyo" },
-        { q: "Boiling point of water?", options: ["90°C", "100°C", "110°C", "120°C"], answer: "100°C" }
-      ],
-      B: [
-        { q: "What is 9 × 6?", options: ["54", "45", "63", "52"], answer: "54" },
-        { q: "Which planet is largest?", options: ["Mars", "Saturn", "Jupiter", "Earth"], answer: "Jupiter" },
-        { q: "Primary color?", options: ["Green", "Blue", "Purple", "Orange"], answer: "Blue" }
-      ]
-    };
-
-    let myTeam = null, myName = "", qIdx = 0, isSuddenDeath = false, currentStatus = "waiting";
-
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    function playBeep(freq, type, duration) {
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-      const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
-      osc.type = type; osc.frequency.value = freq; osc.connect(gain); gain.connect(audioCtx.destination);
-      osc.start(); gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
-      osc.stop(audioCtx.currentTime + duration);
-    }
-
-    window.joinGame = function() {
-      const input = document.getElementById("playerName").value.trim();
-      if (!input) return alert("Please enter your name!");
-      myName = input;
-
-      const myPlayerRef = ref(db, `game/presence/${Math.random().toString(36).substring(2, 9)}`);
-
-      runTransaction(presenceRef, (data) => {
-        let red = 0, blue = 0;
-        if (data) Object.values(data).forEach(p => { if (p.team === "A") red++; else blue++; });
-        myTeam = red <= blue ? "A" : "B";
-        return data;
-      }).then(() => {
-        set(myPlayerRef, { team: myTeam, name: myName });
-        onDisconnect(myPlayerRef).remove();
-        
-        document.getElementById("loginCard").style.display = "none";
-        document.getElementById("gameCard").style.display = "block";
-        
-        const body = document.body;
-        const badge = document.getElementById("teamBadge");
-        if (myTeam === "A") { body.className = "theme-red"; badge.className = "team-badge badge-red"; badge.innerHTML = "Team Red"; } 
-        else { body.className = "theme-blue"; badge.className = "team-badge badge-blue"; badge.innerHTML = "Team Blue"; }
-        
-        renderStateUI();
-      });
-    };
-
-    onValue(gameRef, (snapshot) => {
-      const data = snapshot.val() || {};
-      const status = data.status || "waiting";
-      currentStatus = status;
-
-      // Sync Countdown Overlay
-      const syncOverlay = document.getElementById("syncCountdown");
-      if (status === "countdown") {
-        syncOverlay.classList.add("active");
-        document.getElementById("syncText").innerText = data.countdownVal;
-      } else {
-        syncOverlay.classList.remove("active");
-      }
-
-      // Timer updates
-      const t = data.timerSecs !== undefined ? data.timerSecs : 120;
-      isSuddenDeath = t <= 30 && t > 0;
-      const banner = document.getElementById("timerBanner");
-      if (status === "playing") {
-        banner.style.display = "block";
-        if (isSuddenDeath) {
-          banner.style.background = "rgba(239, 68, 68, 0.3)";
-          banner.innerHTML = `⚡ 2X PULL FORCE! <span>${t}s</span>`;
-        } else {
-          banner.style.background = "rgba(255, 255, 255, 0.1)";
-          const m = Math.floor(t / 60).toString().padStart(2, '0');
-          const s = (t % 60).toString().padStart(2, '0');
-          banner.innerHTML = `TIME: <span>${m}:${s}</span>`;
-        }
-      } else {
-        banner.style.display = "none";
-      }
-
-      if (status === "ended") {
-        document.getElementById("qOptions").innerHTML = "";
-        if (data.winner === myTeam) {
-          document.getElementById("qText").innerHTML = "<span style='color:#4ade80; font-size:1.5rem;'>🏆 YOU WON!</span><br>Check the main screen!";
-        } else if (data.winner === "TIE") {
-          document.getElementById("qText").innerHTML = "🤝 DRAW GAME";
-        } else {
-          document.getElementById("qText").innerHTML = "<span style='color:#ff6b6b; font-size:1.5rem;'>💀 DEFEAT</span>";
-        }
-      }
-
-      if (myTeam) renderStateUI();
-    });
-
-    function renderStateUI() {
-      if (currentStatus === "waiting") {
-        document.getElementById("qText").innerText = "Waiting for Host to start match...";
-        document.getElementById("qOptions").innerHTML = "";
-      } else if (currentStatus === "playing" && document.getElementById("qOptions").innerHTML === "") {
-        renderQ();
-      }
-    }
-
-    window.handleAnswer = function(selected, evt) {
-      if (currentStatus !== "playing") return;
-      const isCorrect = selected === QUESTIONS[myTeam][qIdx].answer;
+    runTransaction(presenceRef, (data) => {
+      const currentData = data || {};
+      let red = 0, blue = 0;
       
-      const el = document.createElement("div");
-      el.className = `float-fx ${isCorrect ? 'fx-plus' : 'fx-minus'}`;
-      el.innerText = isCorrect ? "+5 PTS" : "-5 PULL";
-      el.style.left = `${evt.clientX - 25}px`; el.style.top = `${evt.clientY - 15}px`;
-      document.body.appendChild(el);
-      setTimeout(() => el.remove(), 800);
-
-      if (isCorrect) playBeep(587.33, "sine", 0.2); else playBeep(130.81, "square", 0.3);
-
-      let pullForce = isCorrect ? (isSuddenDeath ? 30 : 15) : -5;
-      let pointsAdded = isCorrect ? 5 : 0;
-      const dir = myTeam === "A" ? -1 : 1;
-
-      runTransaction(gameRef, (data) => {
-        if (!data || data.status !== "playing") return data;
-        let pos = Math.max(-100, Math.min(100, (data.ropePosition || 0) + (pullForce * dir)));
-        return { ...data, ropePosition: pos, 
-                 scoreRed: myTeam === "A" ? (data.scoreRed || 0) + pointsAdded : (data.scoreRed || 0),
-                 scoreBlue: myTeam === "B" ? (data.scoreBlue || 0) + pointsAdded : (data.scoreBlue || 0) };
+      Object.values(currentData).forEach(p => { 
+        if (p.team === "A") red++; else blue++; 
       });
 
-      qIdx = (qIdx + 1) % QUESTIONS[myTeam].length;
-      renderQ();
-    };
+      myTeam = red <= blue ? "A" : "B";
+      currentData[playerId] = { team: myTeam, name: myName };
+      return currentData;
+    }).then(() => {
+      onDisconnect(myPlayerRef).remove();
+      
+      document.getElementById("loginCard").style.display = "none";
+      document.getElementById("gameCard").style.display = "block";
+      
+      const body = document.body;
+      const badge = document.getElementById("teamBadge");
+      if (myTeam === "A") { 
+        body.className = "theme-red"; 
+        badge.className = "team-badge badge-red"; 
+        badge.innerHTML = "Team Red"; 
+      } else { 
+        body.className = "theme-blue"; 
+        badge.className = "team-badge badge-blue"; 
+        badge.innerHTML = "Team Blue"; 
+      }
+      
+      renderStateUI();
+    }).catch(err => {
+      console.error("Failed to join game:", err);
+    });
+  };
 
-    function renderQ() {
-      if (!myTeam || currentStatus !== "playing") return;
-      const q = QUESTIONS[myTeam][qIdx];
-      document.getElementById("qText").innerText = q.q;
-      document.getElementById("qOptions").innerHTML = q.options.map(opt => `<button class="opt" onclick="handleAnswer('${opt}', event)">${opt}</button>`).join('');
+  onValue(gameRef, (snapshot) => {
+    const data = snapshot.val() || {};
+    const status = data.status || "waiting";
+    currentStatus = status;
+
+    // Sync Countdown Overlay
+    const syncOverlay = document.getElementById("syncCountdown");
+    if (status === "countdown") {
+      syncOverlay.classList.add("active");
+      document.getElementById("syncText").innerText = data.countdownVal;
+    } else {
+      syncOverlay.classList.remove("active");
     }
-  </script>
-</body>
-</html>
+
+    // Timer updates
+    const t = data.timerSecs !== undefined ? data.timerSecs : 120;
+    isSuddenDeath = t <= 30 && t > 0;
+    const banner = document.getElementById("timerBanner");
+    if (status === "playing") {
+      banner.style.display = "block";
+      if (isSuddenDeath) {
+        banner.style.background = "rgba(239, 68, 68, 0.3)";
+        banner.innerHTML = `⚡ 2X PULL FORCE! <span>${t}s</span>`;
+      } else {
+        banner.style.background = "rgba(255, 255, 255, 0.1)";
+        const m = Math.floor(t / 60).toString().padStart(2, '0');
+        const s = (t % 60).toString().padStart(2, '0');
+        banner.innerHTML = `TIME: <span>${m}:${s}</span>`;
+      }
+    } else {
+      banner.style.display = "none";
+    }
+
+    if (status === "ended") {
+      document.getElementById("qOptions").innerHTML = "";
+      if (data.winner === myTeam) {
+        document.getElementById("qText").innerHTML = "<span style='color:#4ade80; font-size:1.5rem;'>🏆 YOU WON!</span><br>Check the main screen!";
+      } else if (data.winner === "TIE") {
+        document.getElementById("qText").innerHTML = "🤝 DRAW GAME";
+      } else {
+        document.getElementById("qText").innerHTML = "<span style='color:#ff6b6b; font-size:1.5rem;'>💀 DEFEAT</span>";
+      }
+    }
+
+    if (myTeam) renderStateUI();
+  });
+
+  function renderStateUI() {
+    if (currentStatus === "waiting") {
+      document.getElementById("qText").innerText = "Waiting for Host to start match...";
+      document.getElementById("qOptions").innerHTML = "";
+    } else if (currentStatus === "playing" && document.getElementById("qOptions").innerHTML === "") {
+      renderQ();
+    }
+  }
+
+  window.handleAnswer = function(selected, evt) {
+    if (currentStatus !== "playing") return;
+    const isCorrect = selected === QUESTIONS[myTeam][qIdx].answer;
+    
+    const el = document.createElement("div");
+    el.className = `float-fx ${isCorrect ? 'fx-plus' : 'fx-minus'}`;
+    el.innerText = isCorrect ? "+5 PTS" : "-5 PULL";
+    el.style.left = `${evt.clientX - 25}px`; el.style.top = `${evt.clientY - 15}px`;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 800);
+
+    if (isCorrect) playBeep(587.33, "sine", 0.2); else playBeep(130.81, "square", 0.3);
+
+    let pullForce = isCorrect ? (isSuddenDeath ? 30 : 15) : -5;
+    let pointsAdded = isCorrect ? 5 : 0;
+    const dir = myTeam === "A" ? -1 : 1;
+
+    runTransaction(gameRef, (data) => {
+      if (!data || data.status !== "playing") return data;
+      let pos = Math.max(-100, Math.min(100, (data.ropePosition || 0) + (pullForce * dir)));
+      return { 
+        ...data, 
+        ropePosition: pos, 
+        scoreRed: myTeam === "A" ? (data.scoreRed || 0) + pointsAdded : (data.scoreRed || 0),
+        scoreBlue: myTeam === "B" ? (data.scoreBlue || 0) + pointsAdded : (data.scoreBlue || 0) 
+      };
+    });
+
+    qIdx = (qIdx + 1) % QUESTIONS[myTeam].length;
+    renderQ();
+  };
+
+  function renderQ() {
+    if (!myTeam || currentStatus !== "playing") return;
+    const q = QUESTIONS[myTeam][qIdx];
+    document.getElementById("qText").innerText = q.q;
+    document.getElementById("qOptions").innerHTML = q.options.map(opt => `<button class="opt" onclick="handleAnswer('${opt}', event)">${opt}</button>`).join('');
+  }
+</script>
