@@ -27,7 +27,7 @@
 
   let myTeam = null, myName = "", qIdx = 0, isSuddenDeath = false, currentStatus = "waiting";
 
-  // FIX 2: Audio Context setup
+  // Audio Context Setup
   let audioCtx = null;
   function initAudio() {
     if (!audioCtx) {
@@ -47,17 +47,18 @@
     osc.stop(audioCtx.currentTime + duration);
   }
 
-  // FIX 1: Updated joinGame with atomic transaction & player presence
+  // Join Game with Fixed Team Assignment Logic
   window.joinGame = function() {
     const input = document.getElementById("playerName").value.trim();
     if (!input) return alert("Please enter your name!");
     myName = input;
 
-    // Unlock audio on physical tap
     initAudio();
 
     const playerId = Math.random().toString(36).substring(2, 9);
     const myPlayerRef = ref(db, `game/presence/${playerId}`);
+
+    let assignedTeam = null;
 
     runTransaction(presenceRef, (data) => {
       const currentData = data || {};
@@ -67,10 +68,15 @@
         if (p.team === "A") red++; else blue++; 
       });
 
-      myTeam = red <= blue ? "A" : "B";
-      currentData[playerId] = { team: myTeam, name: myName };
+      assignedTeam = red <= blue ? "A" : "B";
+      currentData[playerId] = { team: assignedTeam, name: myName };
       return currentData;
-    }).then(() => {
+    }).then((transactionResult) => {
+      if (!transactionResult.committed) {
+        return alert("Failed to join. Please try again.");
+      }
+
+      myTeam = assignedTeam;
       onDisconnect(myPlayerRef).remove();
       
       document.getElementById("loginCard").style.display = "none";
@@ -91,6 +97,7 @@
       renderStateUI();
     }).catch(err => {
       console.error("Failed to join game:", err);
+      alert("Error connecting to game server: " + err.message);
     });
   };
 
