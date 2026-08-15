@@ -269,7 +269,7 @@
 
       <!-- COOL-DOWN BANNER -->
       <div class="cooldown-banner" id="cooldownBanner">
-        <div id="cooldownText">⚠️ SLIPPED! REGAINING FOOTING (3.0s)...</div>
+        <div id="cooldownText">⚠️ SLIPPED! REGAINING FOOTING (4.0s)...</div>
         <div class="cooldown-bar-bg">
           <div class="cooldown-bar-fill" id="cooldownBar"></div>
         </div>
@@ -497,9 +497,9 @@
         renderQ();
 
       } else {
-        // Slipped Penalty
+        // Slipped Penalty - Increased to 4 seconds
         playBeep(130.81, "square", 0.3);
-        triggerCooldown(3);
+        triggerCooldown(4);
       }
     };
 
