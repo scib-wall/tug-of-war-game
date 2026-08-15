@@ -2,216 +2,153 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Phase Changes: Student Player</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Phase Changes Tug-of-War: Arena Controller</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Outfit:wght@800;900&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
-    
-    body { 
-      font-family: 'Fredoka', sans-serif; 
-      text-align: center; 
-      color: #ffffff; 
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      font-family: 'Fredoka', sans-serif;
+      text-align: center;
+      color: #ffffff;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      justify-content: space-between;
       align-items: center;
       padding: 1rem;
-      /* Default neutral state */
-      background: linear-gradient(-45deg, #0f172a, #1e1b4b, #0369a1, #312e81);
-      background-size: 300% 300%;
-      animation: subtleBG 16s ease infinite;
-      transition: background 1s ease-in-out;
+      background: #0f172a;
       overflow: hidden;
+      transition: background 0.5s ease;
     }
 
-    /* DRAMATIC TEAM-SPECIFIC BACKGROUND GRADIENTS */
-    body.team-red {
-      background: linear-gradient(-45deg, #7f1d1d, #ef4444, #450a0a, #000000) !important;
-      background-size: 300% 300% !important;
-      animation: subtleBG 6s ease infinite !important;
-    }
+    /* THEME STATES */
+    body.team-a-theme { background: linear-gradient(180deg, #1e1b4b, #881337); }
+    body.team-b-theme { background: linear-gradient(180deg, #0c4a6e, #1e3a8a); }
 
-    body.team-blue {
-      background: linear-gradient(-45deg, #075985, #0284c7, #030712, #0f172a) !important;
-      background-size: 300% 300% !important;
-      animation: subtleBG 6s ease infinite !important;
-    }
-
-    @keyframes subtleBG { 
-      0% { background-position: 0% 50%; } 
-      50% { background-position: 100% 50%; } 
-      100% { background-position: 0% 50%; } 
-    }
-
-    /* CARD CONTAINER WITH ANIMATED PERIMETER RUNNING LIGHT */
-    .card-wrapper {
-      position: relative;
-      width: 100%;
-      max-width: 450px;
-      border-radius: 30px;
-      padding: 3px;
-      background: linear-gradient(90deg, #38bdf8, #ef4444, #facc15, #38bdf8);
-      background-size: 300% 300%;
-      animation: runningBorder 4s linear infinite;
-      box-shadow: 0 0 25px rgba(0,0,0,0.6);
-    }
-
-    /* PERIMETER INTENSIFIES ACCORDING TO TEAMS */
-    body.team-red .card-wrapper {
-      background: linear-gradient(90deg, #ff0000, #ff5263, #3a0000, #ff0000);
-      background-size: 300% 300%;
-      animation: runningBorder 2.5s linear infinite;
-      box-shadow: 0 0 35px rgba(239, 68, 68, 0.4);
-    }
-
-    body.team-blue .card-wrapper {
-      background: linear-gradient(90deg, #0284c7, #38bdf8, #001e3d, #0284c7);
-      background-size: 300% 300%;
-      animation: runningBorder 2.5s linear infinite;
-      box-shadow: 0 0 35px rgba(56, 189, 248, 0.4);
-    }
-
-    @keyframes runningBorder {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
+    /* CARD CONTAINER */
     .card {
-      background: rgba(10, 15, 30, 0.85);
-      backdrop-filter: blur(28px) saturate(160%);
-      -webkit-backdrop-filter: blur(28px) saturate(160%);
-      border-radius: 27px;
-      padding: 24px;
       width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      position: relative;
+      max-width: 440px;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 28px;
+      padding: 1.5rem;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+      margin: auto;
     }
 
-    h1 { font-family: 'Outfit', sans-serif; font-size: 1.8rem; font-weight: 900; letter-spacing: 1px; }
-    
-    input[type="text"] {
+    /* JOIN FORM SCREEN */
+    .join-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2rem;
+      font-weight: 900;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(90deg, #ff5263, #38bdf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .input-field {
       width: 100%;
-      padding: 14px;
+      padding: 16px;
       border-radius: 16px;
-      border: 1px solid rgba(255,255,255,0.2);
-      background: rgba(0,0,0,0.4);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      background: rgba(0, 0, 0, 0.4);
       color: white;
-      font-size: 1.1rem;
       font-family: 'Fredoka', sans-serif;
+      font-size: 1.2rem;
       text-align: center;
+      margin: 1.2rem 0;
       outline: none;
     }
+    .input-field:focus { border-color: #38bdf8; }
 
-    .btn {
-      padding: 14px;
+    .btn-action {
+      width: 100%;
+      padding: 18px;
       border-radius: 50px;
       border: none;
       font-family: 'Outfit', sans-serif;
-      font-size: 1.1rem;
-      font-weight: 800;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      color: white;
-    }
-    .btn:active { transform: scale(0.96); }
-
-    .join-btn { 
-      background: linear-gradient(135deg, #0284c7, #2563eb); 
-      box-shadow: 0 6px 20px rgba(2, 132, 199, 0.4); 
-    }
-
-    .q-box { font-size: 1.15rem; line-height: 1.4; font-weight: 600; min-height: 60px; display: flex; align-items: center; justify-content: center; }
-    
-    .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    
-    button.opt {
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.2);
-      color: white;
-      padding: 16px 10px;
-      border-radius: 18px;
-      font-family: 'Fredoka', sans-serif;
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    button.opt:active:not(:disabled) { transform: scale(0.95); background: rgba(255,255,255,0.25); }
-
-    button.opt:disabled {
-      opacity: 0.35;
-      cursor: not-allowed;
-      filter: grayscale(80%);
-      transform: none !important;
-    }
-
-    /* COOL-DOWN WARNING BANNER & PROGRESS BAR */
-    .cooldown-banner {
-      background: rgba(239, 68, 68, 0.25);
-      border: 1px solid rgba(239, 68, 68, 0.5);
-      color: #fca5a5;
-      padding: 10px 14px;
-      border-radius: 20px;
-      font-size: 0.85rem;
-      font-weight: 700;
-      display: none;
-      flex-direction: column;
-      gap: 6px;
-      animation: pulseAlert 0.6s infinite alternate;
-    }
-
-    .cooldown-bar-bg {
-      width: 100%;
-      height: 6px;
-      background: rgba(0, 0, 0, 0.4);
-      border-radius: 10px;
-      overflow: hidden;
-    }
-
-    .cooldown-bar-fill {
-      width: 100%;
-      height: 100%;
-      background: #f87171;
-      border-radius: 10px;
-      transition: width 0.1s linear;
-    }
-
-    @keyframes pulseAlert {
-      from { opacity: 0.85; transform: scale(0.99); }
-      to { opacity: 1; transform: scale(1.01); }
-    }
-
-    /* FLOATING FEEDBACK FX */
-    .float-fx {
-      position: fixed;
-      font-family: 'Outfit', sans-serif;
+      font-size: 1.3rem;
       font-weight: 900;
-      font-size: 1.4rem;
-      pointer-events: none;
-      animation: floatUp 0.8s ease-out forwards;
-      z-index: 1000;
+      color: white;
+      background: linear-gradient(135deg, #38bdf8, #0284c7);
+      box-shadow: 0 10px 25px rgba(2, 132, 199, 0.4);
+      cursor: pointer;
+      transition: transform 0.1s ease;
     }
-    .fx-plus { color: #4ade80; text-shadow: 0 0 10px rgba(74, 222, 128, 0.6); }
-    .fx-minus { color: #f87171; text-shadow: 0 0 10px rgba(248, 113, 113, 0.6); }
+    .btn-action:active { transform: scale(0.96); }
 
-    @keyframes floatUp {
-      0% { opacity: 1; transform: translateY(0) scale(1); }
-      100% { opacity: 0; transform: translateY(-40px) scale(1.2); }
+    /* GAME INTERFACE */
+    .hud-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
     }
 
-    /* FULLSCREEN DRAMATIC COUNTDOWN OVERLAY */
-    .countdown-overlay {
+    .team-badge {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 900;
+      padding: 6px 16px;
+      border-radius: 50px;
+      background: rgba(255,255,255,0.15);
+    }
+
+    .question-box {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 1.2rem;
+      margin-bottom: 1.2rem;
+      min-height: 110px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.15rem;
+      line-height: 1.4;
+      font-weight: 600;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1px 1px;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .opt-btn {
+      padding: 16px 12px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.08);
+      color: white;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .opt-btn:active { transform: scale(0.95); }
+
+    /* FEEDBACK ANIMATION */
+    @keyframes flashGreen { 0% { background: rgba(34,197,94,0.6); } 100% { background: rgba(255,255,255,0.08); } }
+    @keyframes flashRed { 0% { background: rgba(239,68,68,0.6); } 100% { background: rgba(255,255,255,0.08); } }
+    .correct-flash { animation: flashGreen 0.6s ease; }
+    .incorrect-flash { animation: flashRed 0.6s ease; }
+
+    /* DRAMATIC COUNTDOWN OVERLAY */
+    .student-cd-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.88);
-      backdrop-filter: blur(15px);
+      background: rgba(0, 0, 0, 0.92);
+      backdrop-filter: blur(20px);
       display: none;
       flex-direction: column;
       align-items: center;
@@ -219,22 +156,13 @@
       z-index: 9999;
     }
 
-    .cd-number {
+    .cd-num {
       font-family: 'Outfit', sans-serif;
-      font-size: 8rem;
+      font-size: 10rem;
       font-weight: 900;
       color: #facc15;
-      text-shadow: 0 0 30px rgba(250, 204, 21, 0.8), 0 0 60px rgba(250, 204, 21, 0.4);
+      text-shadow: 0 0 30px rgba(250, 204, 21, 0.8);
       animation: cdPop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite;
-    }
-
-    .cd-label {
-      font-family: 'Outfit', sans-serif;
-      font-size: 2rem;
-      font-weight: 800;
-      letter-spacing: 3px;
-      color: #ffffff;
-      text-transform: uppercase;
     }
 
     @keyframes cdPop {
@@ -246,264 +174,228 @@
 </head>
 <body>
 
-  <!-- DRAMATIC COUNTDOWN OVERLAY -->
-  <div class="countdown-overlay" id="cdOverlay">
-    <div class="cd-label">GET READY</div>
-    <div class="cd-number" id="cdNum">3</div>
+  <!-- COUNTDOWN OVERLAY -->
+  <div class="student-cd-overlay" id="studentCdOverlay">
+    <div style="font-size: 1.5rem; letter-spacing: 4px; font-weight: 800; color: #fff;">GET READY</div>
+    <div class="cd-num" id="studentCdNum">3</div>
   </div>
 
-  <div class="card-wrapper">
-    <!-- JOIN CARD -->
-    <div class="card" id="joinCard">
-      <h1>JOIN THE MATCH</h1>
-      <input type="text" id="playerName" placeholder="Enter Your Name" maxlength="15">
-      <button class="btn join-btn" style="width: 100%; margin-top: 6px;" onclick="joinGame()">JOIN MATCH</button>
+  <!-- JOIN SCREEN -->
+  <div class="card" id="joinScreen">
+    <div class="join-title">TUG-OF-WAR ARENA</div>
+    <p style="opacity: 0.8; font-size: 0.95rem;">Enter your name to join a team!</p>
+    <input type="text" class="input-field" id="studentNameInput" placeholder="Enter your name..." maxlength="15" autocomplete="off">
+    <button class="btn-action" onclick="joinGame()">JOIN MATCH</button>
+  </div>
+
+  <!-- WAITING SCREEN -->
+  <div class="card" id="waitingScreen" style="display: none;">
+    <h2 style="font-family: 'Outfit', sans-serif; font-size: 1.8rem; margin-bottom: 0.5rem;" id="waitingTeamTitle">TEAM ASSIGNED</h2>
+    <p style="opacity: 0.8; margin-top: 1rem;">Waiting for Host to start the match...</p>
+  </div>
+
+  <!-- GAMEPLAY SCREEN -->
+  <div class="card" id="gameScreen" style="display: none;">
+    <div class="hud-header">
+      <div class="team-badge" id="hudTeamBadge">TEAM A</div>
+      <div style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.1rem; color: #facc15;" id="streakDisplay">🔥 0 STREAK</div>
     </div>
 
-    <!-- GAME PLAY CARD -->
-    <div class="card" id="gameCard" style="display: none;">
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <span id="playerBadge" style="font-weight: 700; opacity: 0.9;"></span>
-        <span id="statusBadge" style="font-weight: 800; color: #facc15;">WAITING...</span>
-      </div>
+    <div class="question-box" id="qBox">Loading question...</div>
 
-      <!-- COOL-DOWN BANNER -->
-      <div class="cooldown-banner" id="cooldownBanner">
-        <div id="cooldownText">⚠️ SLIPPED! REGAINING FOOTING (3.0s)...</div>
-        <div class="cooldown-bar-bg">
-          <div class="cooldown-bar-fill" id="cooldownBar"></div>
-        </div>
-      </div>
-
-      <div class="q-box" id="qText">Get Ready!</div>
-
-      <div class="options-grid" id="optionsGrid">
-        <button class="opt" disabled>A</button>
-        <button class="opt" disabled>B</button>
-        <button class="opt" disabled>C</button>
-        <button class="opt" disabled>D</button>
-      </div>
+    <div class="options-grid" id="optionsGrid">
+      <button class="opt-btn" onclick="submitAnswer(0)" id="opt0">Option 1</button>
+      <button class="opt-btn" onclick="submitAnswer(1)" id="opt1">Option 2</button>
+      <button class="opt-btn" onclick="submitAnswer(2)" id="opt2">Option 3</button>
+      <button class="opt-btn" onclick="submitAnswer(3)" id="opt3">Option 4</button>
     </div>
+  </div>
+
+  <!-- GAME ENDED SCREEN -->
+  <div class="card" id="endScreen" style="display: none;">
+    <h1 style="font-family: 'Outfit', sans-serif; font-size: 2.5rem; margin-bottom: 0.5rem;" id="endTitle">MATCH OVER</h1>
+    <p style="font-size: 1.2rem; opacity: 0.9;" id="endSubtitle">Great effort!</p>
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, set, push, onValue, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, set, push, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const app = initializeApp({
-      apiKey: "AIzaSyCS3yT10PtrUfFqvO4MhsZucgEatbSFKZY", 
+      apiKey: "AIzaSyCS3yT10PtrUfFqvO4MhsZucgEatbSFKZY",
       authDomain: "tug-of-war-game-f18b3.firebaseapp.com",
-      databaseURL: "https://tug-of-war-game-f18b3-default-rtdb.firebaseio.com", 
+      databaseURL: "https://tug-of-war-game-f18b3-default-rtdb.firebaseio.com",
       projectId: "tug-of-war-game-f18b3"
     });
+
     const db = getDatabase(app);
-    const gameRef = ref(db, "game/state");
-    const pullsRef = ref(db, "game/pulls");
 
-    const QUESTIONS = {
-      A: [
-        { q: "Solid to Liquid phase change?", opts: ["Melting", "Freezing", "Sublimation", "Deposition"], answer: "Melting" },
-        { q: "Liquid to Gas phase change?", opts: ["Condensation", "Evaporation", "Freezing", "Melting"], answer: "Evaporation" },
-        { q: "Solid directly to Gas?", opts: ["Deposition", "Melting", "Sublimation", "Condensation"], answer: "Sublimation" },
-        { q: "Gas to Liquid phase change?", opts: ["Freezing", "Condensation", "Evaporation", "Sublimation"], answer: "Condensation" }
-      ],
-      B: [
-        { q: "Liquid to Solid phase change?", opts: ["Freezing", "Melting", "Evaporation", "Sublimation"], answer: "Freezing" },
-        { q: "Gas directly to Solid?", opts: ["Sublimation", "Deposition", "Condensation", "Melting"], answer: "Deposition" },
-        { q: "Does adding heat increase molecular speed?", opts: ["Yes", "No", "Only in solids", "Never"], answer: "Yes" },
-        { q: "Gas to Liquid phase change?", opts: ["Condensation", "Melting", "Freezing", "Evaporation"], answer: "Condensation" }
-      ]
-    };
+    const questions = [
+      { q: "What phase change occurs when solid ice turns directly into water vapor?", options: ["Sublimation", "Deposition", "Melting", "Evaporation"], answer: 0 },
+      { q: "What is the reverse process of condensation?", options: ["Freezing", "Evaporation", "Sublimation", "Melting"], answer: 1 },
+      { q: "During freezing, a liquid turns into a solid by...", options: ["Gaining Heat", "Losing Heat", "Sublimating", "Boiling"], answer: 1 },
+      { q: "Frost forming on a cold windshield is an example of...", options: ["Deposition", "Condensation", "Freezing", "Evaporation"], answer: 0 },
+      { q: "What process causes water droplets to form on the outside of a cold glass?", options: ["Evaporation", "Condensation", "Melting", "Sublimation"], answer: 1 }
+    ];
 
-    let myName = "", myTeam = "", qIdx = 0, currentStatus = "waiting", isSuddenDeath = false, isCoolingDown = false;
-    let lastCdVal = null;
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    let myPlayerId = null;
+    let myTeam = null; // 'A' (Red) or 'B' (Blue)
+    let currentQIndex = 0;
+    let streak = 0;
+    let isSuddenDeath = false;
 
-    function playBeep(freq, type, duration) {
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-      const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
-      osc.type = type; osc.frequency.value = freq; osc.connect(gain); gain.connect(audioCtx.destination);
-      osc.start(); gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
-      osc.stop(audioCtx.currentTime + duration);
+    // LISTEN TO ROOM RESET / ROSTER CLEAR
+    function listenToPresence() {
+      if (!myPlayerId) return;
+      onValue(ref(db, `game/presence/${myPlayerId}`), (snapshot) => {
+        if (!snapshot.exists()) {
+          // Host clicked "Clear Roster" -> Redirect back to Join Match screen
+          myPlayerId = null;
+          myTeam = null;
+          document.body.className = "";
+          document.getElementById("gameScreen").style.display = "none";
+          document.getElementById("waitingScreen").style.display = "none";
+          document.getElementById("endScreen").style.display = "none";
+          document.getElementById("joinScreen").style.display = "block";
+        }
+      });
     }
 
+    // JOIN MATCH & AUTOMATICALLY BALANCE TEAMS
     window.joinGame = function() {
-      const nameInput = document.getElementById("playerName").value.trim();
+      const nameInput = document.getElementById("studentNameInput").value.trim();
       if (!nameInput) return alert("Please enter your name!");
 
-      myName = nameInput;
+      myPlayerId = "p_" + Math.random().toString(36).substr(2, 9);
 
-      // Deterministic auto-team assignment based on name + timestamp hash
-      const uniqueId = `${myName}_${Date.now()}`;
-      let hash = 0;
-      for (let i = 0; i < uniqueId.length; i++) {
-        hash = (hash << 5) - hash + uniqueId.charCodeAt(i);
-        hash |= 0;
-      }
-      myTeam = Math.abs(hash) % 2 === 0 ? 'A' : 'B';
+      onValue(ref(db, "game/presence"), (snapshot) => {
+        if (myTeam) return; // Team already assigned
 
-      // Register presence in Firebase
-      const playerRef = ref(db, `game/presence/${uniqueId}`);
-      set(playerRef, { name: myName, team: myTeam });
-      onDisconnect(playerRef).remove();
-
-      // Apply Team Color Theme to Whole Body & Running Borders
-      document.body.className = myTeam === 'A' ? 'team-red' : 'team-blue';
-
-      // Update UI
-      document.getElementById("joinCard").style.display = "none";
-      document.getElementById("gameCard").style.display = "flex";
-      
-      const badge = document.getElementById("playerBadge");
-      badge.innerText = `${myName} (${myTeam === 'A' ? 'RED TEAM' : 'BLUE TEAM'})`;
-      badge.style.color = myTeam === 'A' ? '#ff8593' : '#7dd3fc';
-
-      listenToGame();
-    };
-
-    function listenToGame() {
-      onValue(gameRef, (snapshot) => {
-        const data = snapshot.val() || {};
-        currentStatus = data.status || "waiting";
-        isSuddenDeath = (data.timerSecs !== undefined && data.timerSecs <= 30 && data.timerSecs > 0);
-
-        const statusBadge = document.getElementById("statusBadge");
-        const cdOverlay = document.getElementById("cdOverlay");
-        const cdNum = document.getElementById("cdNum");
-
-        if (currentStatus === "countdown") {
-          const cdVal = data.countdownVal !== undefined ? data.countdownVal : "3";
-          
-          // Show dramatic fullscreen overlay
-          cdOverlay.style.display = "flex";
-          cdNum.innerText = cdVal;
-
-          // Sound trigger on number tick
-          if (cdVal !== lastCdVal) {
-            playBeep(cdVal === "GO!" ? 880 : 440, "triangle", 0.25);
-            lastCdVal = cdVal;
-          }
-
-          statusBadge.innerText = `READY...`;
-          statusBadge.style.color = "#facc15";
-          document.getElementById("qText").innerText = "Get Ready!";
-          disableButtons(true);
-        } else {
-          // Hide countdown overlay during active play or waiting
-          cdOverlay.style.display = "none";
-          lastCdVal = null;
-
-          if (currentStatus === "playing") {
-            statusBadge.innerText = isSuddenDeath ? "🔥 SUDDEN DEATH 2X!" : "PULL!";
-            statusBadge.style.color = isSuddenDeath ? "#ff2a5f" : "#4ade80";
-            if (!isCoolingDown) {
-              renderQ();
-            }
-          } else if (currentStatus === "ended") {
-            statusBadge.innerText = "MATCH OVER";
-            statusBadge.style.color = "#ef4444";
-            document.getElementById("qText").innerText = data.winner === myTeam ? "🎉 YOUR TEAM WON!" : (data.winner === "TIE" ? "🤝 IT'S A TIE!" : "💔 MATCH LOST");
-            disableButtons(true);
-          } else {
-            statusBadge.innerText = "WAITING FOR HOST...";
-            statusBadge.style.color = "#facc15";
-            document.getElementById("qText").innerText = "Waiting for host to start...";
-            disableButtons(true);
-          }
-        }
-      });
-    }
-
-    function renderQ() {
-      if (currentStatus !== "playing" || isCoolingDown) return;
-      const q = QUESTIONS[myTeam][qIdx];
-      document.getElementById("qText").innerText = q.q;
-      const grid = document.getElementById("optionsGrid");
-      grid.innerHTML = "";
-
-      q.opts.forEach(opt => {
-        const btn = document.createElement("button");
-        btn.className = "opt";
-        btn.innerText = opt;
-        btn.onclick = (e) => handleAnswer(opt, e);
-        grid.appendChild(btn);
-      });
-    }
-
-    function disableButtons(disabled) {
-      document.querySelectorAll("button.opt").forEach(b => b.disabled = disabled);
-    }
-
-    window.handleAnswer = function(selected, evt) {
-      if (currentStatus !== "playing" || isCoolingDown) return;
-
-      const isCorrect = selected === QUESTIONS[myTeam][qIdx].answer;
-      
-      // Floating score FX
-      const el = document.createElement("div");
-      el.className = `float-fx ${isCorrect ? 'fx-plus' : 'fx-minus'}`;
-      el.innerText = isCorrect ? "+5 PTS" : "SLIPPED!";
-      el.style.left = `${evt.clientX - 25}px`; 
-      el.style.top = `${evt.clientY - 15}px`;
-      document.body.appendChild(el);
-      setTimeout(() => el.remove(), 800);
-
-      if (isCorrect) {
-        playBeep(587.33, "sine", 0.2);
-        
-        let pullForce = isSuddenDeath ? 30 : 15;
-        let pointsAdded = 5;
-
-        push(pullsRef, {
-          team: myTeam,
-          force: pullForce,
-          points: pointsAdded,
-          timestamp: Date.now()
+        const players = snapshot.val() || {};
+        let countA = 0, countB = 0;
+        Object.values(players).forEach(p => {
+          if (p.team === 'A') countA++;
+          if (p.team === 'B') countB++;
         });
 
-        qIdx = (qIdx + 1) % QUESTIONS[myTeam].length;
-        renderQ();
+        // Assign to smaller team
+        myTeam = countA <= countB ? 'A' : 'B';
 
-      } else {
-        // Slipped Penalty
-        playBeep(130.81, "square", 0.3);
-        triggerCooldown(3);
-      }
+        // Save presence in Firebase
+        set(ref(db, `game/presence/${myPlayerId}`), {
+          name: nameInput,
+          team: myTeam
+        });
+
+        setupStudentUI();
+        listenToPresence();
+      }, { onlyOnce: true });
     };
 
-    function triggerCooldown(seconds) {
-      isCoolingDown = true;
-      const banner = document.getElementById("cooldownBanner");
-      const text = document.getElementById("cooldownText");
-      const bar = document.getElementById("cooldownBar");
-      disableButtons(true);
+    function setupStudentUI() {
+      document.getElementById("joinScreen").style.display = "none";
+      document.getElementById("waitingScreen").style.display = "block";
 
-      banner.style.display = "flex";
-      bar.style.width = "100%";
+      if (myTeam === 'A') {
+        document.body.className = "team-a-theme";
+        document.getElementById("waitingTeamTitle").innerText = "🔴 YOU ARE TEAM RED";
+        document.getElementById("hudTeamBadge").innerText = "RED TEAM";
+        document.getElementById("hudTeamBadge").style.color = "#ff5263";
+      } else {
+        document.body.className = "team-b-theme";
+        document.getElementById("waitingTeamTitle").innerText = "🔵 YOU ARE TEAM BLUE";
+        document.getElementById("hudTeamBadge").innerText = "BLUE TEAM";
+        document.getElementById("hudTeamBadge").style.color = "#38bdf8";
+      }
+    }
 
-      const startTime = Date.now();
-      const durationMs = seconds * 1000;
+    // LISTEN TO GAME STATE
+    onValue(ref(db, "game/state"), (snapshot) => {
+      const state = snapshot.val() || {};
+      const cdOverlay = document.getElementById("studentCdOverlay");
+      const cdNum = document.getElementById("studentCdNum");
 
-      const timer = setInterval(() => {
-        const elapsed = Date.now() - startTime;
-        const remainingMs = Math.max(0, durationMs - elapsed);
-        const percentLeft = (remainingMs / durationMs) * 100;
+      // Check Sudden Death 2X multiplier
+      isSuddenDeath = state.timerSecs !== undefined && state.timerSecs <= 30;
 
-        bar.style.width = `${percentLeft}%`;
-        text.innerText = `⚠️ SLIPPED! REGAINING FOOTING (${(remainingMs / 1000).toFixed(1)}s)...`;
+      if (state.status === "countdown") {
+        cdOverlay.style.display = "flex";
+        cdNum.innerText = state.countdownVal !== undefined ? state.countdownVal : "3";
+      } else {
+        cdOverlay.style.display = "none";
 
-        if (remainingMs <= 0) {
-          clearInterval(timer);
-          isCoolingDown = false;
-          banner.style.display = "none";
-          
-          if (currentStatus === "playing") {
-            qIdx = (qIdx + 1) % QUESTIONS[myTeam].length;
-            renderQ();
+        if (state.status === "playing" && myTeam) {
+          document.getElementById("waitingScreen").style.display = "none";
+          document.getElementById("endScreen").style.display = "none";
+          document.getElementById("gameScreen").style.display = "block";
+          loadQuestion();
+        } else if (state.status === "ended") {
+          document.getElementById("gameScreen").style.display = "none";
+          document.getElementById("endScreen").style.display = "block";
+
+          const endTitle = document.getElementById("endTitle");
+          const endSubtitle = document.getElementById("endSubtitle");
+
+          if (state.winner === myTeam) {
+            endTitle.innerText = "🏆 VICTORY!";
+            endTitle.style.color = "#4ade80";
+            endSubtitle.innerText = "Your team pulled off the win!";
+          } else if (state.winner === "TIE") {
+            endTitle.innerText = "🤝 IT'S A TIE!";
+            endTitle.style.color = "#facc15";
+            endSubtitle.innerText = "Evenly matched battle!";
+          } else {
+            endTitle.innerText = "💔 DEFEAT";
+            endTitle.style.color = "#ef4444";
+            endSubtitle.innerText = "Better luck next round!";
           }
         }
-      }, 50);
+      }
+    });
+
+    function loadQuestion() {
+      const q = questions[currentQIndex];
+      document.getElementById("qBox").innerText = q.q;
+      q.options.forEach((opt, idx) => {
+        document.getElementById(`opt${idx}`).innerText = opt;
+      });
     }
+
+    window.submitAnswer = function(selectedIdx) {
+      const q = questions[currentQIndex];
+      const gameCard = document.getElementById("gameScreen");
+
+      if (selectedIdx === q.answer) {
+        // CORRECT ANSWER
+        streak++;
+        gameCard.classList.add("correct-flash");
+        setTimeout(() => gameCard.classList.remove("correct-flash"), 600);
+
+        // Calculate pull force (Base 12 + Streak bonus * Sudden Death multiplier)
+        const multiplier = isSuddenDeath ? 2 : 1;
+        const forceVal = (12 + (streak * 3)) * multiplier;
+        const pointsVal = 100 * multiplier;
+
+        // Push pull payload to Firebase queue
+        push(ref(db, "game/pulls"), {
+          team: myTeam,
+          force: forceVal,
+          points: pointsVal,
+          timestamp: Date.now()
+        });
+      } else {
+        // INCORRECT ANSWER
+        streak = 0;
+        gameCard.classList.add("incorrect-flash");
+        setTimeout(() => gameCard.classList.remove("incorrect-flash"), 600);
+      }
+
+      document.getElementById("streakDisplay").innerText = `🔥 ${streak} STREAK`;
+
+      // Cycle through questions
+      currentQIndex = (currentQIndex + 1) % questions.length;
+      loadQuestion();
+    };
   </script>
 </body>
 </html>
