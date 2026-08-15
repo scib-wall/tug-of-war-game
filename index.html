@@ -302,16 +302,48 @@
 
     const QUESTIONS = {
       A: [
-        { q: "Solid to Liquid phase change?", opts: ["Melting", "Freezing", "Sublimation", "Deposition"], answer: "Melting" },
-        { q: "Liquid to Gas phase change?", opts: ["Condensation", "Evaporation", "Freezing", "Melting"], answer: "Evaporation" },
-        { q: "Solid directly to Gas?", opts: ["Deposition", "Melting", "Sublimation", "Condensation"], answer: "Sublimation" },
-        { q: "Gas to Liquid phase change?", opts: ["Freezing", "Condensation", "Evaporation", "Sublimation"], answer: "Condensation" }
+        { q: "Which state of matter has no fixed shape or volume?", opts: ["Solid", "Liquid", "Gas", "Ice"], answer: "Gas" },
+        { q: "Water droplets form on the outside of a cold glass because of:", opts: ["Melting", "Condensation", "Freezing", "Sublimation"], answer: "Condensation" },
+        { q: "What is the process when a liquid changes into a solid?", opts: ["Melting", "Freezing", "Condensation", "Sublimation"], answer: "Freezing" },
+        { q: "What happens to ice when it is heated?", opts: ["It freezes", "It melts", "It deposits", "It condenses"], answer: "It melts" },
+        { q: "Clouds form when water vapor undergoes:", opts: ["Melting", "Freezing", "Condensation", "Sublimation"], answer: "Condensation" },
+        { q: "When water boils, it changes from:", opts: ["Solid to liquid", "Liquid to gas", "Gas to liquid", "Solid to gas"], answer: "Liquid to gas" },
+        { q: "Which phase change releases heat?", opts: ["Melting", "Evaporation", "Sublimation", "Freezing"], answer: "Freezing" },
+        { q: "Which state of matter takes the shape of its container but has a fixed volume?", opts: ["Solid", "Liquid", "Gas", "Plasma"], answer: "Liquid" },
+        { q: "Butter becoming liquid when heated is an example of:", opts: ["Freezing", "Melting", "Condensation", "Deposition"], answer: "Melting" },
+        { q: "What happens to water when it is placed in a freezer?", opts: ["It melts", "It evaporates", "It freezes", "It sublimates"], answer: "It freezes" },
+        { q: "Which state of matter has a fixed shape?", opts: ["Gas", "Liquid", "Solid", "Vapor"], answer: "Solid" },
+        { q: "What is the process when a gas changes into a liquid?", opts: ["Melting", "Condensation", "Freezing", "Sublimation"], answer: "Condensation" },
+        { q: "What is the process when a solid changes directly into a gas?", opts: ["Sublimation", "Melting", "Freezing", "Condensation"], answer: "Sublimation" },
+        { q: "Wet clothes dry because water undergoes:", opts: ["Evaporation", "Freezing", "Deposition", "Melting"], answer: "Evaporation" },
+        { q: "Frost forming on a cold surface is an example of:", opts: ["Deposition", "Melting", "Evaporation", "Vaporization"], answer: "Deposition" },
+        { q: "What is the process when a liquid changes into a gas?", opts: ["Freezing", "Melting", "Vaporization", "Deposition"], answer: "Vaporization" },
+        { q: "Which phase change requires heat?", opts: ["Freezing", "Condensation", "Melting", "Deposition"], answer: "Melting" },
+        { q: "Dry ice changing directly into gas is an example of:", opts: ["Freezing", "Condensation", "Sublimation", "Melting"], answer: "Sublimation" },
+        { q: "What is the process when a solid changes into a liquid?", opts: ["Melting", "Freezing", "Evaporation", "Deposition"], answer: "Melting" },
+        { q: "What is the process when a gas changes directly into a solid?", opts: ["Evaporation", "Melting", "Deposition", "Freezing"], answer: "Deposition" }
       ],
       B: [
-        { q: "Liquid to Solid phase change?", opts: ["Freezing", "Melting", "Evaporation", "Sublimation"], answer: "Freezing" },
-        { q: "Gas directly to Solid?", opts: ["Sublimation", "Deposition", "Condensation", "Melting"], answer: "Deposition" },
-        { q: "Does adding heat increase molecular speed?", opts: ["Yes", "No", "Only in solids", "Never"], answer: "Yes" },
-        { q: "Gas to Liquid phase change?", opts: ["Condensation", "Melting", "Freezing", "Evaporation"], answer: "Condensation" }
+        { q: "What happens to ice when it is heated?", opts: ["It freezes", "It melts", "It deposits", "It condenses"], answer: "It melts" },
+        { q: "Dry ice changing directly into gas is an example of:", opts: ["Freezing", "Condensation", "Sublimation", "Melting"], answer: "Sublimation" },
+        { q: "When water boils, it changes from:", opts: ["Solid to liquid", "Liquid to gas", "Gas to liquid", "Solid to gas"], answer: "Liquid to gas" },
+        { q: "What is the process when a solid changes directly into a gas?", opts: ["Sublimation", "Melting", "Freezing", "Condensation"], answer: "Sublimation" },
+        { q: "Which state of matter has no fixed shape or volume?", opts: ["Solid", "Liquid", "Gas", "Ice"], answer: "Gas" },
+        { q: "What is the process when a gas changes directly into a solid?", opts: ["Evaporation", "Melting", "Deposition", "Freezing"], answer: "Deposition" },
+        { q: "What is the process when a solid changes into a liquid?", opts: ["Melting", "Freezing", "Evaporation", "Deposition"], answer: "Melting" },
+        { q: "Clouds form when water vapor undergoes:", opts: ["Melting", "Freezing", "Condensation", "Sublimation"], answer: "Condensation" },
+        { q: "What is the process when a liquid changes into a solid?", opts: ["Melting", "Freezing", "Condensation", "Sublimation"], answer: "Freezing" },
+        { q: "Frost forming on a cold surface is an example of:", opts: ["Deposition", "Melting", "Evaporation", "Vaporization"], answer: "Deposition" },
+        { q: "Which phase change releases heat?", opts: ["Melting", "Evaporation", "Sublimation", "Freezing"], answer: "Freezing" },
+        { q: "Which state of matter has a fixed shape?", opts: ["Gas", "Liquid", "Solid", "Vapor"], answer: "Solid" },
+        { q: "Which state of matter takes the shape of its container but has a fixed volume?", opts: ["Solid", "Liquid", "Gas", "Plasma"], answer: "Liquid" },
+        { q: "Water droplets form on the outside of a cold glass because of:", opts: ["Melting", "Condensation", "Freezing", "Sublimation"], answer: "Condensation" },
+        { q: "Wet clothes dry because water undergoes:", opts: ["Evaporation", "Freezing", "Deposition", "Melting"], answer: "Evaporation" },
+        { q: "What happens to water when it is placed in a freezer?", opts: ["It melts", "It evaporates", "It freezes", "It sublimates"], answer: "It freezes" },
+        { q: "Which phase change requires heat?", opts: ["Freezing", "Condensation", "Melting", "Deposition"], answer: "Melting" },
+        { q: "What is the process when a gas changes into a liquid?", opts: ["Melting", "Condensation", "Freezing", "Sublimation"], answer: "Condensation" },
+        { q: "Butter becoming liquid when heated is an example of:", opts: ["Freezing", "Melting", "Condensation", "Deposition"], answer: "Melting" },
+        { q: "What is the process when a liquid changes into a gas?", opts: ["Freezing", "Melting", "Vaporization", "Deposition"], answer: "Vaporization" }
       ]
     };
 
