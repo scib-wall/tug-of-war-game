@@ -242,6 +242,112 @@
       50% { transform: scale(1.1); opacity: 1; }
       100% { transform: scale(1); opacity: 1; }
     }
+
+    /* DRAMATIC WIN / LOSE POPUP OVERLAY */
+    .result-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 7, 18, 0.92);
+      backdrop-filter: blur(25px);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      padding: 20px;
+      animation: fadeInResult 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes fadeInResult {
+      from { opacity: 0; transform: scale(0.85); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .result-card {
+      background: rgba(15, 23, 42, 0.9);
+      border-radius: 32px;
+      padding: 40px 28px;
+      max-width: 420px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      position: relative;
+      box-shadow: 0 0 60px rgba(0, 0, 0, 0.8);
+    }
+
+    .result-overlay.win .result-card {
+      border: 3px solid #4ade80;
+      box-shadow: 0 0 80px rgba(74, 222, 128, 0.5), inset 0 0 30px rgba(74, 222, 128, 0.2);
+      animation: victoryPulse 2s infinite alternate;
+    }
+
+    .result-overlay.lose .result-card {
+      border: 3px solid #ef4444;
+      box-shadow: 0 0 80px rgba(239, 68, 68, 0.5), inset 0 0 30px rgba(239, 68, 68, 0.2);
+      animation: defeatShake 0.6s cubic-bezier(.36,.07,.19,.97) both;
+    }
+
+    .result-overlay.tie .result-card {
+      border: 3px solid #facc15;
+      box-shadow: 0 0 80px rgba(250, 204, 21, 0.5), inset 0 0 30px rgba(250, 204, 21, 0.2);
+    }
+
+    @keyframes victoryPulse {
+      0% { transform: scale(1); box-shadow: 0 0 60px rgba(74, 222, 128, 0.4); }
+      100% { transform: scale(1.03); box-shadow: 0 0 90px rgba(74, 222, 128, 0.8); }
+    }
+
+    @keyframes defeatShake {
+      10%, 90% { transform: translate3d(-2px, 0, 0); }
+      20%, 80% { transform: translate3d(4px, 0, 0); }
+      30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+      40%, 60% { transform: translate3d(6px, 0, 0); }
+    }
+
+    .result-icon {
+      font-size: 5rem;
+      line-height: 1;
+      filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
+      animation: iconFloat 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes iconFloat {
+      0% { transform: translateY(0) scale(1); }
+      100% { transform: translateY(-12px) scale(1.1); }
+    }
+
+    .result-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      line-height: 1.1;
+    }
+
+    .win .result-title {
+      color: #4ade80;
+      text-shadow: 0 0 25px rgba(74, 222, 128, 0.8);
+    }
+
+    .lose .result-title {
+      color: #f87171;
+      text-shadow: 0 0 25px rgba(248, 113, 113, 0.8);
+    }
+
+    .tie .result-title {
+      color: #facc15;
+      text-shadow: 0 0 25px rgba(250, 204, 21, 0.8);
+    }
+
+    .result-subtitle {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.85);
+      line-height: 1.4;
+    }
   </style>
 </head>
 <body>
@@ -250,6 +356,15 @@
   <div class="countdown-overlay" id="cdOverlay">
     <div class="cd-label">GET READY</div>
     <div class="cd-number" id="cdNum">3</div>
+  </div>
+
+  <!-- DRAMATIC RESULT POPUP OVERLAY -->
+  <div class="result-overlay" id="resultOverlay">
+    <div class="result-card">
+      <div class="result-icon" id="resIcon">🏆</div>
+      <div class="result-title" id="resTitle">VICTORY!</div>
+      <div class="result-subtitle" id="resSubtitle">Your team pulled through to take the win!</div>
+    </div>
   </div>
 
   <div class="card-wrapper">
@@ -269,7 +384,7 @@
 
       <!-- COOL-DOWN BANNER -->
       <div class="cooldown-banner" id="cooldownBanner">
-        <div id="cooldownText">⚠️ SLIPPED! REGAINING FOOTING (4.0s)...</div>
+        <div id="cooldownText">⚠️ SLIPPED! REGAINING FOOTING (5.0s)...</div>
         <div class="cooldown-bar-bg">
           <div class="cooldown-bar-fill" id="cooldownBar"></div>
         </div>
@@ -389,6 +504,7 @@
 
     let myName = "", myTeam = "", qIdx = 0, currentStatus = "waiting", isSuddenDeath = false, isCoolingDown = false;
     let lastCdVal = null;
+    let resultOverlayShown = false;
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
     function playBeep(freq, type, duration) {
@@ -397,6 +513,22 @@
       osc.type = type; osc.frequency.value = freq; osc.connect(gain); gain.connect(audioCtx.destination);
       osc.start(); gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
       osc.stop(audioCtx.currentTime + duration);
+    }
+
+    function playVictorySound() {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+      notes.forEach((freq, idx) => {
+        setTimeout(() => playBeep(freq, "triangle", 0.3), idx * 120);
+      });
+    }
+
+    function playDefeatSound() {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const notes = [400, 350, 300, 220];
+      notes.forEach((freq, idx) => {
+        setTimeout(() => playBeep(freq, "sawtooth", 0.35), idx * 150);
+      });
     }
 
     window.joinGame = function() {
@@ -442,8 +574,13 @@
         const statusBadge = document.getElementById("statusBadge");
         const cdOverlay = document.getElementById("cdOverlay");
         const cdNum = document.getElementById("cdNum");
+        const resultOverlay = document.getElementById("resultOverlay");
 
         if (currentStatus === "countdown") {
+          resultOverlayShown = false;
+          resultOverlay.style.display = "none";
+          resultOverlay.className = "result-overlay";
+
           const cdVal = data.countdownVal !== undefined ? data.countdownVal : "3";
           
           // Show dramatic fullscreen overlay
@@ -466,6 +603,10 @@
           lastCdVal = null;
 
           if (currentStatus === "playing") {
+            resultOverlayShown = false;
+            resultOverlay.style.display = "none";
+            resultOverlay.className = "result-overlay";
+
             statusBadge.innerText = isSuddenDeath ? "🔥 SUDDEN DEATH 2X!" : "PULL!";
             statusBadge.style.color = isSuddenDeath ? "#ff2a5f" : "#4ade80";
             if (!isCoolingDown) {
@@ -474,9 +615,42 @@
           } else if (currentStatus === "ended") {
             statusBadge.innerText = "MATCH OVER";
             statusBadge.style.color = "#ef4444";
-            document.getElementById("qText").innerText = data.winner === myTeam ? "🎉 YOUR TEAM WON!" : (data.winner === "TIE" ? "🤝 IT'S A TIE!" : "💔 MATCH LOST");
             disableButtons(true);
+
+            // Show Dramatic Win/Lose Popup Overlay
+            if (!resultOverlayShown) {
+              resultOverlayShown = true;
+              const resIcon = document.getElementById("resIcon");
+              const resTitle = document.getElementById("resTitle");
+              const resSubtitle = document.getElementById("resSubtitle");
+
+              if (data.winner === myTeam) {
+                resultOverlay.className = "result-overlay win";
+                resIcon.innerText = "🏆";
+                resTitle.innerText = "VICTORY!";
+                resSubtitle.innerText = "Your team pulled with relentless force and dominated the match!";
+                playVictorySound();
+              } else if (data.winner === "TIE") {
+                resultOverlay.className = "result-overlay tie";
+                resIcon.innerText = "🤝";
+                resTitle.innerText = "DRAW!";
+                resSubtitle.innerText = "An evenly matched battle! Both teams stood their ground.";
+                playBeep(440, "sine", 0.4);
+              } else {
+                resultOverlay.className = "result-overlay lose";
+                resIcon.innerText = "💔";
+                resTitle.innerText = "DEFEAT";
+                resSubtitle.innerText = "The opposition dragged your team across the line. Better luck next time!";
+                playDefeatSound();
+              }
+
+              resultOverlay.style.display = "flex";
+            }
           } else {
+            resultOverlayShown = false;
+            resultOverlay.style.display = "none";
+            resultOverlay.className = "result-overlay";
+
             statusBadge.innerText = "WAITING FOR HOST...";
             statusBadge.style.color = "#facc15";
             document.getElementById("qText").innerText = "Waiting for host to start...";
@@ -537,9 +711,9 @@
         renderQ();
 
       } else {
-        // Slipped Penalty - Increased to 4 seconds
+        // Slipped Penalty - Increased to 5 seconds
         playBeep(130.81, "square", 0.3);
-        triggerCooldown(4);
+        triggerCooldown(5);
       }
     };
 
