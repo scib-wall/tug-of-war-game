@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Phase Changes: Student Player</title>
+  <title>Phase Changes: Tug of War Player</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Outfit:wght@800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700;900&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
     
@@ -20,490 +20,336 @@
       justify-content: center;
       align-items: center;
       padding: 1rem;
-      /* Default neutral state */
-      background: linear-gradient(-45deg, #0f172a, #1e1b4b, #0369a1, #312e81);
-      background-size: 300% 300%;
-      animation: subtleBG 16s ease infinite;
-      transition: background 1s ease-in-out;
-      overflow: hidden;
-    }
-
-    /* DRAMATIC TEAM-SPECIFIC BACKGROUND GRADIENTS */
-    body.team-red {
-      background: linear-gradient(-45deg, #7f1d1d, #ef4444, #450a0a, #000000) !important;
-      background-size: 300% 300% !important;
-      animation: subtleBG 6s ease infinite !important;
-    }
-
-    body.team-blue {
-      background: linear-gradient(-45deg, #075985, #0284c7, #030712, #0f172a) !important;
-      background-size: 300% 300% !important;
-      animation: subtleBG 6s ease infinite !important;
-    }
-
-    @keyframes subtleBG { 
-      0% { background-position: 0% 50%; } 
-      50% { background-position: 100% 50%; } 
-      100% { background-position: 0% 50%; } 
-    }
-
-    /* CARD CONTAINER WITH ANIMATED PERIMETER RUNNING LIGHT */
-    .card-wrapper {
+      overflow-x: hidden;
       position: relative;
-      width: 100%;
-      max-width: 450px;
-      border-radius: 30px;
-      padding: 3px;
-      background: linear-gradient(90deg, #38bdf8, #ef4444, #facc15, #38bdf8);
+      background: linear-gradient(-45deg, #0a1128, #1e1b4b, #0f172a, #172554);
       background-size: 300% 300%;
-      animation: runningBorder 4s linear infinite;
-      box-shadow: 0 0 25px rgba(0,0,0,0.6);
+      animation: bgGlow 12s ease infinite;
     }
 
-    /* PERIMETER INTENSIFIES ACCORDING TO TEAMS */
-    body.team-red .card-wrapper {
-      background: linear-gradient(90deg, #ff0000, #ff5263, #3a0000, #ff0000);
-      background-size: 300% 300%;
-      animation: runningBorder 2.5s linear infinite;
-      box-shadow: 0 0 35px rgba(239, 68, 68, 0.4);
-    }
-
-    body.team-blue .card-wrapper {
-      background: linear-gradient(90deg, #0284c7, #38bdf8, #001e3d, #0284c7);
-      background-size: 300% 300%;
-      animation: runningBorder 2.5s linear infinite;
-      box-shadow: 0 0 35px rgba(56, 189, 248, 0.4);
-    }
-
-    @keyframes runningBorder {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
+    @keyframes bgGlow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
     .card {
-      background: rgba(10, 15, 30, 0.85);
-      backdrop-filter: blur(28px) saturate(160%);
-      -webkit-backdrop-filter: blur(28px) saturate(160%);
-      border-radius: 27px;
-      padding: 24px;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(24px) saturate(160%);
+      -webkit-backdrop-filter: blur(24px) saturate(160%);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: clamp(20px, 4vw, 36px);
+      border-radius: 28px;
       width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      position: relative;
+      max-width: 500px;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.18);
     }
 
-    h1 { font-family: 'Outfit', sans-serif; font-size: 1.8rem; font-weight: 900; letter-spacing: 1px; }
-    
+    .title {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 900;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      background: linear-gradient(135deg, #38bdf8, #818cf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .team-badge {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 50px;
+      font-weight: 800;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    }
+    .badge-red { background: linear-gradient(135deg, #ef4444, #dc2626); color: #fff; box-shadow: 0 4px 15px rgba(239,68,68,0.4); }
+    .badge-blue { background: linear-gradient(135deg, #0284c7, #2563eb); color: #fff; box-shadow: 0 4px 15px rgba(2,132,199,0.4); }
+
     input[type="text"] {
       width: 100%;
-      padding: 14px;
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,0.2);
-      background: rgba(0,0,0,0.4);
-      color: white;
-      font-size: 1.1rem;
+      padding: 14px 18px;
       font-family: 'Fredoka', sans-serif;
-      text-align: center;
+      font-size: 1.1rem;
+      border-radius: 16px;
+      border: 2px solid rgba(255,255,255,0.2);
+      background: rgba(0,0,0,0.3);
+      color: #fff;
+      margin-bottom: 16px;
       outline: none;
+      transition: border-color 0.2s ease;
+      text-align: center;
+    }
+    input[type="text"]:focus { border-color: #38bdf8; }
+
+    .team-select-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .team-btn-choice {
+      padding: 14px;
+      border-radius: 18px;
+      border: 2px solid transparent;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 900;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: rgba(255,255,255,0.05);
+      color: rgba(255,255,255,0.7);
+    }
+    .team-btn-choice.selected-red {
+      background: rgba(239, 68, 68, 0.25);
+      border-color: #ef4444;
+      color: #ff8888;
+      box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);
+    }
+    .team-btn-choice.selected-blue {
+      background: rgba(56, 189, 248, 0.25);
+      border-color: #38bdf8;
+      color: #7dd3fc;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
     }
 
-    .btn {
-      padding: 14px;
+    .btn-action {
+      width: 100%;
+      padding: 16px;
       border-radius: 50px;
       border: none;
-      font-family: 'Outfit', sans-serif;
-      font-size: 1.1rem;
-      font-weight: 800;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: transform 0.15s ease, background 0.2s ease;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
       color: white;
+      box-shadow: 0 8px 20px rgba(34, 197, 94, 0.3);
     }
-    .btn:active { transform: scale(0.96); }
+    .btn-action:hover { transform: translateY(-2px); }
+    .btn-action:active { transform: translateY(0); }
 
-    .join-btn { 
-      background: linear-gradient(135deg, #0284c7, #2563eb); 
-      box-shadow: 0 6px 20px rgba(2, 132, 199, 0.4); 
+    .question-box {
+      font-size: clamp(1.1rem, 3.5vw, 1.35rem);
+      font-weight: 700;
+      margin-bottom: 20px;
+      line-height: 1.4;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
     }
 
-    .q-box { font-size: 1.15rem; line-height: 1.4; font-weight: 600; min-height: 60px; display: flex; align-items: center; justify-content: center; }
-    
-    .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    
-    button.opt {
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.2);
-      color: white;
-      padding: 16px 10px;
-      border-radius: 18px;
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .opt-btn {
+      padding: 14px 18px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.06);
+      color: #fff;
       font-family: 'Fredoka', sans-serif;
       font-size: 1rem;
-      font-weight: 700;
+      font-weight: 600;
       cursor: pointer;
+      text-align: left;
       transition: all 0.2s ease;
     }
-    button.opt:active:not(:disabled) { transform: scale(0.95); background: rgba(255,255,255,0.25); }
+    .opt-btn:hover { background: rgba(255,255,255,0.15); transform: translateX(4px); }
+    .opt-btn.correct { background: #22c55e !important; border-color: #4ade80 !important; color: #fff; }
+    .opt-btn.wrong { background: #ef4444 !important; border-color: #f87171 !important; color: #fff; }
 
-    button.opt:disabled {
-      opacity: 0.35;
-      cursor: not-allowed;
-      filter: grayscale(80%);
-      transform: none !important;
+    .status-overlay {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(15, 23, 42, 0.92);
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      z-index: 100;
+      padding: 20px;
+      backdrop-filter: blur(12px);
     }
+    .hidden { display: none !important; }
 
-    /* COOL-DOWN WARNING BANNER & PROGRESS BAR */
-    .cooldown-banner {
-      background: rgba(239, 68, 68, 0.25);
-      border: 1px solid rgba(239, 68, 68, 0.5);
-      color: #fca5a5;
-      padding: 10px 14px;
-      border-radius: 20px;
-      font-size: 0.85rem;
-      font-weight: 700;
-      display: none;
-      flex-direction: column;
-      gap: 6px;
-      animation: pulseAlert 0.6s infinite alternate;
-    }
-
-    .cooldown-bar-bg {
-      width: 100%;
-      height: 6px;
-      background: rgba(0, 0, 0, 0.4);
-      border-radius: 10px;
-      overflow: hidden;
-    }
-
-    .cooldown-bar-fill {
-      width: 100%;
-      height: 100%;
-      background: #f87171;
-      border-radius: 10px;
-      transition: width 0.1s linear;
-    }
-
-    @keyframes pulseAlert {
-      from { opacity: 0.85; transform: scale(0.99); }
-      to { opacity: 1; transform: scale(1.01); }
-    }
-
-    /* FLOATING FEEDBACK FX */
-    .float-fx {
-      position: fixed;
-      font-family: 'Outfit', sans-serif;
-      font-weight: 900;
-      font-size: 1.4rem;
-      pointer-events: none;
-      animation: floatUp 0.8s ease-out forwards;
-      z-index: 1000;
-    }
-    .fx-plus { color: #4ade80; text-shadow: 0 0 10px rgba(74, 222, 128, 0.6); }
-    .fx-minus { color: #f87171; text-shadow: 0 0 10px rgba(248, 113, 113, 0.6); }
-
-    @keyframes floatUp {
-      0% { opacity: 1; transform: translateY(0) scale(1); }
-      100% { opacity: 0; transform: translateY(-40px) scale(1.2); }
-    }
-
-    /* FULLSCREEN DRAMATIC COUNTDOWN OVERLAY */
-    .countdown-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.88);
-      backdrop-filter: blur(15px);
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-    }
-
-    .cd-number {
-      font-family: 'Outfit', sans-serif;
-      font-size: 8rem;
-      font-weight: 900;
-      color: #facc15;
-      text-shadow: 0 0 30px rgba(250, 204, 21, 0.8), 0 0 60px rgba(250, 204, 21, 0.4);
-      animation: cdPop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite;
-    }
-
-    .cd-label {
-      font-family: 'Outfit', sans-serif;
-      font-size: 2rem;
+    .streak-pop {
+      font-size: 0.95rem;
       font-weight: 800;
-      letter-spacing: 3px;
-      color: #ffffff;
-      text-transform: uppercase;
-    }
-
-    @keyframes cdPop {
-      0% { transform: scale(0.3); opacity: 0; }
-      50% { transform: scale(1.1); opacity: 1; }
-      100% { transform: scale(1); opacity: 1; }
+      color: #facc15;
+      margin-top: 10px;
+      letter-spacing: 0.5px;
     }
   </style>
 </head>
 <body>
 
-  <!-- DRAMATIC COUNTDOWN OVERLAY -->
-  <div class="countdown-overlay" id="cdOverlay">
-    <div class="cd-label">GET READY</div>
-    <div class="cd-number" id="cdNum">3</div>
+  <!-- JOIN SCREEN -->
+  <div class="card" id="joinScreen">
+    <div class="title">Join Game</div>
+    <p style="opacity:0.8; font-size:0.9rem; margin-bottom:20px;">Enter your name and pick a team!</p>
+    
+    <input type="text" id="playerName" placeholder="Enter Your Name" maxlength="16">
+    
+    <div class="team-select-container">
+      <button class="team-btn-choice" id="btnRed" onclick="selectTeam('A')">RED TEAM</button>
+      <button class="team-btn-choice" id="btnBlue" onclick="selectTeam('B')">BLUE TEAM</button>
+    </div>
+
+    <button class="btn-action" onclick="joinGame()">READY TO PLAY</button>
   </div>
 
-  <div class="card-wrapper">
-    <!-- JOIN CARD -->
-    <div class="card" id="joinCard">
-      <h1>JOIN THE MATCH</h1>
-      <input type="text" id="playerName" placeholder="Enter Your Name" maxlength="15">
-      <button class="btn join-btn" style="width: 100%; margin-top: 6px;" onclick="joinGame()">JOIN MATCH</button>
-    </div>
+  <!-- GAMEPLAY SCREEN -->
+  <div class="card hidden" id="gameScreen">
+    <div id="teamBadge" class="team-badge">TEAM</div>
+    <div class="question-box" id="questionTxt">Loading Question...</div>
+    <div class="options-grid" id="optionsContainer"></div>
+    <div class="streak-pop" id="streakTxt">🔥 Streak: 0</div>
+  </div>
 
-    <!-- GAME PLAY CARD -->
-    <div class="card" id="gameCard" style="display: none;">
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <span id="playerBadge" style="font-weight: 700; opacity: 0.9;"></span>
-        <span id="statusBadge" style="font-weight: 800; color: #facc15;">WAITING...</span>
-      </div>
-
-      <!-- COOL-DOWN BANNER -->
-      <div class="cooldown-banner" id="cooldownBanner">
-        <div id="cooldownText">⚠️ SLIPPED! REGAINING FOOTING (3.0s)...</div>
-        <div class="cooldown-bar-bg">
-          <div class="cooldown-bar-fill" id="cooldownBar"></div>
-        </div>
-      </div>
-
-      <div class="q-box" id="qText">Get Ready!</div>
-
-      <div class="options-grid" id="optionsGrid">
-        <button class="opt" disabled>A</button>
-        <button class="opt" disabled>B</button>
-        <button class="opt" disabled>C</button>
-        <button class="opt" disabled>D</button>
-      </div>
-    </div>
+  <!-- WAITING / GAME END OVERLAY -->
+  <div class="status-overlay hidden" id="statusOverlay">
+    <h1 id="statusTitle" style="font-family:'Outfit'; font-size:2.5rem; margin-bottom:10px;">GET READY!</h1>
+    <p id="statusDesc" style="font-size:1.2rem; opacity:0.9; text-align:center;">Waiting for the host to start...</p>
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, set, push, onValue, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, onValue, push, set, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const app = initializeApp({
-      apiKey: "AIzaSyCS3yT10PtrUfFqvO4MhsZucgEatbSFKZY", 
-      authDomain: "tug-of-war-game-f18b3.firebaseapp.com",
-      databaseURL: "https://tug-of-war-game-f18b3-default-rtdb.firebaseio.com", 
-      projectId: "tug-of-war-game-f18b3"
+      apiKey: "AIzaSyCS3yT10PtrUfFqvO4MhsZucgEatbSFKZY", authDomain: "tug-of-war-game-f18b3.firebaseapp.com",
+      databaseURL: "https://tug-of-war-game-f18b3-default-rtdb.firebaseio.com", projectId: "tug-of-war-game-f18b3"
     });
     const db = getDatabase(app);
-    const gameRef = ref(db, "game/state");
-    const pullsRef = ref(db, "game/pulls");
 
-    const QUESTIONS = {
-      A: [
-        { q: "Solid to Liquid phase change?", opts: ["Melting", "Freezing", "Sublimation", "Deposition"], answer: "Melting" },
-        { q: "Liquid to Gas phase change?", opts: ["Condensation", "Evaporation", "Freezing", "Melting"], answer: "Evaporation" },
-        { q: "Solid directly to Gas?", opts: ["Deposition", "Melting", "Sublimation", "Condensation"], answer: "Sublimation" },
-        { q: "Gas to Liquid phase change?", opts: ["Freezing", "Condensation", "Evaporation", "Sublimation"], answer: "Condensation" }
-      ],
-      B: [
-        { q: "Liquid to Solid phase change?", opts: ["Freezing", "Melting", "Evaporation", "Sublimation"], answer: "Freezing" },
-        { q: "Gas directly to Solid?", opts: ["Sublimation", "Deposition", "Condensation", "Melting"], answer: "Deposition" },
-        { q: "Does adding heat increase molecular speed?", opts: ["Yes", "No", "Only in solids", "Never"], answer: "Yes" },
-        { q: "Gas to Liquid phase change?", opts: ["Condensation", "Melting", "Freezing", "Evaporation"], answer: "Condensation" }
-      ]
+    // 20 UPDATED QUESTIONS
+    const questions = [
+      { q: "What is the process when a gas changes into a liquid?", options: ["Melting", "Condensation", "Freezing", "Sublimation"], answer: 1 },
+      { q: "What is the process when a solid changes into a liquid?", options: ["Melting", "Freezing", "Evaporation", "Deposition"], answer: 0 },
+      { q: "What is the process when a liquid changes into a gas?", options: ["Freezing", "Melting", "Vaporization", "Deposition"], answer: 2 },
+      { q: "What is the process when a liquid changes into a solid?", options: ["Melting", "Freezing", "Condensation", "Sublimation"], answer: 1 },
+      { q: "What is the process when a solid changes directly into a gas?", options: ["Sublimation", "Melting", "Freezing", "Condensation"], answer: 0 },
+      { q: "What is the process when a gas changes directly into a solid?", options: ["Evaporation", "Melting", "Deposition", "Freezing"], answer: 2 },
+      { q: "What happens to ice when it is heated?", options: ["It freezes", "It melts", "It deposits", "It condenses"], answer: 1 },
+      { q: "What happens to water when it is placed in a freezer?", options: ["It melts", "It evaporates", "It freezes", "It sublimates"], answer: 2 },
+      { q: "Water droplets form on the outside of a cold glass because of:", options: ["Melting", "Condensation", "Freezing", "Sublimation"], answer: 1 },
+      { q: "Wet clothes dry because water undergoes:", options: ["Evaporation", "Freezing", "Deposition", "Melting"], answer: 0 },
+      { q: "Which phase change requires heat?", options: ["Freezing", "Condensation", "Melting", "Deposition"], answer: 2 },
+      { q: "Which phase change releases heat?", options: ["Melting", "Evaporation", "Sublimation", "Freezing"], answer: 3 },
+      { q: "When water boils, it changes from:", options: ["Solid to liquid", "Liquid to gas", "Gas to liquid", "Solid to gas"], answer: 1 },
+      { q: "Frost forming on a cold surface is an example of:", options: ["Deposition", "Melting", "Evaporation", "Vaporization"], answer: 0 },
+      { q: "Which state of matter has a fixed shape?", options: ["Gas", "Liquid", "Solid", "Vapor"], answer: 2 },
+      { q: "Which state of matter takes the shape of its container but has a fixed volume?", options: ["Solid", "Liquid", "Gas", "Plasma"], answer: 1 },
+      { q: "Which state of matter has no fixed shape or volume?", options: ["Solid", "Liquid", "Gas", "Ice"], answer: 2 },
+      { q: "Butter becoming liquid when heated is an example of:", options: ["Freezing", "Melting", "Condensation", "Deposition"], answer: 1 },
+      { q: "Clouds form when water vapor undergoes:", options: ["Melting", "Freezing", "Condensation", "Sublimation"], answer: 2 },
+      { q: "Dry ice changing directly into gas is an example of:", options: ["Freezing", "Condensation", "Sublimation", "Melting"], answer: 2 }
+    ];
+
+    let myTeam = null, myName = "", currentQIndex = 0, streak = 0, isAnsweringAllowed = true;
+    let playerId = "player_" + Math.random().toString(36).substr(2, 9);
+
+    window.selectTeam = function(team) {
+      myTeam = team;
+      document.getElementById("btnRed").className = `team-btn-choice ${team === 'A' ? 'selected-red' : ''}`;
+      document.getElementById("btnBlue").className = `team-btn-choice ${team === 'B' ? 'selected-blue' : ''}`;
     };
-
-    let myName = "", myTeam = "", qIdx = 0, currentStatus = "waiting", isSuddenDeath = false, isCoolingDown = false;
-    let lastCdVal = null;
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-    function playBeep(freq, type, duration) {
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-      const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
-      osc.type = type; osc.frequency.value = freq; osc.connect(gain); gain.connect(audioCtx.destination);
-      osc.start(); gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
-      osc.stop(audioCtx.currentTime + duration);
-    }
 
     window.joinGame = function() {
-      const nameInput = document.getElementById("playerName").value.trim();
-      if (!nameInput) return alert("Please enter your name!");
+      myName = document.getElementById("playerName").value.trim();
+      if (!myName) return alert("Please enter your name!");
+      if (!myTeam) return alert("Please choose a team!");
 
-      myName = nameInput;
+      set(ref(db, `game/presence/${playerId}`), { name: myName, team: myTeam });
 
-      // Deterministic auto-team assignment based on name + timestamp hash
-      const uniqueId = `${myName}_${Date.now()}`;
-      let hash = 0;
-      for (let i = 0; i < uniqueId.length; i++) {
-        hash = (hash << 5) - hash + uniqueId.charCodeAt(i);
-        hash |= 0;
-      }
-      myTeam = Math.abs(hash) % 2 === 0 ? 'A' : 'B';
-
-      // Register presence in Firebase
-      const playerRef = ref(db, `game/presence/${uniqueId}`);
-      set(playerRef, { name: myName, team: myTeam });
-      onDisconnect(playerRef).remove();
-
-      // Apply Team Color Theme to Whole Body & Running Borders
-      document.body.className = myTeam === 'A' ? 'team-red' : 'team-blue';
-
-      // Update UI
-      document.getElementById("joinCard").style.display = "none";
-      document.getElementById("gameCard").style.display = "flex";
+      document.getElementById("joinScreen").classList.add("hidden");
+      document.getElementById("gameScreen").classList.remove("hidden");
       
-      const badge = document.getElementById("playerBadge");
-      badge.innerText = `${myName} (${myTeam === 'A' ? 'RED TEAM' : 'BLUE TEAM'})`;
-      badge.style.color = myTeam === 'A' ? '#ff8593' : '#7dd3fc';
+      const badge = document.getElementById("teamBadge");
+      badge.innerText = myTeam === 'A' ? "TEAM RED" : "TEAM BLUE";
+      badge.className = `team-badge ${myTeam === 'A' ? 'badge-red' : 'badge-blue'}`;
 
-      listenToGame();
+      loadNextQuestion();
     };
 
-    function listenToGame() {
-      onValue(gameRef, (snapshot) => {
-        const data = snapshot.val() || {};
-        currentStatus = data.status || "waiting";
-        isSuddenDeath = (data.timerSecs !== undefined && data.timerSecs <= 30 && data.timerSecs > 0);
+    function loadNextQuestion() {
+      isAnsweringAllowed = true;
+      currentQIndex = Math.floor(Math.random() * questions.length);
+      const q = questions[currentQIndex];
 
-        const statusBadge = document.getElementById("statusBadge");
-        const cdOverlay = document.getElementById("cdOverlay");
-        const cdNum = document.getElementById("cdNum");
+      document.getElementById("questionTxt").innerText = q.q;
+      const optsContainer = document.getElementById("optionsContainer");
+      optsContainer.innerHTML = "";
 
-        if (currentStatus === "countdown") {
-          const cdVal = data.countdownVal !== undefined ? data.countdownVal : "3";
-          
-          // Show dramatic fullscreen overlay
-          cdOverlay.style.display = "flex";
-          cdNum.innerText = cdVal;
-
-          // Sound trigger on number tick
-          if (cdVal !== lastCdVal) {
-            playBeep(cdVal === "GO!" ? 880 : 440, "triangle", 0.25);
-            lastCdVal = cdVal;
-          }
-
-          statusBadge.innerText = `READY...`;
-          statusBadge.style.color = "#facc15";
-          document.getElementById("qText").innerText = "Get Ready!";
-          disableButtons(true);
-        } else {
-          // Hide countdown overlay during active play or waiting
-          cdOverlay.style.display = "none";
-          lastCdVal = null;
-
-          if (currentStatus === "playing") {
-            statusBadge.innerText = isSuddenDeath ? "🔥 SUDDEN DEATH 2X!" : "PULL!";
-            statusBadge.style.color = isSuddenDeath ? "#ff2a5f" : "#4ade80";
-            if (!isCoolingDown) {
-              renderQ();
-            }
-          } else if (currentStatus === "ended") {
-            statusBadge.innerText = "MATCH OVER";
-            statusBadge.style.color = "#ef4444";
-            document.getElementById("qText").innerText = data.winner === myTeam ? "🎉 YOUR TEAM WON!" : (data.winner === "TIE" ? "🤝 IT'S A TIE!" : "💔 MATCH LOST");
-            disableButtons(true);
-          } else {
-            statusBadge.innerText = "WAITING FOR HOST...";
-            statusBadge.style.color = "#facc15";
-            document.getElementById("qText").innerText = "Waiting for host to start...";
-            disableButtons(true);
-          }
-        }
-      });
-    }
-
-    function renderQ() {
-      if (currentStatus !== "playing" || isCoolingDown) return;
-      const q = QUESTIONS[myTeam][qIdx];
-      document.getElementById("qText").innerText = q.q;
-      const grid = document.getElementById("optionsGrid");
-      grid.innerHTML = "";
-
-      q.opts.forEach(opt => {
+      q.options.forEach((optStr, idx) => {
         const btn = document.createElement("button");
-        btn.className = "opt";
-        btn.innerText = opt;
-        btn.onclick = (e) => handleAnswer(opt, e);
-        grid.appendChild(btn);
+        btn.className = "opt-btn";
+        btn.innerText = `${String.fromCharCode(65 + idx)}. ${optStr}`;
+        btn.onclick = () => submitAnswer(idx, btn);
+        optsContainer.appendChild(btn);
       });
     }
 
-    function disableButtons(disabled) {
-      document.querySelectorAll("button.opt").forEach(b => b.disabled = disabled);
-    }
+    function submitAnswer(chosenIndex, btnElement) {
+      if (!isAnsweringAllowed) return;
+      isAnsweringAllowed = false;
 
-    window.handleAnswer = function(selected, evt) {
-      if (currentStatus !== "playing" || isCoolingDown) return;
-
-      const isCorrect = selected === QUESTIONS[myTeam][qIdx].answer;
-      
-      // Floating score FX
-      const el = document.createElement("div");
-      el.className = `float-fx ${isCorrect ? 'fx-plus' : 'fx-minus'}`;
-      el.innerText = isCorrect ? "+5 PTS" : "SLIPPED!";
-      el.style.left = `${evt.clientX - 25}px`; 
-      el.style.top = `${evt.clientY - 15}px`;
-      document.body.appendChild(el);
-      setTimeout(() => el.remove(), 800);
+      const q = questions[currentQIndex];
+      const isCorrect = chosenIndex === q.answer;
 
       if (isCorrect) {
-        playBeep(587.33, "sine", 0.2);
+        btnElement.classList.add("correct");
+        streak++;
+        const forceVal = 1 + (streak * 0.2); // Bonus pull power for streak
         
-        let pullForce = isSuddenDeath ? 30 : 15;
-        let pointsAdded = 5;
-
-        push(pullsRef, {
+        push(ref(db, "game/pulls"), {
           team: myTeam,
-          force: pullForce,
-          points: pointsAdded,
-          timestamp: Date.now()
+          force: forceVal,
+          points: 10,
+          timestamp: serverTimestamp()
         });
-
-        qIdx = (qIdx + 1) % QUESTIONS[myTeam].length;
-        renderQ();
-
       } else {
-        // Slipped Penalty
-        playBeep(130.81, "square", 0.3);
-        triggerCooldown(3);
+        btnElement.classList.add("wrong");
+        streak = 0;
       }
-    };
 
-    function triggerCooldown(seconds) {
-      isCoolingDown = true;
-      const banner = document.getElementById("cooldownBanner");
-      const text = document.getElementById("cooldownText");
-      const bar = document.getElementById("cooldownBar");
-      disableButtons(true);
+      document.getElementById("streakTxt").innerText = `🔥 Streak: ${streak}`;
 
-      banner.style.display = "flex";
-      bar.style.width = "100%";
-
-      const startTime = Date.now();
-      const durationMs = seconds * 1000;
-
-      const timer = setInterval(() => {
-        const elapsed = Date.now() - startTime;
-        const remainingMs = Math.max(0, durationMs - elapsed);
-        const percentLeft = (remainingMs / durationMs) * 100;
-
-        bar.style.width = `${percentLeft}%`;
-        text.innerText = `⚠️ SLIPPED! REGAINING FOOTING (${(remainingMs / 1000).toFixed(1)}s)...`;
-
-        if (remainingMs <= 0) {
-          clearInterval(timer);
-          isCoolingDown = false;
-          banner.style.display = "none";
-          
-          if (currentStatus === "playing") {
-            qIdx = (qIdx + 1) % QUESTIONS[myTeam].length;
-            renderQ();
-          }
-        }
-      }, 50);
+      setTimeout(() => {
+        loadNextQuestion();
+      }, 1000);
     }
+
+    // Sync Game State with Host
+    onValue(ref(db, "game/state"), (snapshot) => {
+      const state = snapshot.val() || {};
+      const overlay = document.getElementById("statusOverlay");
+      const title = document.getElementById("statusTitle");
+      const desc = document.getElementById("statusDesc");
+
+      if (state.status === "countdown") {
+        overlay.classList.remove("hidden");
+        title.innerText = state.countdownVal || "3";
+        desc.innerText = "Get ready to pull!";
+      } else if (state.status === "playing") {
+        overlay.classList.add("hidden");
+      } else if (state.status === "ended") {
+        overlay.classList.remove("hidden");
+        if (state.winner === myTeam) {
+          title.innerText = "🎉 VICTORY! 🎉";
+          desc.innerText = "Your team won the Tug of War!";
+        } else if (state.winner === "TIE") {
+          title.innerText = "🤝 IT'S A TIE!";
+          desc.innerText = "Great effort from both teams!";
+        } else {
+          title.innerText = "💔 DEFEAT";
+          desc.innerText = "Better luck next match!";
+        }
+      } else {
+        // waiting status
+        overlay.classList.remove("hidden");
+        title.innerText = "WAITING FOR HOST";
+        desc.innerText = "The game will start soon...";
+      }
+    });
   </script>
 </body>
 </html>
