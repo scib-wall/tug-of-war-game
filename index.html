@@ -6,7 +6,7 @@
   <title>Phase Changes: Student Player</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Outfit:wght@800;900&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
     
@@ -20,23 +20,74 @@
       justify-content: center;
       align-items: center;
       padding: 1rem;
+      /* Default neutral state */
       background: linear-gradient(-45deg, #0f172a, #1e1b4b, #0369a1, #312e81);
       background-size: 300% 300%;
       animation: subtleBG 16s ease infinite;
+      transition: background 1s ease-in-out;
+      overflow: hidden;
     }
 
-    @keyframes subtleBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+    /* DRAMATIC TEAM-SPECIFIC BACKGROUND GRADIENTS */
+    body.team-red {
+      background: linear-gradient(-45deg, #7f1d1d, #ef4444, #450a0a, #000000) !important;
+      background-size: 300% 300% !important;
+      animation: subtleBG 6s ease infinite !important;
+    }
 
-    .card {
-      background: rgba(15, 23, 42, 0.75);
-      backdrop-filter: blur(28px) saturate(160%);
-      -webkit-backdrop-filter: blur(28px) saturate(160%);
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      border-radius: 28px;
-      padding: 24px;
+    body.team-blue {
+      background: linear-gradient(-45deg, #075985, #0284c7, #030712, #0f172a) !important;
+      background-size: 300% 300% !important;
+      animation: subtleBG 6s ease infinite !important;
+    }
+
+    @keyframes subtleBG { 
+      0% { background-position: 0% 50%; } 
+      50% { background-position: 100% 50%; } 
+      100% { background-position: 0% 50%; } 
+    }
+
+    /* CARD CONTAINER WITH ANIMATED PERIMETER RUNNING LIGHT */
+    .card-wrapper {
+      position: relative;
       width: 100%;
       max-width: 450px;
-      box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+      border-radius: 30px;
+      padding: 3px;
+      background: linear-gradient(90deg, #38bdf8, #ef4444, #facc15, #38bdf8);
+      background-size: 300% 300%;
+      animation: runningBorder 4s linear infinite;
+      box-shadow: 0 0 25px rgba(0,0,0,0.6);
+    }
+
+    /* PERIMETER INTENSIFIES ACCORDING TO TEAMS */
+    body.team-red .card-wrapper {
+      background: linear-gradient(90deg, #ff0000, #ff5263, #3a0000, #ff0000);
+      background-size: 300% 300%;
+      animation: runningBorder 2.5s linear infinite;
+      box-shadow: 0 0 35px rgba(239, 68, 68, 0.4);
+    }
+
+    body.team-blue .card-wrapper {
+      background: linear-gradient(90deg, #0284c7, #38bdf8, #001e3d, #0284c7);
+      background-size: 300% 300%;
+      animation: runningBorder 2.5s linear infinite;
+      box-shadow: 0 0 35px rgba(56, 189, 248, 0.4);
+    }
+
+    @keyframes runningBorder {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .card {
+      background: rgba(10, 15, 30, 0.85);
+      backdrop-filter: blur(28px) saturate(160%);
+      -webkit-backdrop-filter: blur(28px) saturate(160%);
+      border-radius: 27px;
+      padding: 24px;
+      width: 100%;
       display: flex;
       flex-direction: column;
       gap: 16px;
@@ -50,7 +101,7 @@
       padding: 14px;
       border-radius: 16px;
       border: 1px solid rgba(255,255,255,0.2);
-      background: rgba(0,0,0,0.3);
+      background: rgba(0,0,0,0.4);
       color: white;
       font-size: 1.1rem;
       font-family: 'Fredoka', sans-serif;
@@ -71,7 +122,10 @@
     }
     .btn:active { transform: scale(0.96); }
 
-    .join-btn { background: linear-gradient(135deg, #0284c7, #2563eb); box-shadow: 0 6px 20px rgba(2, 132, 199, 0.4); }
+    .join-btn { 
+      background: linear-gradient(135deg, #0284c7, #2563eb); 
+      box-shadow: 0 6px 20px rgba(2, 132, 199, 0.4); 
+    }
 
     .q-box { font-size: 1.15rem; line-height: 1.4; font-weight: 600; min-height: 60px; display: flex; align-items: center; justify-content: center; }
     
@@ -91,7 +145,6 @@
     }
     button.opt:active:not(:disabled) { transform: scale(0.95); background: rgba(255,255,255,0.25); }
 
-    /* DISABLED / COOL-DOWN BUTTON STATE */
     button.opt:disabled {
       opacity: 0.35;
       cursor: not-allowed;
@@ -152,39 +205,84 @@
       0% { opacity: 1; transform: translateY(0) scale(1); }
       100% { opacity: 0; transform: translateY(-40px) scale(1.2); }
     }
+
+    /* FULLSCREEN DRAMATIC COUNTDOWN OVERLAY */
+    .countdown-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.88);
+      backdrop-filter: blur(15px);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .cd-number {
+      font-family: 'Outfit', sans-serif;
+      font-size: 8rem;
+      font-weight: 900;
+      color: #facc15;
+      text-shadow: 0 0 30px rgba(250, 204, 21, 0.8), 0 0 60px rgba(250, 204, 21, 0.4);
+      animation: cdPop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite;
+    }
+
+    .cd-label {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: 3px;
+      color: #ffffff;
+      text-transform: uppercase;
+    }
+
+    @keyframes cdPop {
+      0% { transform: scale(0.3); opacity: 0; }
+      50% { transform: scale(1.1); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
   </style>
 </head>
 <body>
 
-  <!-- JOIN CARD -->
-  <div class="card" id="joinCard">
-    <h1>JOIN THE MATCH</h1>
-    <input type="text" id="playerName" placeholder="Enter Your Name" maxlength="15">
-    <button class="btn join-btn" style="width: 100%; margin-top: 6px;" onclick="joinGame()">JOIN MATCH</button>
+  <!-- DRAMATIC COUNTDOWN OVERLAY -->
+  <div class="countdown-overlay" id="cdOverlay">
+    <div class="cd-label">GET READY</div>
+    <div class="cd-number" id="cdNum">3</div>
   </div>
 
-  <!-- GAME PLAY CARD -->
-  <div class="card" id="gameCard" style="display: none;">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-      <span id="playerBadge" style="font-weight: 700; opacity: 0.8;"></span>
-      <span id="statusBadge" style="font-weight: 800; color: #facc15;">WAITING...</span>
+  <div class="card-wrapper">
+    <!-- JOIN CARD -->
+    <div class="card" id="joinCard">
+      <h1>JOIN THE MATCH</h1>
+      <input type="text" id="playerName" placeholder="Enter Your Name" maxlength="15">
+      <button class="btn join-btn" style="width: 100%; margin-top: 6px;" onclick="joinGame()">JOIN MATCH</button>
     </div>
 
-    <!-- COOL-DOWN BANNER -->
-    <div class="cooldown-banner" id="cooldownBanner">
-      <div id="cooldownText">⚠️ SLIPPED! REGAINING FOOTING (3.0s)...</div>
-      <div class="cooldown-bar-bg">
-        <div class="cooldown-bar-fill" id="cooldownBar"></div>
+    <!-- GAME PLAY CARD -->
+    <div class="card" id="gameCard" style="display: none;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span id="playerBadge" style="font-weight: 700; opacity: 0.9;"></span>
+        <span id="statusBadge" style="font-weight: 800; color: #facc15;">WAITING...</span>
       </div>
-    </div>
 
-    <div class="q-box" id="qText">Get Ready!</div>
+      <!-- COOL-DOWN BANNER -->
+      <div class="cooldown-banner" id="cooldownBanner">
+        <div id="cooldownText">⚠️ SLIPPED! REGAINING FOOTING (3.0s)...</div>
+        <div class="cooldown-bar-bg">
+          <div class="cooldown-bar-fill" id="cooldownBar"></div>
+        </div>
+      </div>
 
-    <div class="options-grid" id="optionsGrid">
-      <button class="opt" disabled>A</button>
-      <button class="opt" disabled>B</button>
-      <button class="opt" disabled>C</button>
-      <button class="opt" disabled>D</button>
+      <div class="q-box" id="qText">Get Ready!</div>
+
+      <div class="options-grid" id="optionsGrid">
+        <button class="opt" disabled>A</button>
+        <button class="opt" disabled>B</button>
+        <button class="opt" disabled>C</button>
+        <button class="opt" disabled>D</button>
+      </div>
     </div>
   </div>
 
@@ -218,6 +316,7 @@
     };
 
     let myName = "", myTeam = "", qIdx = 0, currentStatus = "waiting", isSuddenDeath = false, isCoolingDown = false;
+    let lastCdVal = null;
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
     function playBeep(freq, type, duration) {
@@ -234,10 +333,8 @@
 
       myName = nameInput;
 
-      // Unique ID combining name and millisecond timestamp
+      // Deterministic auto-team assignment based on name + timestamp hash
       const uniqueId = `${myName}_${Date.now()}`;
-
-      // Hash the uniqueId to assign teams evenly (50/50 split) without race conditions
       let hash = 0;
       for (let i = 0; i < uniqueId.length; i++) {
         hash = (hash << 5) - hash + uniqueId.charCodeAt(i);
@@ -250,13 +347,16 @@
       set(playerRef, { name: myName, team: myTeam });
       onDisconnect(playerRef).remove();
 
-      // Update UI instantly
+      // Apply Team Color Theme to Whole Body & Running Borders
+      document.body.className = myTeam === 'A' ? 'team-red' : 'team-blue';
+
+      // Update UI
       document.getElementById("joinCard").style.display = "none";
       document.getElementById("gameCard").style.display = "flex";
       
       const badge = document.getElementById("playerBadge");
       badge.innerText = `${myName} (${myTeam === 'A' ? 'RED TEAM' : 'BLUE TEAM'})`;
-      badge.style.color = myTeam === 'A' ? '#ff5263' : '#38bdf8';
+      badge.style.color = myTeam === 'A' ? '#ff8593' : '#7dd3fc';
 
       listenToGame();
     };
@@ -268,28 +368,48 @@
         isSuddenDeath = (data.timerSecs !== undefined && data.timerSecs <= 30 && data.timerSecs > 0);
 
         const statusBadge = document.getElementById("statusBadge");
+        const cdOverlay = document.getElementById("cdOverlay");
+        const cdNum = document.getElementById("cdNum");
 
         if (currentStatus === "countdown") {
-          statusBadge.innerText = `READY... ${data.countdownVal || ''}`;
+          const cdVal = data.countdownVal !== undefined ? data.countdownVal : "3";
+          
+          // Show dramatic fullscreen overlay
+          cdOverlay.style.display = "flex";
+          cdNum.innerText = cdVal;
+
+          // Sound trigger on number tick
+          if (cdVal !== lastCdVal) {
+            playBeep(cdVal === "GO!" ? 880 : 440, "triangle", 0.25);
+            lastCdVal = cdVal;
+          }
+
+          statusBadge.innerText = `READY...`;
           statusBadge.style.color = "#facc15";
           document.getElementById("qText").innerText = "Get Ready!";
           disableButtons(true);
-        } else if (currentStatus === "playing") {
-          statusBadge.innerText = isSuddenDeath ? "🔥 SUDDEN DEATH 2X!" : "PULL!";
-          statusBadge.style.color = isSuddenDeath ? "#ff2a5f" : "#4ade80";
-          if (!isCoolingDown) {
-            renderQ();
-          }
-        } else if (currentStatus === "ended") {
-          statusBadge.innerText = "MATCH OVER";
-          statusBadge.style.color = "#ef4444";
-          document.getElementById("qText").innerText = data.winner === myTeam ? "🎉 YOUR TEAM WON!" : (data.winner === "TIE" ? "🤝 IT'S A TIE!" : "💔 MATCH LOST");
-          disableButtons(true);
         } else {
-          statusBadge.innerText = "WAITING FOR HOST...";
-          statusBadge.style.color = "#facc15";
-          document.getElementById("qText").innerText = "Waiting for host to start...";
-          disableButtons(true);
+          // Hide countdown overlay during active play or waiting
+          cdOverlay.style.display = "none";
+          lastCdVal = null;
+
+          if (currentStatus === "playing") {
+            statusBadge.innerText = isSuddenDeath ? "🔥 SUDDEN DEATH 2X!" : "PULL!";
+            statusBadge.style.color = isSuddenDeath ? "#ff2a5f" : "#4ade80";
+            if (!isCoolingDown) {
+              renderQ();
+            }
+          } else if (currentStatus === "ended") {
+            statusBadge.innerText = "MATCH OVER";
+            statusBadge.style.color = "#ef4444";
+            document.getElementById("qText").innerText = data.winner === myTeam ? "🎉 YOUR TEAM WON!" : (data.winner === "TIE" ? "🤝 IT'S A TIE!" : "💔 MATCH LOST");
+            disableButtons(true);
+          } else {
+            statusBadge.innerText = "WAITING FOR HOST...";
+            statusBadge.style.color = "#facc15";
+            document.getElementById("qText").innerText = "Waiting for host to start...";
+            disableButtons(true);
+          }
         }
       });
     }
@@ -319,7 +439,7 @@
 
       const isCorrect = selected === QUESTIONS[myTeam][qIdx].answer;
       
-      // Visual Float FX (+5 PTS or SLIPPED!)
+      // Floating score FX
       const el = document.createElement("div");
       el.className = `float-fx ${isCorrect ? 'fx-plus' : 'fx-minus'}`;
       el.innerText = isCorrect ? "+5 PTS" : "SLIPPED!";
@@ -334,7 +454,6 @@
         let pullForce = isSuddenDeath ? 30 : 15;
         let pointsAdded = 5;
 
-        // Push pull event to queue
         push(pullsRef, {
           team: myTeam,
           force: pullForce,
@@ -342,12 +461,11 @@
           timestamp: Date.now()
         });
 
-        // Rotate to next question immediately
         qIdx = (qIdx + 1) % QUESTIONS[myTeam].length;
         renderQ();
 
       } else {
-        // INCORRECT ANSWER: Trigger 3-Second Cool-down Penalty
+        // Slipped Penalty
         playBeep(130.81, "square", 0.3);
         triggerCooldown(3);
       }
