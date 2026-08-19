@@ -3,752 +3,223 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Phase Changes: Student Player</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Outfit:wght@800;900&display=swap" rel="stylesheet">
+  <title>Phase Changes: Tug of War - Player</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
-    
-    body { 
-      font-family: 'Fredoka', sans-serif; 
-      text-align: center; 
-      color: #ffffff; 
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 1rem;
-      /* Default neutral state */
-      background: linear-gradient(-45deg, #0f172a, #1e1b4b, #0369a1, #312e81);
-      background-size: 300% 300%;
-      animation: subtleBG 16s ease infinite;
-      transition: background 1s ease-in-out;
-      overflow: hidden;
+    @keyframes sudden-death-pulse {
+      0%, 100% { background-color: rgba(225, 29, 72, 0.9); }
+      50% { background-color: rgba(217, 119, 6, 0.9); }
     }
-
-    /* DRAMATIC TEAM-SPECIFIC BACKGROUND GRADIENTS */
-    body.team-red {
-      background: linear-gradient(-45deg, #7f1d1d, #ef4444, #450a0a, #000000) !important;
-      background-size: 300% 300% !important;
-      animation: subtleBG 6s ease infinite !important;
-    }
-
-    body.team-blue {
-      background: linear-gradient(-45deg, #075985, #0284c7, #030712, #0f172a) !important;
-      background-size: 300% 300% !important;
-      animation: subtleBG 6s ease infinite !important;
-    }
-
-    @keyframes subtleBG { 
-      0% { background-position: 0% 50%; } 
-      50% { background-position: 100% 50%; } 
-      100% { background-position: 0% 50%; } 
-    }
-
-    /* CARD CONTAINER WITH ANIMATED PERIMETER RUNNING LIGHT */
-    .card-wrapper {
-      position: relative;
-      width: 100%;
-      max-width: 450px;
-      border-radius: 30px;
-      padding: 3px;
-      background: linear-gradient(90deg, #38bdf8, #ef4444, #facc15, #38bdf8);
-      background-size: 300% 300%;
-      animation: runningBorder 4s linear infinite;
-      box-shadow: 0 0 25px rgba(0,0,0,0.6);
-    }
-
-    /* PERIMETER INTENSIFIES ACCORDING TO TEAMS */
-    body.team-red .card-wrapper {
-      background: linear-gradient(90deg, #ff0000, #ff5263, #3a0000, #ff0000);
-      background-size: 300% 300%;
-      animation: runningBorder 2.5s linear infinite;
-      box-shadow: 0 0 35px rgba(239, 68, 68, 0.4);
-    }
-
-    body.team-blue .card-wrapper {
-      background: linear-gradient(90deg, #0284c7, #38bdf8, #001e3d, #0284c7);
-      background-size: 300% 300%;
-      animation: runningBorder 2.5s linear infinite;
-      box-shadow: 0 0 35px rgba(56, 189, 248, 0.4);
-    }
-
-    @keyframes runningBorder {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    .card {
-      background: rgba(10, 15, 30, 0.85);
-      backdrop-filter: blur(28px) saturate(160%);
-      -webkit-backdrop-filter: blur(28px) saturate(160%);
-      border-radius: 27px;
-      padding: 24px;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      position: relative;
-    }
-
-    h1 { font-family: 'Outfit', sans-serif; font-size: 1.8rem; font-weight: 900; letter-spacing: 1px; }
-    
-    input[type="text"] {
-      width: 100%;
-      padding: 14px;
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,0.2);
-      background: rgba(0,0,0,0.4);
-      color: white;
-      font-size: 1.1rem;
-      font-family: 'Fredoka', sans-serif;
-      text-align: center;
-      outline: none;
-    }
-
-    .btn {
-      padding: 14px;
-      border-radius: 50px;
-      border: none;
-      font-family: 'Outfit', sans-serif;
-      font-size: 1.1rem;
-      font-weight: 800;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      color: white;
-    }
-    .btn:active { transform: scale(0.96); }
-
-    .join-btn { 
-      background: linear-gradient(135deg, #0284c7, #2563eb); 
-      box-shadow: 0 6px 20px rgba(2, 132, 199, 0.4); 
-    }
-
-    .q-box { font-size: 1.15rem; line-height: 1.4; font-weight: 600; min-height: 60px; display: flex; align-items: center; justify-content: center; }
-    
-    .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    
-    button.opt {
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.2);
-      color: white;
-      padding: 16px 10px;
-      border-radius: 18px;
-      font-family: 'Fredoka', sans-serif;
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    button.opt:active:not(:disabled) { transform: scale(0.95); background: rgba(255,255,255,0.25); }
-
-    button.opt:disabled {
-      opacity: 0.35;
-      cursor: not-allowed;
-      filter: grayscale(80%);
-      transform: none !important;
-    }
-
-    /* COOL-DOWN WARNING BANNER & PROGRESS BAR */
-    .cooldown-banner {
-      background: rgba(239, 68, 68, 0.25);
-      border: 1px solid rgba(239, 68, 68, 0.5);
-      color: #fca5a5;
-      padding: 10px 14px;
-      border-radius: 20px;
-      font-size: 0.85rem;
-      font-weight: 700;
-      display: none;
-      flex-direction: column;
-      gap: 6px;
-      animation: pulseAlert 0.6s infinite alternate;
-    }
-
-    .cooldown-bar-bg {
-      width: 100%;
-      height: 6px;
-      background: rgba(0, 0, 0, 0.4);
-      border-radius: 10px;
-      overflow: hidden;
-    }
-
-    .cooldown-bar-fill {
-      width: 100%;
-      height: 100%;
-      background: #f87171;
-      border-radius: 10px;
-      transition: width 0.1s linear;
-    }
-
-    @keyframes pulseAlert {
-      from { opacity: 0.85; transform: scale(0.99); }
-      to { opacity: 1; transform: scale(1.01); }
-    }
-
-    /* FLOATING FEEDBACK FX */
-    .float-fx {
-      position: fixed;
-      font-family: 'Outfit', sans-serif;
-      font-weight: 900;
-      font-size: 1.4rem;
-      pointer-events: none;
-      animation: floatUp 0.8s ease-out forwards;
-      z-index: 1000;
-    }
-    .fx-plus { color: #4ade80; text-shadow: 0 0 10px rgba(74, 222, 128, 0.6); }
-    .fx-minus { color: #f87171; text-shadow: 0 0 10px rgba(248, 113, 113, 0.6); }
-
-    @keyframes floatUp {
-      0% { opacity: 1; transform: translateY(0) scale(1); }
-      100% { opacity: 0; transform: translateY(-40px) scale(1.2); }
-    }
-
-    /* FULLSCREEN DRAMATIC COUNTDOWN OVERLAY */
-    .countdown-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.88);
-      backdrop-filter: blur(15px);
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-    }
-
-    .cd-number {
-      font-family: 'Outfit', sans-serif;
-      font-size: 8rem;
-      font-weight: 900;
-      color: #facc15;
-      text-shadow: 0 0 30px rgba(250, 204, 21, 0.8), 0 0 60px rgba(250, 204, 21, 0.4);
-      animation: cdPop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite;
-    }
-
-    .cd-label {
-      font-family: 'Outfit', sans-serif;
-      font-size: 2rem;
-      font-weight: 800;
-      letter-spacing: 3px;
-      color: #ffffff;
-      text-transform: uppercase;
-    }
-
-    @keyframes cdPop {
-      0% { transform: scale(0.3); opacity: 0; }
-      50% { transform: scale(1.1); opacity: 1; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-
-    /* DRAMATIC WIN / LOSE POPUP OVERLAY */
-    .result-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(3, 7, 18, 0.92);
-      backdrop-filter: blur(25px);
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 10000;
-      padding: 20px;
-      animation: fadeInResult 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-
-    @keyframes fadeInResult {
-      from { opacity: 0; transform: scale(0.85); }
-      to { opacity: 1; transform: scale(1); }
-    }
-
-    .result-card {
-      background: rgba(15, 23, 42, 0.9);
-      border-radius: 32px;
-      padding: 40px 28px;
-      max-width: 420px;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-      position: relative;
-      box-shadow: 0 0 60px rgba(0, 0, 0, 0.8);
-    }
-
-    .result-overlay.win .result-card {
-      border: 3px solid #4ade80;
-      box-shadow: 0 0 80px rgba(74, 222, 128, 0.5), inset 0 0 30px rgba(74, 222, 128, 0.2);
-      animation: victoryPulse 2s infinite alternate;
-    }
-
-    .result-overlay.lose .result-card {
-      border: 3px solid #ef4444;
-      box-shadow: 0 0 80px rgba(239, 68, 68, 0.5), inset 0 0 30px rgba(239, 68, 68, 0.2);
-      animation: defeatShake 0.6s cubic-bezier(.36,.07,.19,.97) both;
-    }
-
-    .result-overlay.tie .result-card {
-      border: 3px solid #facc15;
-      box-shadow: 0 0 80px rgba(250, 204, 21, 0.5), inset 0 0 30px rgba(250, 204, 21, 0.2);
-    }
-
-    @keyframes victoryPulse {
-      0% { transform: scale(1); box-shadow: 0 0 60px rgba(74, 222, 128, 0.4); }
-      100% { transform: scale(1.03); box-shadow: 0 0 90px rgba(74, 222, 128, 0.8); }
-    }
-
-    @keyframes defeatShake {
-      10%, 90% { transform: translate3d(-2px, 0, 0); }
-      20%, 80% { transform: translate3d(4px, 0, 0); }
-      30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
-      40%, 60% { transform: translate3d(6px, 0, 0); }
-    }
-
-    .result-icon {
-      font-size: 5rem;
-      line-height: 1;
-      filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
-      animation: iconFloat 2s ease-in-out infinite alternate;
-    }
-
-    @keyframes iconFloat {
-      0% { transform: translateY(0) scale(1); }
-      100% { transform: translateY(-12px) scale(1.1); }
-    }
-
-    .result-title {
-      font-family: 'Outfit', sans-serif;
-      font-size: 2.5rem;
-      font-weight: 900;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      line-height: 1.1;
-    }
-
-    .win .result-title {
-      color: #4ade80;
-      text-shadow: 0 0 25px rgba(74, 222, 128, 0.8);
-    }
-
-    .lose .result-title {
-      color: #f87171;
-      text-shadow: 0 0 25px rgba(248, 113, 113, 0.8);
-    }
-
-    .tie .result-title {
-      color: #facc15;
-      text-shadow: 0 0 25px rgba(250, 204, 21, 0.8);
-    }
-
-    .result-subtitle {
-      font-size: 1.15rem;
-      font-weight: 600;
-      color: rgba(255, 255, 255, 0.85);
-      line-height: 1.4;
+    .animate-sudden-death {
+      animation: sudden-death-pulse 1s infinite ease-in-out;
     }
   </style>
 </head>
-<body>
+<body class="bg-slate-900 text-white min-h-screen font-sans flex flex-col justify-between p-4">
 
-  <!-- DRAMATIC COUNTDOWN OVERLAY -->
-  <div class="countdown-overlay" id="cdOverlay">
-    <div class="cd-label">GET READY</div>
-    <div class="cd-number" id="cdNum">3</div>
+  <!-- Header / Team Info -->
+  <header class="bg-slate-800 border border-slate-700 rounded-2xl p-4 flex justify-between items-center shadow-lg">
+    <div>
+      <h1 class="text-sm font-bold text-slate-400">Player Portal</h1>
+      <div id="playerNameDisplay" class="text-lg font-black text-amber-400">Connecting...</div>
+    </div>
+    <div id="teamBadge" class="px-3 py-1 rounded-full font-black text-xs uppercase tracking-wider bg-slate-700 text-slate-300">
+      Assigning...
+    </div>
+  </header>
+
+  <!-- Sudden Death Alert Banner (Hidden by default) -->
+  <div id="suddenDeathNotice" class="hidden my-2 p-3 rounded-xl animate-sudden-death text-center text-white font-black text-xs tracking-wider uppercase shadow-xl border border-amber-300">
+    ⚡ SUDDEN DEATH MODE! LAST 30 SECONDS! ⚡
   </div>
 
-  <!-- DRAMATIC RESULT POPUP OVERLAY -->
-  <div class="result-overlay" id="resultOverlay">
-    <div class="result-card">
-      <div class="result-icon" id="resIcon">🏆</div>
-      <div class="result-title" id="resTitle">VICTORY!</div>
-      <div class="result-subtitle" id="resSubtitle">Your team pulled through to take the win!</div>
-    </div>
-  </div>
+  <!-- Game Active Area -->
+  <main class="flex-1 flex flex-col justify-center my-4 max-w-md mx-auto w-full gap-4">
+    
+    <!-- Question Box -->
+    <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-6 text-center shadow-2xl relative overflow-hidden">
+      <span class="text-[10px] font-bold uppercase tracking-widest text-amber-400/80 block mb-2">Phase Changes Quiz</span>
+      <h2 id="questionText" class="text-xl font-bold text-white leading-snug">Waiting for game to start...</h2>
 
-  <div class="card-wrapper">
-    <!-- JOIN CARD -->
-    <div class="card" id="joinCard">
-      <h1>JOIN THE MATCH</h1>
-      <input type="text" id="playerName" placeholder="Enter Your Name" maxlength="15">
-      <button class="btn join-btn" style="width: 100%; margin-top: 6px;" onclick="joinGame()">JOIN MATCH</button>
-    </div>
-
-    <!-- GAME PLAY CARD -->
-    <div class="card" id="gameCard" style="display: none;">
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <span id="playerBadge" style="font-weight: 700; opacity: 0.9;"></span>
-        <span id="statusBadge" style="font-weight: 800; color: #facc15;">WAITING...</span>
-      </div>
-
-      <!-- COOL-DOWN BANNER -->
-      <div class="cooldown-banner" id="cooldownBanner">
-        <div id="cooldownText">⚠️ SLIPPED! REGAINING FOOTING (5.0s)...</div>
-        <div class="cooldown-bar-bg">
-          <div class="cooldown-bar-fill" id="cooldownBar"></div>
-        </div>
-      </div>
-
-      <div class="q-box" id="qText">Get Ready!</div>
-
-      <div class="options-grid" id="optionsGrid">
-        <button class="opt" disabled>A</button>
-        <button class="opt" disabled>B</button>
-        <button class="opt" disabled>C</button>
-        <button class="opt" disabled>D</button>
+      <!-- Penalty Lockout Overlay -->
+      <div id="penaltyOverlay" class="hidden absolute inset-0 bg-slate-950/90 backdrop-blur-sm flex-col items-center justify-center z-20">
+        <span class="text-3xl mb-1">⏳</span>
+        <span class="text-rose-400 font-black text-lg">WRONG ANSWER!</span>
+        <p class="text-slate-300 text-xs mt-1">Locked out for <span id="penaltyTimer" class="font-bold text-amber-400">5</span>s</p>
       </div>
     </div>
-  </div>
 
+    <!-- Answer Choices -->
+    <div id="choicesContainer" class="grid grid-cols-1 gap-3">
+      <!-- Options rendered via JS -->
+    </div>
+
+  </main>
+
+  <!-- Footer / Score -->
+  <footer class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-3 text-center text-xs text-slate-400">
+    Your Score: <span id="playerScore" class="font-bold text-emerald-400 font-mono text-sm">0</span>
+  </footer>
+
+  <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, set, push, onValue, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, onValue, set, push, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-rtdb.js";
 
-    const app = initializeApp({
-      apiKey: "AIzaSyCS3yT10PtrUfFqvO4MhsZucgEatbSFKZY", 
-      authDomain: "tug-of-war-game-f18b3.firebaseapp.com",
-      databaseURL: "https://tug-of-war-game-f18b3-default-rtdb.firebaseio.com", 
-      projectId: "tug-of-war-game-f18b3"
-    });
+    const firebaseConfig = {
+      databaseURL: "https://tug-of-war-game-f18b3-default-rtdb.firebaseio.com"
+    };
+
+    const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
-    const gameRef = ref(db, "game/state");
-    const pullsRef = ref(db, "game/pulls");
 
-    const QUESTIONS = {
-      A: [
-        { q: "What is the process when a gas changes into a liquid?", opts: ["Melting", "Condensation", "Freezing", "Sublimation"], answer: "Condensation" },
-        { q: "What is the process when a solid changes into a liquid?", opts: ["Melting", "Freezing", "Evaporation", "Deposition"], answer: "Melting" },
-        { q: "What is the process when a liquid changes into a gas?", opts: ["Freezing", "Melting", "Evaporation", "Deposition"], answer: "Evaporation" },
-        { q: "What is the process when a liquid changes into a solid?", opts: ["Melting", "Freezing", "Condensation", "Sublimation"], answer: "Freezing" },
-        { q: "What is the process when a solid changes directly into a gas?", opts: ["Sublimation", "Melting", "Freezing", "Condensation"], answer: "Sublimation" },
-        { q: "What is the process when a gas changes directly into a solid?", opts: ["Evaporation", "Melting", "Deposition", "Freezing"], answer: "Deposition" },
-        { q: "What happens to ice when it is heated?", opts: ["It freezes", "It melts", "It deposits", "It condenses"], answer: "It melts" },
-        { q: "What happens to water when it is placed in a freezer?", opts: ["It melts", "It evaporates", "It freezes", "It sublimates"], answer: "It freezes" },
-        { q: "Water droplets form on the outside of a cold glass because of:", opts: ["Melting", "Condensation", "Freezing", "Sublimation"], answer: "Condensation" },
-        { q: "Wet clothes dry because water undergoes:", opts: ["Evaporation", "Freezing", "Deposition", "Melting"], answer: "Evaporation" },
-        { q: "Which phase change requires heat?", opts: ["Freezing", "Condensation", "Melting", "Deposition"], answer: "Melting" },
-        { q: "Which phase change releases heat?", opts: ["Melting", "Evaporation", "Sublimation", "Freezing"], answer: "Freezing" },
-        { q: "When water boils, it changes from:", opts: ["Solid to liquid", "Liquid to gas", "Gas to liquid", "Solid to gas"], answer: "Liquid to gas" },
-        { q: "Frost forming on a cold surface is an example of:", opts: ["Deposition", "Melting", "Evaporation", "Vaporization"], answer: "Deposition" },
-        { q: "Which state of matter has a fixed shape?", opts: ["Gas", "Liquid", "Solid", "Vapor"], answer: "Solid" },
-        { q: "Which state of matter takes the shape of its container but has a fixed volume?", opts: ["Solid", "Liquid", "Gas", "Plasma"], answer: "Liquid" },
-        { q: "Which state of matter has no fixed shape or volume?", opts: ["Solid", "Liquid", "Gas", "Ice"], answer: "Gas" },
-        { q: "Butter becoming liquid when heated is an example of:", opts: ["Freezing", "Melting", "Condensation", "Deposition"], answer: "Melting" },
-        { q: "Clouds form when water vapor undergoes:", opts: ["Melting", "Freezing", "Condensation", "Sublimation"], answer: "Condensation" },
-        { q: "Dry ice changing directly into gas is an example of:", opts: ["Freezing", "Condensation", "Sublimation", "Melting"], answer: "Sublimation" },
-        { q: "Which process changes a liquid into a gas?", opts: ["Freezing", "Evaporation", "Condensation", "Deposition"], answer: "Evaporation" },
-        { q: "Which process changes a gas into a liquid?", opts: ["Melting", "Sublimation", "Condensation", "Freezing"], answer: "Condensation" },
-        { q: "Which phase change happens when water becomes ice?", opts: ["Melting", "Freezing", "Evaporation", "Sublimation"], answer: "Freezing" },
-        { q: "Which phase change happens when ice becomes water?", opts: ["Freezing", "Condensation", "Melting", "Deposition"], answer: "Melting" },
-        { q: "Which process occurs when water vapor becomes water?", opts: ["Condensation", "Melting", "Sublimation", "Freezing"], answer: "Condensation" },
-        { q: "Which process occurs when water changes into water vapor?", opts: ["Freezing", "Evaporation", "Deposition", "Condensation"], answer: "Evaporation" },
-        { q: "Which phase change absorbs heat?", opts: ["Melting", "Freezing", "Condensation", "Deposition"], answer: "Melting" },
-        { q: "Which phase change is endothermic?", opts: ["Freezing", "Condensation", "Melting", "Deposition"], answer: "Melting" },
-        { q: "An endothermic process usually:", opts: ["Releases heat", "Absorbs heat", "Produces ice", "Removes water"], answer: "Absorbs heat" },
-        { q: "An exothermic process usually:", opts: ["Absorbs heat", "Releases heat", "Melts solids", "Produces gas"], answer: "Releases heat" },
-        { q: "Which is an exothermic phase change?", opts: ["Melting", "Evaporation", "Freezing", "Sublimation"], answer: "Freezing" },
-        { q: "Which is an endothermic phase change?", opts: ["Condensation", "Freezing", "Deposition", "Evaporation"], answer: "Evaporation" },
-        { q: "When ice melts, it:", opts: ["Releases heat", "Absorbs heat", "Loses all energy", "Becomes a gas immediately"], answer: "Absorbs heat" },
-        { q: "When water freezes, it:", opts: ["Absorbs heat", "Releases heat", "Becomes a gas", "Sublimates"], answer: "Releases heat" },
-        { q: "When water evaporates, it:", opts: ["Absorbs heat", "Releases heat", "Freezes", "Deposits"], answer: "Absorbs heat" },
-        { q: "When water vapor condenses, it:", opts: ["Absorbs heat", "Releases heat", "Melts", "Sublimates"], answer: "Releases heat" },
-        { q: "Which process is endothermic?", opts: ["Melting", "Freezing", "Condensation", "Deposition"], answer: "Melting" },
-        { q: "Which process is exothermic?", opts: ["Vaporization", "Sublimation", "Melting", "Condensation"], answer: "Condensation" },
-        { q: "What happens to particles when a substance gains heat?", opts: ["They usually move faster", "They stop moving", "They disappear", "They become smaller"], answer: "They usually move faster" },
-        { q: "Which pair contains only endothermic processes?", opts: ["Melting and evaporation", "Freezing and condensation", "Condensation and deposition", "Freezing and melting"], answer: "Melting and evaporation" }
-      ],
-      B: [
-        { q: "Which process is endothermic?", opts: ["Melting", "Freezing", "Condensation", "Deposition"], answer: "Melting" },
-        { q: "What happens to ice when it is heated?", opts: ["It freezes", "It melts", "It deposits", "It condenses"], answer: "It melts" },
-        { q: "When water vapor condenses, it:", opts: ["Absorbs heat", "Releases heat", "Melts", "Sublimates"], answer: "Releases heat" },
-        { q: "Which state of matter has no fixed shape or volume?", opts: ["Solid", "Liquid", "Gas", "Ice"], answer: "Gas" },
-        { q: "Which process occurs when water vapor becomes water?", opts: ["Condensation", "Melting", "Sublimation", "Freezing"], answer: "Condensation" },
-        { q: "What is the process when a gas changes into a liquid?", opts: ["Melting", "Condensation", "Freezing", "Sublimation"], answer: "Condensation" },
-        { q: "An exothermic process usually:", opts: ["Absorbs heat", "Releases heat", "Melts solids", "Produces gas"], answer: "Releases heat" },
-        { q: "Dry ice changing directly into gas is an example of:", opts: ["Freezing", "Condensation", "Sublimation", "Melting"], answer: "Sublimation" },
-        { q: "Which process changes a gas into a liquid?", opts: ["Melting", "Sublimation", "Condensation", "Freezing"], answer: "Condensation" },
-        { q: "Which state of matter takes the shape of its container but has a fixed volume?", opts: ["Solid", "Liquid", "Gas", "Plasma"], answer: "Liquid" },
-        { q: "When water boils, it changes from:", opts: ["Solid to liquid", "Liquid to gas", "Gas to liquid", "Solid to gas"], answer: "Liquid to gas" },
-        { q: "Which is an endothermic phase change?", opts: ["Condensation", "Freezing", "Deposition", "Evaporation"], answer: "Evaporation" },
-        { q: "What is the process when a solid changes directly into a gas?", opts: ["Sublimation", "Melting", "Freezing", "Condensation"], answer: "Sublimation" },
-        { q: "When water freezes, it:", opts: ["Absorbs heat", "Releases heat", "Becomes a gas", "Sublimates"], answer: "Releases heat" },
-        { q: "Which phase change happens when ice becomes water?", opts: ["Freezing", "Condensation", "Melting", "Deposition"], answer: "Melting" },
-        { q: "What is the process when a gas changes directly into a solid?", opts: ["Evaporation", "Melting", "Deposition", "Freezing"], answer: "Deposition" },
-        { q: "An endothermic process usually:", opts: ["Releases heat", "Absorbs heat", "Produces ice", "Removes water"], answer: "Absorbs heat" },
-        { q: "Frost forming on a cold surface is an example of:", opts: ["Deposition", "Melting", "Evaporation", "Vaporization"], answer: "Deposition" },
-        { q: "Which phase change releases heat?", opts: ["Melting", "Evaporation", "Sublimation", "Freezing"], answer: "Freezing" },
-        { q: "When water evaporates, it:", opts: ["Absorbs heat", "Releases heat", "Freezes", "Deposits"], answer: "Absorbs heat" },
-        { q: "Clouds form when water vapor undergoes:", opts: ["Melting", "Freezing", "Condensation", "Sublimation"], answer: "Condensation" },
-        { q: "What is the process when a liquid changes into a solid?", opts: ["Melting", "Freezing", "Condensation", "Sublimation"], answer: "Freezing" },
-        { q: "Which state of matter has a fixed shape?", opts: ["Gas", "Liquid", "Solid", "Vapor"], answer: "Solid" },
-        { q: "Which phase change is endothermic?", opts: ["Freezing", "Condensation", "Melting", "Deposition"], answer: "Melting" },
-        { q: "Which process changes a liquid into a gas?", opts: ["Freezing", "Evaporation", "Condensation", "Deposition"], answer: "Evaporation" },
-        { q: "What happens to particles when a substance gains heat?", opts: ["They usually move faster", "They stop moving", "They disappear", "They become smaller"], answer: "They usually move faster" },
-        { q: "Which phase change absorbs heat?", opts: ["Melting", "Freezing", "Condensation", "Deposition"], answer: "Melting" },
-        { q: "What is the process when a solid changes into a liquid?", opts: ["Melting", "Freezing", "Evaporation", "Deposition"], answer: "Melting" },
-        { q: "Water droplets form on the outside of a cold glass because of:", opts: ["Melting", "Condensation", "Freezing", "Sublimation"], answer: "Condensation" },
-        { q: "Which is an exothermic phase change?", opts: ["Melting", "Evaporation", "Freezing", "Sublimation"], answer: "Freezing" },
-        { q: "Wet clothes dry because water undergoes:", opts: ["Evaporation", "Freezing", "Deposition", "Melting"], answer: "Evaporation" },
-        { q: "Which process occurs when water changes into water vapor?", opts: ["Freezing", "Evaporation", "Deposition", "Condensation"], answer: "Evaporation" },
-        { q: "What happens to water when it is placed in a freezer?", opts: ["It melts", "It evaporates", "It freezes", "It sublimates"], answer: "It freezes" },
-        { q: "Which phase change requires heat?", opts: ["Freezing", "Condensation", "Melting", "Deposition"], answer: "Melting" },
-        { q: "Butter becoming liquid when heated is an example of:", opts: ["Freezing", "Melting", "Condensation", "Deposition"], answer: "Melting" },
-        { q: "Which pair contains only endothermic processes?", opts: ["Melting and evaporation", "Freezing and condensation", "Condensation and deposition", "Freezing and melting"], answer: "Melting and evaporation" },
-        { q: "What is the process when a liquid changes into a gas?", opts: ["Freezing", "Melting", "Evaporation", "Deposition"], answer: "Evaporation" },
-        { q: "When ice melts, it:", opts: ["Releases heat", "Absorbs heat", "Loses all energy", "Becomes a gas immediately"], answer: "Absorbs heat" },
-        { q: "Which process is exothermic?", opts: ["Vaporization", "Sublimation", "Melting", "Condensation"], answer: "Condensation" },
-        { q: "Which phase change happens when water becomes ice?", opts: ["Melting", "Freezing", "Evaporation", "Sublimation"], answer: "Freezing" }
-      ]
-    };
-
-    let myName = "", myTeam = "", qIdx = 0, currentStatus = "waiting", isSuddenDeath = false, isCoolingDown = false;
-    let lastCdVal = null;
-    let resultOverlayShown = false;
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-    function playBeep(freq, type, duration) {
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-      const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
-      osc.type = type; osc.frequency.value = freq; osc.connect(gain); gain.connect(audioCtx.destination);
-      osc.start(); gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
-      osc.stop(audioCtx.currentTime + duration);
+    // Player Identity
+    let playerId = localStorage.getItem("tug_player_id");
+    if (!playerId) {
+      playerId = "player_" + Math.random().toString(36).substr(2, 9);
+      localStorage.setItem("tug_player_id", playerId);
     }
 
-    function playVictorySound() {
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-      const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
-      notes.forEach((freq, idx) => {
-        setTimeout(() => playBeep(freq, "triangle", 0.3), idx * 120);
-      });
+    let playerName = localStorage.getItem("tug_player_name");
+    if (!playerName) {
+      playerName = prompt("Enter your name:") || "Player " + Math.floor(Math.random() * 100);
+      localStorage.setItem("tug_player_name", playerName);
     }
+    document.getElementById("playerNameDisplay").innerText = playerName;
 
-    function playDefeatSound() {
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-      const notes = [400, 350, 300, 220];
-      notes.forEach((freq, idx) => {
-        setTimeout(() => playBeep(freq, "sawtooth", 0.35), idx * 150);
-      });
-    }
+    // References
+    const refPresence = ref(db, `game/presence/${playerId}`);
+    const refState = ref(db, "game/state");
+    const refPulls = ref(db, "game/pulls");
 
-    window.joinGame = function() {
-      const nameInput = document.getElementById("playerName").value.trim();
-      if (!nameInput) return alert("Please enter your name!");
+    let playerTeam = null;
+    let playerScore = 0;
+    let currentPenaltyEnd = 0;
+    let penaltyInterval = null;
+    let currentQuestion = null;
 
-      myName = nameInput;
+    // Sample Phase Changes Questions
+    const questions = [
+      { q: "Solid to Liquid is called?", choices: ["Melting", "Freezing", "Evaporation", "Sublimation"], correct: 0 },
+      { q: "Liquid to Gas is called?", choices: ["Condensation", "Evaporation", "Freezing", "Deposition"], correct: 1 },
+      { q: "Gas to Liquid is called?", choices: ["Melting", "Sublimation", "Condensation", "Freezing"], correct: 2 },
+      { q: "Liquid to Solid is called?", choices: ["Freezing", "Melting", "Deposition", "Evaporation"], correct: 0 },
+      { q: "Solid directly to Gas is called?", choices: ["Deposition", "Sublimation", "Melting", "Condensation"], correct: 1 },
+      { q: "Gas directly to Solid is called?", choices: ["Sublimation", "Evaporation", "Deposition", "Freezing"], correct: 2 }
+    ];
 
-      // Deterministic auto-team assignment based on name + timestamp hash
-      const uniqueId = `${myName}_${Date.now()}`;
-      let hash = 0;
-      for (let i = 0; i < uniqueId.length; i++) {
-        hash = (hash << 5) - hash + uniqueId.charCodeAt(i);
-        hash |= 0;
+    // Register Presence
+    set(refPresence, {
+      name: playerName,
+      score: 0,
+      wrongCount: 0,
+      lastActive: serverTimestamp()
+    });
+
+    // Listen to Player Data (Team Assignment & Cooldowns)
+    onValue(refPresence, (snapshot) => {
+      const data = snapshot.val();
+      if (!data) return;
+
+      playerTeam = data.team;
+      playerScore = data.score || 0;
+      document.getElementById("playerScore").innerText = playerScore;
+
+      // Update Team Badge UI
+      const badge = document.getElementById("teamBadge");
+      if (playerTeam === 'red') {
+        badge.innerText = "🔴 Red Team";
+        badge.className = "px-3 py-1 rounded-full font-black text-xs uppercase tracking-wider bg-red-900/80 text-red-300 border border-red-600";
+      } else if (playerTeam === 'blue') {
+        badge.innerText = "🔵 Blue Team";
+        badge.className = "px-3 py-1 rounded-full font-black text-xs uppercase tracking-wider bg-blue-900/80 text-blue-300 border border-blue-600";
       }
-      myTeam = Math.abs(hash) % 2 === 0 ? 'A' : 'B';
 
-      // Register presence in Firebase
-      const playerRef = ref(db, `game/presence/${uniqueId}`);
-      set(playerRef, { name: myName, team: myTeam });
-      onDisconnect(playerRef).remove();
+      // Handle Cooldown Timer
+      if (data.cooldownUntil && Date.now() < data.cooldownUntil) {
+        startPenaltyTimer(data.cooldownUntil);
+      }
+    });
 
-      // Apply Team Color Theme to Whole Body & Running Borders
-      document.body.className = myTeam === 'A' ? 'team-red' : 'team-blue';
+    // Listen to Game State (Sudden Death & Match Status)
+    onValue(refState, (snapshot) => {
+      const state = snapshot.val();
+      if (!state) return;
 
-      // Update UI
-      document.getElementById("joinCard").style.display = "none";
-      document.getElementById("gameCard").style.display = "flex";
-      
-      const badge = document.getElementById("playerBadge");
-      badge.innerText = `${myName} (${myTeam === 'A' ? 'RED TEAM' : 'BLUE TEAM'})`;
-      badge.style.color = myTeam === 'A' ? '#ff8593' : '#7dd3fc';
+      const suddenDeathNotice = document.getElementById("suddenDeathNotice");
+      if (state.status === "PLAYING" && state.isSuddenDeath) {
+        suddenDeathNotice.classList.remove("hidden");
+      } else {
+        suddenDeathNotice.classList.add("hidden");
+      }
 
-      listenToGame();
-    };
+      if (state.status === "PLAYING") {
+        if (!currentQuestion) loadNextQuestion();
+      } else if (state.status === "ENDED") {
+        document.getElementById("questionText").innerText = "Match Ended!";
+        document.getElementById("choicesContainer").innerHTML = "";
+        currentQuestion = null;
+      }
+    });
 
-    function listenToGame() {
-      onValue(gameRef, (snapshot) => {
-        const data = snapshot.val() || {};
-        currentStatus = data.status || "waiting";
-        isSuddenDeath = (data.timerSecs !== undefined && data.timerSecs <= 30 && data.timerSecs > 0);
+    function loadNextQuestion() {
+      const randomQ = questions[Math.floor(Math.random() * questions.length)];
+      currentQuestion = randomQ;
 
-        const statusBadge = document.getElementById("statusBadge");
-        const cdOverlay = document.getElementById("cdOverlay");
-        const cdNum = document.getElementById("cdNum");
-        const resultOverlay = document.getElementById("resultOverlay");
+      document.getElementById("questionText").innerText = randomQ.q;
+      const container = document.getElementById("choicesContainer");
+      container.innerHTML = "";
 
-        if (currentStatus === "countdown") {
-          resultOverlayShown = false;
-          resultOverlay.style.display = "none";
-          resultOverlay.className = "result-overlay";
-
-          const cdVal = data.countdownVal !== undefined ? data.countdownVal : "3";
-          
-          // Show dramatic fullscreen overlay
-          cdOverlay.style.display = "flex";
-          cdNum.innerText = cdVal;
-
-          // Sound trigger on number tick
-          if (cdVal !== lastCdVal) {
-            playBeep(cdVal === "GO!" ? 880 : 440, "triangle", 0.25);
-            lastCdVal = cdVal;
-          }
-
-          statusBadge.innerText = `READY...`;
-          statusBadge.style.color = "#facc15";
-          document.getElementById("qText").innerText = "Get Ready!";
-          disableButtons(true);
-        } else {
-          // Hide countdown overlay during active play or waiting
-          cdOverlay.style.display = "none";
-          lastCdVal = null;
-
-          if (currentStatus === "playing") {
-            resultOverlayShown = false;
-            resultOverlay.style.display = "none";
-            resultOverlay.className = "result-overlay";
-
-            statusBadge.innerText = isSuddenDeath ? "🔥 SUDDEN DEATH 2X!" : "PULL!";
-            statusBadge.style.color = isSuddenDeath ? "#ff2a5f" : "#4ade80";
-            if (!isCoolingDown) {
-              renderQ();
-            }
-          } else if (currentStatus === "ended") {
-            statusBadge.innerText = "MATCH OVER";
-            statusBadge.style.color = "#ef4444";
-            disableButtons(true);
-
-            // Show Dramatic Win/Lose Popup Overlay
-            if (!resultOverlayShown) {
-              resultOverlayShown = true;
-              const resIcon = document.getElementById("resIcon");
-              const resTitle = document.getElementById("resTitle");
-              const resSubtitle = document.getElementById("resSubtitle");
-
-              if (data.winner === myTeam) {
-                resultOverlay.className = "result-overlay win";
-                resIcon.innerText = "🏆";
-                resTitle.innerText = "VICTORY!";
-                resSubtitle.innerText = "Your team pulled with relentless force and dominated the match!";
-                playVictorySound();
-              } else if (data.winner === "TIE") {
-                resultOverlay.className = "result-overlay tie";
-                resIcon.innerText = "🤝";
-                resTitle.innerText = "DRAW!";
-                resSubtitle.innerText = "An evenly matched battle! Both teams stood their ground.";
-                playBeep(440, "sine", 0.4);
-              } else {
-                resultOverlay.className = "result-overlay lose";
-                resIcon.innerText = "💔";
-                resTitle.innerText = "DEFEAT";
-                resSubtitle.innerText = "The opposition dragged your team across the line. Better luck next time!";
-                playDefeatSound();
-              }
-
-              resultOverlay.style.display = "flex";
-            }
-          } else {
-            resultOverlayShown = false;
-            resultOverlay.style.display = "none";
-            resultOverlay.className = "result-overlay";
-
-            statusBadge.innerText = "WAITING FOR HOST...";
-            statusBadge.style.color = "#facc15";
-            document.getElementById("qText").innerText = "Waiting for host to start...";
-            disableButtons(true);
-          }
-        }
-      });
-    }
-
-    function renderQ() {
-      if (currentStatus !== "playing" || isCoolingDown) return;
-      const q = QUESTIONS[myTeam][qIdx];
-      document.getElementById("qText").innerText = q.q;
-      const grid = document.getElementById("optionsGrid");
-      grid.innerHTML = "";
-
-      q.opts.forEach(opt => {
+      randomQ.choices.forEach((choice, idx) => {
         const btn = document.createElement("button");
-        btn.className = "opt";
-        btn.innerText = opt;
-        btn.onclick = (e) => handleAnswer(opt, e);
-        grid.appendChild(btn);
+        btn.className = "w-full bg-slate-800 hover:bg-slate-700 active:scale-95 text-white font-bold py-3.5 px-4 rounded-xl border border-slate-700 transition-all text-sm";
+        btn.innerText = choice;
+        btn.onclick = () => submitAnswer(idx);
+        container.appendChild(btn);
       });
     }
 
-    function disableButtons(disabled) {
-      document.querySelectorAll("button.opt").forEach(b => b.disabled = disabled);
-    }
+    function submitAnswer(chosenIdx) {
+      if (!playerTeam || Date.now() < currentPenaltyEnd) return;
 
-    window.handleAnswer = function(selected, evt) {
-      if (currentStatus !== "playing" || isCoolingDown) return;
-
-      const isCorrect = selected === QUESTIONS[myTeam][qIdx].answer;
-      
-      // Floating score FX
-      const el = document.createElement("div");
-      el.className = `float-fx ${isCorrect ? 'fx-plus' : 'fx-minus'}`;
-      el.innerText = isCorrect ? "+5 PTS" : "SLIPPED!";
-      el.style.left = `${evt.clientX - 25}px`; 
-      el.style.top = `${evt.clientY - 15}px`;
-      document.body.appendChild(el);
-      setTimeout(() => el.remove(), 800);
+      const isCorrect = (chosenIdx === currentQuestion.correct);
 
       if (isCorrect) {
-        playBeep(587.33, "sine", 0.2);
-        
-        let pullForce = isSuddenDeath ? 30 : 15;
-        let pointsAdded = 5;
-
-        push(pullsRef, {
-          team: myTeam,
-          force: pullForce,
-          points: pointsAdded,
-          timestamp: Date.now()
-        });
-
-        qIdx = (qIdx + 1) % QUESTIONS[myTeam].length;
-        renderQ();
-
-      } else {
-        // Slipped Penalty - Increased to 5 seconds
-        playBeep(130.81, "square", 0.3);
-        triggerCooldown(5);
+        playerScore += 1;
+        set(ref(db, `game/presence/${playerId}/score`), playerScore);
       }
-    };
 
-    function triggerCooldown(seconds) {
-      isCoolingDown = true;
-      const banner = document.getElementById("cooldownBanner");
-      const text = document.getElementById("cooldownText");
-      const bar = document.getElementById("cooldownBar");
-      disableButtons(true);
+      // Push Pull Action to Firebase
+      push(refPulls, {
+        playerId: playerId,
+        team: playerTeam,
+        isCorrect: isCorrect,
+        timestamp: serverTimestamp()
+      });
 
-      banner.style.display = "flex";
-      bar.style.width = "100%";
+      loadNextQuestion();
+    }
 
-      const startTime = Date.now();
-      const durationMs = seconds * 1000;
+    function startPenaltyTimer(untilTimestamp) {
+      currentPenaltyEnd = untilTimestamp;
+      const overlay = document.getElementById("penaltyOverlay");
+      const timerDisplay = document.getElementById("penaltyTimer");
+      overlay.classList.remove("hidden");
+      overlay.classList.add("flex");
 
-      const timer = setInterval(() => {
-        const elapsed = Date.now() - startTime;
-        const remainingMs = Math.max(0, durationMs - elapsed);
-        const percentLeft = (remainingMs / durationMs) * 100;
-
-        bar.style.width = `${percentLeft}%`;
-        text.innerText = `⚠️ SLIPPED! REGAINING FOOTING (${(remainingMs / 1000).toFixed(1)}s)...`;
-
-        if (remainingMs <= 0) {
-          clearInterval(timer);
-          isCoolingDown = false;
-          banner.style.display = "none";
-          
-          if (currentStatus === "playing") {
-            qIdx = (qIdx + 1) % QUESTIONS[myTeam].length;
-            renderQ();
-          }
+      clearInterval(penaltyInterval);
+      penaltyInterval = setInterval(() => {
+        const remaining = Math.ceil((currentPenaltyEnd - Date.now()) / 1000);
+        if (remaining <= 0) {
+          clearInterval(penaltyInterval);
+          overlay.classList.add("hidden");
+          overlay.classList.remove("flex");
+        } else {
+          timerDisplay.innerText = remaining;
         }
-      }, 50);
+      }, 200);
     }
   </script>
 </body>
