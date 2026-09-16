@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Stratigraphy & Rock Layers</title>
+  <title>Stratigraphy & Rock Layers: Student Player</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Outfit:wght@800;900&display=swap" rel="stylesheet">
@@ -64,7 +64,7 @@
     <div class="card" id="joinCard"><h1>JOIN THE MATCH</h1><input type="text" id="playerName" placeholder="Enter Your Name" maxlength="15"><button class="btn join-btn" style="width: 100%; margin-top: 6px;" onclick="joinGame()">JOIN MATCH</button></div>
     <div class="card" id="gameCard" style="display: none;">
       <div style="display: flex; justify-content: space-between; align-items: center;"><span id="playerBadge" style="font-weight: 700; opacity: 0.9;"></span><span id="statusBadge" style="font-weight: 800; color: #facc15;">WAITING...</span></div>
-      <div class="cooldown-banner" id="cooldownBanner"><div id="cooldownText">⚠️ SLIPPED! REGAINING FOOTING (5.0s)...</div><div class="cooldown-bar-bg"><div class="cooldown-bar-fill" id="cooldownBar"></div></div></div>
+      <div class="cooldown-banner" id="cooldownBanner"><div id="cooldownText">⚠️ SLIPPED! REGAINING FOOTING (4.0s)...</div><div class="cooldown-bar-bg"><div class="cooldown-bar-fill" id="cooldownBar"></div></div></div>
       <div class="q-box" id="qText">Get Ready!</div>
       <div class="options-grid" id="optionsGrid"><button class="opt" disabled>A</button><button class="opt" disabled>B</button><button class="opt" disabled>C</button><button class="opt" disabled>D</button></div>
     </div>
@@ -75,31 +75,31 @@
     const app=initializeApp({apiKey:"AIzaSyCS3yT10PtrUfFqvO4MhsZucgEatbSFKZY",authDomain:"tug-of-war-game-f18b3.firebaseapp.com",databaseURL:"https://tug-of-war-game-f18b3-default-rtdb.firebaseio.com",projectId:"tug-of-war-game-f18b3"});
     const db=getDatabase(app),gameRef=ref(db,"game/state"),presenceRef=ref(db,"game/presence"),pullsRef=ref(db,"game/pulls");
     const RAW_QUESTIONS=[
-      {q:"A fault cuts through three rock layers. Which is younger?",opts:["The rock layers","The fault","Both are the same age","Cannot be determined"],answer:"The fault"},
-      {q:"What principle states that a feature cutting across rock layers is younger than the layers?",opts:["Principle of Inclusions","Law of Superposition","Law of Cross-Cutting Relationships","Principle of Original Horizontality"],answer:"Law of Cross-Cutting Relationships"},
-      {q:"What are rock fragments trapped inside another rock layer called?",opts:["Unconformities","Dikes","Inclusions","Faults"],answer:"Inclusions"},
-      {q:"According to the Principle of Inclusions, the fragments inside a rock layer are ____ than the surrounding rock.",opts:["Younger","Older","The exact same age","Softer"],answer:"Older"},
-      {q:"What does an unconformity represent in the rock record?",opts:["Continuous rock layer formation","A gap or missing time in the geological record","The presence of ocean water","A sudden volcanic explosion"],answer:"A gap or missing time in the geological record"},
-      {q:"Which process creates an unconformity surface before new layers are deposited?",opts:["Compaction","Erosion","Melting","Cementation"],answer:"Erosion"},
-      {q:"How many main types of unconformities are there?",opts:["Two","Three","Four","Five"],answer:"Three"},
-      {q:"If a magma dike cuts through sandstone, what is the magma dike?",opts:["Older than the sandstone","Younger than the sandstone","An unconformity","An inclusion"],answer:"Younger than the sandstone"},
-      {q:"Granite pebbles are inside a sandstone layer. Which formed first?",opts:["Sandstone layer","Granite pebbles","Both formed together","Neither"],answer:"Granite pebbles"},
-      {q:"What type of rock layer sits on top of an unconformity?",opts:["Older layer","Younger layer","Igneous layer only","Metamorphic layer only"],answer:"Younger layer"},
-      {q:"Which unconformity features tilted rock layers overlain by flat, horizontal layers?",opts:["Disconformity","Nonconformity","Angular unconformity","Faulted unconformity"],answer:"Angular unconformity"},
-      {q:"In a disconformity, how are the rock layers above and below the erosional gap arranged?",opts:["Tilted relative to each other","Parallel to each other","Folded into curves","Vertical"],answer:"Parallel to each other"},
-      {q:"A Nonconformity occurs when sedimentary rock sits directly on top of eroded ____ rocks.",opts:["Sedimentary","Igneous or metamorphic","Volcanic ash only","Sandstone"],answer:"Igneous or metamorphic"},
-      {q:"If a rock layer contains pieces of the rock directly beneath it, those pieces are:",opts:["Younger inclusions","Older inclusions","Cross-cutting dikes","Angular unconformities"],answer:"Older inclusions"},
-      {q:"You see horizontal sedimentary rocks directly resting on eroded granite. What type of unconformity is this?",opts:["Disconformity","Nonconformity","Angular unconformity","Superposition"],answer:"Nonconformity"},
-      {q:"Parallel sedimentary layers have a jagged, eroded line separating them. What is this line called?",opts:["Disconformity","Nonconformity","Angular unconformity","Fault line"],answer:"Disconformity"},
-      {q:"What geological feature cuts vertically or diagonally through pre-existing rock layers?",opts:["Inclusion","Magma dike","Sediment","Basal layer"],answer:"Magma dike"},
-      {q:"Why is an unconformity described as \"missing time\"?",opts:["Rocks were stolen","Sediment was never deposited or was eroded away","Fossils stopped growing","Radioactive decay slowed down"],answer:"Sediment was never deposited or was eroded away"},
-      {q:"Rock Layer A contains fragments of Rock Layer B. Which statement is correct?",opts:["Layer A is older than Layer B","Layer B is older than Layer A","Both layers are the exact same age","Layer A was formed by a fault"],answer:"Layer B is older than Layer A"},
-      {q:"What event must happen FIRST to create an angular unconformity?",opts:["Deposition of horizontal layers, followed by tilting","Deposition of flat layers directly on granite","Erosion of parallel horizontal layers","A magma intrusion cuts through top layers"],answer:"Deposition of horizontal layers, followed by tilting"},
-      {q:"A fault shifts three layers of limestone, but a top layer of shale is NOT shifted. What is the youngest feature?",opts:["The fault","The limestone layers","The shale layer","The bottom limestone layer"],answer:"The shale layer"},
-      {q:"Which principle helps geologists prove that pebbles inside a conglomerate rock existed BEFORE the conglomerate rock was formed?",opts:["Law of Cross-Cutting Relationships","Principle of Inclusions","Principle of Original Horizontality","Law of Superposition"],answer:"Principle of Inclusions"},
-      {q:"Both a disconformity and a nonconformity represent missing time. How do you tell them apart?",opts:["Disconformity separates parallel sedimentary layers; Nonconformity separates sedimentary from igneous/metamorphic rocks.","Disconformity involves tilted rocks; Nonconformity involves parallel rocks.","Disconformity has inclusions; Nonconformity has faults.","They are identical."],answer:"Disconformity separates parallel sedimentary layers; Nonconformity separates sedimentary from igneous/metamorphic rocks."},
-      {q:"If an igneous intrusion cuts across a fault line, which is younger: the intrusion or the fault?",opts:["The fault","The igneous intrusion","They are the same age","Neither"],answer:"The igneous intrusion"},
-      {q:"Which geological process turns an land surface into an unconformity before new sediments settle?",opts:["Weathering and Erosion","Melting and Magma formation","Mountain tilting only","Cementation"],answer:"Weathering and Erosion"}
+      {q:"A fault cuts through rock layers. Which is younger: the fault or the rock layers?",opts:["The fault","The rock layers","Both are the same age","Cannot be determined"],answer:"The fault"},
+      {q:"What law states that a fault or magma dike cutting across a rock layer is younger than the layer?",opts:["Law of Cross-Cutting Relationships","Principle of Inclusions","Law of Superposition","Principle of Original Horizontality"],answer:"Law of Cross-Cutting Relationships"},
+      {q:"If a magma dike cuts vertically through a sandstone layer, what is the magma dike?",opts:["Younger than the sandstone","Older than the sandstone","An unconformity","An inclusion"],answer:"Younger than the sandstone"},
+      {q:"Which geological feature cuts across existing rock layers?",opts:["A fault or magma dike","An inclusion","An unconformity","Sediments"],answer:"A fault or magma dike"},
+      {q:"A fault line breaks through three layers of limestone. Which formed FIRST?",opts:["The limestone layers","The fault line","Both formed at the same time","Neither"],answer:"The limestone layers"},
+      {q:"True or False: A rock layer must already exist BEFORE a magma dike can cut through it.",opts:["True","False","Only in the ocean","Only during earthquakes"],answer:"True"},
+      {q:"What do you call rock fragments trapped inside another rock layer?",opts:["Inclusions","Unconformities","Dikes","Faults"],answer:"Inclusions"},
+      {q:"According to the Principle of Inclusions, how old are fragments inside a rock compared to the surrounding layer?",opts:["Older","Younger","The exact same age","Softer"],answer:"Older"},
+      {q:"Granite pebbles are trapped inside a sandstone layer. Which is OLDER?",opts:["Granite pebbles","Sandstone layer","Both are the same age","Neither"],answer:"Granite pebbles"},
+      {q:"Which principle states that rock inclusions inside a layer are older than the layer itself?",opts:["Principle of Inclusions","Law of Cross-Cutting Relationships","Law of Superposition","Principle of Original Horizontality"],answer:"Principle of Inclusions"},
+      {q:"If Layer A contains pieces of Layer B inside it, which layer was formed FIRST?",opts:["Layer B","Layer A","Both at the same time","Neither"],answer:"Layer B"},
+      {q:"Why are inclusions older than the rock layer surrounding them?",opts:["They had to exist first to get trapped inside","They fell from the sky later","They were melted by magma","They are made of water"],answer:"They had to exist first to get trapped inside"},
+      {q:"What is an unconformity?",opts:["A gap in the geological time record due to erosion","A rock layer full of fossils","A magma explosion","A flat horizontal layer"],answer:"A gap in the geological time record due to erosion"},
+      {q:"What process creates an unconformity surface before new layers settle?",opts:["Erosion","Melting","Compaction","Freezing"],answer:"Erosion"},
+      {q:"How many main types of unconformities are there?",opts:["Three","Two","Four","Five"],answer:"Three"},
+      {q:"Why is an unconformity called 'missing time' in geology?",opts:["Rock layers were eroded away or never deposited","Clock time slowed down","Fossils stopped growing","Magma erased all rocks"],answer:"Rock layers were eroded away or never deposited"},
+      {q:"What type of rock layer rests directly ON TOP of an unconformity?",opts:["Younger layer","Older layer","Igneous layer only","Metamorphic layer only"],answer:"Younger layer"},
+      {q:"Which type of unconformity shows TILTED rock layers underneath flat horizontal layers?",opts:["Angular Unconformity","Disconformity","Nonconformity","Superposition"],answer:"Angular Unconformity"},
+      {q:"In an Angular Unconformity, what happened to the bottom rock layers before the new top layers were placed?",opts:["They were tilted and eroded","They melted into magma","They stayed completely flat","They turned into soil"],answer:"They were tilted and eroded"},
+      {q:"Which type of unconformity separates two sets of PARALLEL sedimentary rock layers?",opts:["Disconformity","Angular Unconformity","Nonconformity","Fault"],answer:"Disconformity"},
+      {q:"In a Disconformity, how are the rock layers above and below the erosional gap arranged?",opts:["Parallel to each other","Tilted to each other","Vertical","Curved"],answer:"Parallel to each other"},
+      {q:"Which type of unconformity occurs when sedimentary rock rests on top of eroded IGNEOUS or METAMORPHIC rocks?",opts:["Nonconformity","Disconformity","Angular Unconformity","Cross-Cutting"],answer:"Nonconformity"},
+      {q:"If flat sandstone sits directly on top of eroded granite, what type of unconformity is present?",opts:["Nonconformity","Disconformity","Angular Unconformity","Superposition"],answer:"Nonconformity"},
+      {q:"An erosion line separates parallel layers of shale and limestone. What type of unconformity is this?",opts:["Disconformity","Nonconformity","Angular Unconformity","Magma Dike"],answer:"Disconformity"},
+      {q:"What separates the older rock from the younger rock at an unconformity surface?",opts:["A buried erosional surface","A volcanic crater","A river of water","A fold"],answer:"A buried erosional surface"}
     ];
     const QUESTIONS={A:RAW_QUESTIONS,B:RAW_QUESTIONS};
     let myName="",myTeam="",qIdx=0,currentStatus="waiting",isSuddenDeath=false,isCoolingDown=false,wrongAnswerCount=0,lastCdVal=null,resultOverlayShown=false;
@@ -132,7 +132,7 @@
     function disableButtons(disabled){document.querySelectorAll("button.opt").forEach(b=>b.disabled=disabled)}
     window.handleAnswer=function(selected,evt){if(currentStatus!=="playing"||isCoolingDown)return;const isCorrect=selected===QUESTIONS[myTeam][qIdx].answer;const el=document.createElement("div");el.className=`float-fx ${isCorrect?'fx-plus':'fx-minus'}`;el.innerText=isCorrect?"+5 PTS":"SLIPPED!";el.style.left=`${evt.clientX-25}px`;el.style.top=`${evt.clientY-15}px`;document.body.appendChild(el);setTimeout(()=>el.remove(),800);
       if(isCorrect){playBeep(587.33,"sine",0.2);let pullForce=isSuddenDeath?15:7.5,pointsAdded=5;push(pullsRef,{team:myTeam,force:pullForce,points:pointsAdded,timestamp:Date.now()});qIdx=(qIdx+1)%QUESTIONS[myTeam].length;renderQ()}
-      else{wrongAnswerCount++;playBeep(130.81,"square",0.3);triggerCooldown(wrongAnswerCount===1?5:10)}
+      else{wrongAnswerCount++;playBeep(130.81,"square",0.3);triggerCooldown(4)}
     };
     function triggerCooldown(seconds){isCoolingDown=true;const banner=document.getElementById("cooldownBanner"),text=document.getElementById("cooldownText"),bar=document.getElementById("cooldownBar");disableButtons(true);banner.style.display="flex";bar.style.width="100%";const startTime=Date.now(),durationMs=seconds*1000;const timer=setInterval(()=>{const elapsed=Date.now()-startTime,remainingMs=Math.max(0,durationMs-elapsed),percentLeft=remainingMs/durationMs*100;bar.style.width=`${percentLeft}%`;text.innerText=`⚠️ SLIPPED! REGAINING FOOTING (${(remainingMs/1000).toFixed(1)}s)...`;if(remainingMs<=0){clearInterval(timer);isCoolingDown=false;banner.style.display="none";if(currentStatus==="playing"){qIdx=(qIdx+1)%QUESTIONS[myTeam].length;renderQ()}}},50)}
   </script>
