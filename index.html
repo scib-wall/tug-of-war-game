@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Stratigraphy & Rock Layers: Student Player</title>
+  <title>Isotopes: Tug-of-War: Student Player</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Outfit:wght@800;900&display=swap" rel="stylesheet">
@@ -75,31 +75,41 @@
     const app=initializeApp({apiKey:"AIzaSyCS3yT10PtrUfFqvO4MhsZucgEatbSFKZY",authDomain:"tug-of-war-game-f18b3.firebaseapp.com",databaseURL:"https://tug-of-war-game-f18b3-default-rtdb.firebaseio.com",projectId:"tug-of-war-game-f18b3"});
     const db=getDatabase(app),gameRef=ref(db,"game/state"),presenceRef=ref(db,"game/presence"),pullsRef=ref(db,"game/pulls");
     const RAW_QUESTIONS=[
-      {q:"A fault cuts through rock layers. Which is younger: the fault or the rock layers?",opts:["The fault","The rock layers","Both are the same age","Cannot be determined"],answer:"The fault"},
-      {q:"What law states that a fault or magma dike cutting across a rock layer is younger than the layer?",opts:["Law of Cross-Cutting Relationships","Principle of Inclusions","Law of Superposition","Principle of Original Horizontality"],answer:"Law of Cross-Cutting Relationships"},
-      {q:"If a magma dike cuts vertically through a sandstone layer, what is the magma dike?",opts:["Younger than the sandstone","Older than the sandstone","An unconformity","An inclusion"],answer:"Younger than the sandstone"},
-      {q:"Which geological feature cuts across existing rock layers?",opts:["A fault or magma dike","An inclusion","An unconformity","Sediments"],answer:"A fault or magma dike"},
-      {q:"A fault line breaks through three layers of limestone. Which formed FIRST?",opts:["The limestone layers","The fault line","Both formed at the same time","Neither"],answer:"The limestone layers"},
-      {q:"True or False: A rock layer must already exist BEFORE a magma dike can cut through it.",opts:["True","False","Only in the ocean","Only during earthquakes"],answer:"True"},
-      {q:"What do you call rock fragments trapped inside another rock layer?",opts:["Inclusions","Unconformities","Dikes","Faults"],answer:"Inclusions"},
-      {q:"According to the Principle of Inclusions, how old are fragments inside a rock compared to the surrounding layer?",opts:["Older","Younger","The exact same age","Softer"],answer:"Older"},
-      {q:"Granite pebbles are trapped inside a sandstone layer. Which is OLDER?",opts:["Granite pebbles","Sandstone layer","Both are the same age","Neither"],answer:"Granite pebbles"},
-      {q:"Which principle states that rock inclusions inside a layer are older than the layer itself?",opts:["Principle of Inclusions","Law of Cross-Cutting Relationships","Law of Superposition","Principle of Original Horizontality"],answer:"Principle of Inclusions"},
-      {q:"If Layer A contains pieces of Layer B inside it, which layer was formed FIRST?",opts:["Layer B","Layer A","Both at the same time","Neither"],answer:"Layer B"},
-      {q:"Why are inclusions older than the rock layer surrounding them?",opts:["They had to exist first to get trapped inside","They fell from the sky later","They were melted by magma","They are made of water"],answer:"They had to exist first to get trapped inside"},
-      {q:"What is an unconformity?",opts:["A gap in the geological time record due to erosion","A rock layer full of fossils","A magma explosion","A flat horizontal layer"],answer:"A gap in the geological time record due to erosion"},
-      {q:"What process creates an unconformity surface before new layers settle?",opts:["Erosion","Melting","Compaction","Freezing"],answer:"Erosion"},
-      {q:"How many main types of unconformities are there?",opts:["Three","Two","Four","Five"],answer:"Three"},
-      {q:"Why is an unconformity called 'missing time' in geology?",opts:["Rock layers were eroded away or never deposited","Clock time slowed down","Fossils stopped growing","Magma erased all rocks"],answer:"Rock layers were eroded away or never deposited"},
-      {q:"What type of rock layer rests directly ON TOP of an unconformity?",opts:["Younger layer","Older layer","Igneous layer only","Metamorphic layer only"],answer:"Younger layer"},
-      {q:"Which type of unconformity shows TILTED rock layers underneath flat horizontal layers?",opts:["Angular Unconformity","Disconformity","Nonconformity","Superposition"],answer:"Angular Unconformity"},
-      {q:"In an Angular Unconformity, what happened to the bottom rock layers before the new top layers were placed?",opts:["They were tilted and eroded","They melted into magma","They stayed completely flat","They turned into soil"],answer:"They were tilted and eroded"},
-      {q:"Which type of unconformity separates two sets of PARALLEL sedimentary rock layers?",opts:["Disconformity","Angular Unconformity","Nonconformity","Fault"],answer:"Disconformity"},
-      {q:"In a Disconformity, how are the rock layers above and below the erosional gap arranged?",opts:["Parallel to each other","Tilted to each other","Vertical","Curved"],answer:"Parallel to each other"},
-      {q:"Which type of unconformity occurs when sedimentary rock rests on top of eroded IGNEOUS or METAMORPHIC rocks?",opts:["Nonconformity","Disconformity","Angular Unconformity","Cross-Cutting"],answer:"Nonconformity"},
-      {q:"If flat sandstone sits directly on top of eroded granite, what type of unconformity is present?",opts:["Nonconformity","Disconformity","Angular Unconformity","Superposition"],answer:"Nonconformity"},
-      {q:"An erosion line separates parallel layers of shale and limestone. What type of unconformity is this?",opts:["Disconformity","Nonconformity","Angular Unconformity","Magma Dike"],answer:"Disconformity"},
-      {q:"What separates the older rock from the younger rock at an unconformity surface?",opts:["A buried erosional surface","A volcanic crater","A river of water","A fold"],answer:"A buried erosional surface"}
+      {q:"What subatomic particle defines the fundamental chemical identity of an element?",opts:["Neutron","Proton","Electron","Positron"],answer:"Proton"},
+      {q:"Atoms of the exact same element that have different numbers of neutrons are called:",opts:["Isobars","Isotopes","Isotones","Isomers"],answer:"Isotopes"},
+      {q:"In two different isotopes of the same element, which subatomic particle counts are identical?",opts:["Neutrons and mass numbers","Protons and electrons","Protons and neutrons","Neutrons and electrons"],answer:"Protons and electrons"},
+      {q:"What changes when a neutral atom gains or loses neutrons to become a different isotope?",opts:["Its electrical charge","Its element symbol","Its mass number","Its atomic number"],answer:"Its mass number"},
+      {q:"Isotopes have identical chemical properties because they have the exact same number of:",opts:["Neutrons","Electrons","Mass numbers","Nuclear charges"],answer:"Electrons"},
+      {q:"Sets of elements that have the same number of neutrons are called:",opts:["Isotopes","Isotones","Isobars","Isomers"],answer:"Isotones"},
+      {q:"Sets of elements that share the exact same mass number (A) are called:",opts:["Isobars","Isotones","Isotopes","Radioisotopes"],answer:"Isobars"},
+      {q:"Which physical property is slightly different between different isotopes of the same element?",opts:["Reactivity with oxygen","Chemical bonding ratio","Density and boiling point","Electrical conductivity"],answer:"Density and boiling point"},
+      {q:"What do we call unstable, artificial isotopes that release radiation as they decay?",opts:["Stable nuclides","Radioisotopes","Isobars","Heavy elements"],answer:"Radioisotopes"},
+      {q:"How are artificial radioisotopes usually created in a laboratory or nuclear core?",opts:["By stripping off all electrons","By bombarding stable nuclei with energetic neutrons","By freezing elements to absolute zero","By heating elements with laser radiation"],answer:"By bombarding stable nuclei with energetic neutrons"},
+      {q:"Which radioisotope is commonly found inside household smoke detectors?",opts:["Americium-241","Carbon-14","Iodine-131","Uranium-238"],answer:"Americium-241"},
+      {q:"Carbon-14 (¹⁴C) is widely used in archaeology and geology for:",opts:["Detecting hidden explosives","Treating thyroid cancer","Estimating the age of organic artifacts","Measuring water salinity"],answer:"Estimating the age of organic artifacts"},
+      {q:"Which radioisotope is used in medicine to detect and treat thyroid diseases?",opts:["Californium-252","Iodine-131","Americium-241","Cobalt-59"],answer:"Iodine-131"},
+      {q:"What radioisotope do geologists use to determine the age of ancient rocks?",opts:["Carbon-14","Uranium-238","Iodine-131","Americium-241"],answer:"Uranium-238"},
+      {q:"Which radioisotope is utilized in security and military operations to detect hidden explosives?",opts:["Chlorine-35","Hydrogen-3","Californium-252","Uranium-238"],answer:"Californium-252"},
+      {q:"How many naturally occurring isotopes does Hydrogen have?",opts:["1","2","3","4"],answer:"3"},
+      {q:"What is the special name given to the Hydrogen-2 (²₁H) isotope?",opts:["Protium","Deuterium","Tritium","Hydronium"],answer:"Deuterium"},
+      {q:"Which of the following elements has NO naturally occurring isotopes?",opts:["Hydrogen","Chlorine","Sodium","Oxygen"],answer:"Sodium"},
+      {q:"Oxygen-16 and Oxygen-18 ratios in Antarctic ice cores are used by climate scientists to study:",opts:["Historical global temperatures and glacial periods","Ocean volcanic eruptions","Atmospheric pressure changes","Cosmic ray levels"],answer:"Historical global temperatures and glacial periods"},
+      {q:"When cobalt-59 is bombarded with a neutron in a nuclear reactor, what product isotope is formed?",opts:["Cobalt-58","Cobalt-60","Nickel-59","Iron-59"],answer:"Cobalt-60"},
+      {q:"In standard nuclear notation ᴬẕX, what does the top number (A) represent?",opts:["Atomic Number","Mass Number","Number of Electrons","Net Charge"],answer:"Mass Number"},
+      {q:"In standard nuclear notation ᴬẕX, how do you calculate the number of neutrons (n⁰)?",opts:["Z + A","A - Z","Z - A","A × Z"],answer:"A - Z"},
+      {q:"How many protons and neutrons are in a Hydrogen-1 (¹₁H) atom?",opts:["1 proton, 0 neutrons","1 proton, 1 neutron","0 protons, 1 neutron","1 proton, 2 neutrons"],answer:"1 proton, 0 neutrons"},
+      {q:"How many neutrons are present in Hydrogen-3 (³₁H, Tritium)?",opts:["1","2","3","0"],answer:"2"},
+      {q:"Chlorine-35 (³⁵₁₇Cl) has an atomic number of 17. How many neutrons does it have?",opts:["17","18","35","52"],answer:"18"},
+      {q:"Chlorine-37 (³⁷₁₇Cl) has how many neutrons?",opts:["17","18","20","37"],answer:"20"},
+      {q:"An atom has 6 protons, 6 electrons, and 8 neutrons. What is its mass number (A)?",opts:["6","12","14","20"],answer:"14"},
+      {q:"An atom has 19 protons and 20 neutrons. What is its standard nuclear representation?",opts:["²⁰₁₉K","³⁹₁₉K","³⁹₂₀K","¹⁹₃₉K"],answer:"³⁹₁₉K"},
+      {q:"What is the number of neutrons in an Argon-38 (³⁸₁₈Ar) atom?",opts:["18","20","38","56"],answer:"20"},
+      {q:"Sulfur-40 (⁴⁰₁₆S) contains how many neutrons?",opts:["16","20","24","40"],answer:"24"},
+      {q:"Consider the pair: ³⁵₁₇Cl and ³⁷₁₇Cl. These two nuclides are best classified as:",opts:["Isotopes","Isotones","Isobars","Radioelements"],answer:"Isotopes"},
+      {q:"Consider the pair: ³⁸₁₈Ar (n⁰ = 20) and ³⁹₁₉K (n⁰ = 20). These two nuclides are best classified as:",opts:["Isotopes","Isotones","Isobars","Allotropes"],answer:"Isotones"},
+      {q:"Consider the pair: ⁴⁰₁₆S and ⁴⁰₂₀Ca. Since both have a mass number of 40, they are classified as:",opts:["Isotopes","Isotones","Isobars","Isomers"],answer:"Isobars"},
+      {q:"Which pair among the following represents a set of ISOTOPES?",opts:["³⁸₁₈Ar and ³⁹₁₉K","¹²₆C and ¹⁴₆C","⁴⁰₁₆S and ⁴⁰₂₀Ca","¹⁴₆C and ¹⁶₈O"],answer:"¹²₆C and ¹⁴₆C"},
+      {q:"Which pair among the following represents a set of ISOTONES?",opts:["¹₁H and ²₁H","⁴⁰₁₆S and ⁴⁰₁₉K","¹⁴₆C (n=8) and ¹⁶₈O (n=8)","³⁵₁₇Cl and ³⁷₁₇Cl"],answer:"¹⁴₆C (n=8) and ¹⁶₈O (n=8)"}
     ];
     const QUESTIONS={A:RAW_QUESTIONS,B:RAW_QUESTIONS};
     let myName="",myTeam="",qIdx=0,currentStatus="waiting",isSuddenDeath=false,isCoolingDown=false,wrongAnswerCount=0,lastCdVal=null,resultOverlayShown=false;
